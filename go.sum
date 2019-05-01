@@ -4,8 +4,6 @@ github.com/Masterminds/semver v1.4.2 h1:WBLTQ37jOCzSLtXNdoo8bNM8876KhNqOKvrlGITg
 github.com/Masterminds/semver v1.4.2/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
 github.com/buildpack/libbuildpack v1.10.0 h1:xwgXTulLRU2zCFbYy35azMsHOjy8uQVyw9xm88Xm2b8=
 github.com/buildpack/libbuildpack v1.10.0/go.mod h1:5YC4KNbppjwmsX561s0rS+4rtuJA++AnzUvcKc6lexc=
-github.com/cloudfoundry/cnb-tools v0.0.0-20190219172305-154ea1cc62b2 h1:28ef8Q5X8QmcGGXVcp1MyBtyV6kzKChnhEuyXRUiyr4=
-github.com/cloudfoundry/cnb-tools v0.0.0-20190219172305-154ea1cc62b2/go.mod h1:4/XXo++Se0dkBKJIHUJcQBQqwZsSiEmUxd84Su8ER3E=
 github.com/cloudfoundry/libcfbuildpack v1.42.0 h1:vHVF9t0Px4p0WsgCG2EkUTTyXxI3QgE95O+hMKUq7z0=
 github.com/cloudfoundry/libcfbuildpack v1.42.0/go.mod h1:C2AOm63Ca1GIBP7NdVhd8Q2gKenz600PVWqtOAbrN4o=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
