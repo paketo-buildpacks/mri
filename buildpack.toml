@@ -1,6 +1,6 @@
 
 [buildpack]
-id = "org.cloudfoundry.buildpacks.ruby"
+id = "org.cloudfoundry.ruby"
 name = "Ruby Buildpack"
 version = "0.0.1"
 
