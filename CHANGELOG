@@ -1,0 +1,11 @@
+v0.0.1 May 21, 2019
+====================
+
+* Initial release of ruby-cnb
+
+* Always passes detection
+
+* Installs a version of ruby which can be used
+  at launch or during build for other cnbs
+
+
