@@ -94,22 +94,36 @@ version = "2.4.6"
 [[metadata.dependencies]]
 id = "ruby"
 name = "Ruby"
-sha256 = "d275cd81cc8fc2663b3fae42058cf03e1599028f42ff7e3d3291ec4d07b4f1e5"
-source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.1.tar.gz"
-source_sha256 = "dac81822325b79c3ba9532b048c2123357d3310b2b40024202f360251d9829b1"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.1-linux-x64-cflinuxfs3-d275cd81.tgz"
-version = "2.5.1"
+sha256 = "b8584ecae59e2ba059bff91f01522c4b012f767a9dfb999883b1e3d8347b3aa3"
+stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
+uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.3-linux-x64-cflinuxfs2-b8584eca.tgz"
+version = "2.5.3"
 
 [[metadata.dependencies]]
 id = "ruby"
 name = "Ruby"
 sha256 = "5d5a8f8cdfe44d9136dc7098771b32054c8dd8cd048638c4997e24e19d2675e0"
-source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.3.tar.gz"
-source_sha256 = "9828d03852c37c20fa333a0264f2490f07338576734d910ee3fd538c9520846c"
 stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
 uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.3-linux-x64-cflinuxfs3-5d5a8f8c.tgz"
 version = "2.5.3"
+
+[[metadata.dependencies]]
+id = "ruby"
+sha256 = "d64c96b624aa2be09acc0c766f9bad3ec868b8a4f686ff91eea8f29216079801"
+source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.5.tar.gz"
+source_sha256 = "28a945fdf340e6ba04fc890b98648342e3cccfd6d223a48f3810572f11b2514c"
+stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
+uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.5-linux-x64-cflinuxfs2-d64c96b6.tgz"
+version = "2.5.5"
+
+[[metadata.dependencies]]
+id = "ruby"
+sha256 = "60148e0c0db401b46b8c9640699b854d1c2ff334603967dff8f8b4e70b33ebee"
+source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.5.tar.gz"
+source_sha256 = "28a945fdf340e6ba04fc890b98648342e3cccfd6d223a48f3810572f11b2514c"
+stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.5-linux-x64-cflinuxfs3-60148e0c.tgz"
+version = "2.5.5"
 
 [[metadata.dependencies]]
 id = "ruby"
