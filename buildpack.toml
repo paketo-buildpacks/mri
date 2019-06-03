@@ -95,5 +95,23 @@ stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
 uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.3-linux-x64-cflinuxfs3-5d5a8f8c.tgz"
 version = "2.5.3"
 
+[[metadata.dependencies]]
+id = "ruby"
+sha256 = "28d42bddf876152f80bb14f33dc45d008a5700538c339fe3fd73921e15546602"
+source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz"
+source_sha256 = "577fd3795f22b8d91c1d4e6733637b0394d4082db659fccf224c774a2b1c82fb"
+stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
+uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.6.3-linux-x64-cflinuxfs2-28d42bdd.tgz"
+version = "2.6.3"
+
+[[metadata.dependencies]]
+id = "ruby"
+sha256 = "5f783afaa368ec9450da8b15aa4b543b186e42d98f2baf6fdb68309b6ce187f2"
+source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz"
+source_sha256 = "577fd3795f22b8d91c1d4e6733637b0394d4082db659fccf224c774a2b1c82fb"
+stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.6.3-linux-x64-cflinuxfs3-5f783afa.tgz"
+version = "2.6.3"
+
 [[stacks]]
 id = "org.cloudfoundry.stacks.cflinuxfs3"
