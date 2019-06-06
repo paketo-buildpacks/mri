@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"ruby-cnb/ruby"
@@ -10,7 +9,6 @@ import (
 	"github.com/buildpack/libbuildpack/buildplan"
 	"github.com/cloudfoundry/libcfbuildpack/detect"
 	"github.com/cloudfoundry/libcfbuildpack/helper"
-	"gopkg.in/yaml.v2"
 )
 
 func main() {
@@ -37,7 +35,7 @@ func runDetect(context detect.Detect) (int, error) {
 
 	version := context.BuildPlan[ruby.Dependency].Version
 	if exists {
-		version, err = readBuildpackYamlVersion(buildpackYAMLPath)
+		version, err = helper.ReadBuildpackYamlVersion(buildpackYAMLPath, "ruby")
 		if err != nil {
 			return detect.FailStatusCode, err
 		}
@@ -49,22 +47,4 @@ func runDetect(context detect.Detect) (int, error) {
 			Metadata: buildplan.Metadata{"build": true, "launch": true},
 		},
 	})
-}
-
-func readBuildpackYamlVersion(buildpackYAMLPath string) (string, error) {
-	buf, err := ioutil.ReadFile(buildpackYAMLPath)
-	if err != nil {
-		return "", err
-	}
-
-	config := struct {
-		Ruby struct {
-			Version string `yaml:"version"`
-		} `yaml:"ruby"`
-	}{}
-	if err := yaml.Unmarshal(buf, &config); err != nil {
-		return "", err
-	}
-
-	return config.Ruby.Version, nil
 }
