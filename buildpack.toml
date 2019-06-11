@@ -14,52 +14,6 @@ ruby = "2.4.*"
 [[metadata.dependencies]]
 id = "ruby"
 name = "Ruby"
-sha256 = "6649b56e83ebc5791f6ccff48fa2eec02b112b994fb82297d762364c8cbfb5cc"
-source = "https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.10.tar.gz"
-source_sha256 = "cd51019eb9d9c786d6cb178c37f6812d8a41d6914a1edaf0050c051c75d7c358"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.2.10-linux-x64-cflinuxfs3-6649b56e.tgz"
-version = "2.2.10"
-
-[[metadata.dependencies]]
-id = "ruby"
-name = "Ruby"
-sha256 = "a72dc47fb959a0e0e9691e5eb886c08c02850bc7ccdbab21a844e0c3df5fb427"
-source = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.7.tar.gz"
-source_sha256 = "35cd349cddf78e4a0640d28ec8c7e88a2ae0db51ebd8926cd232bb70db2c7d7f"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.3.7-linux-x64-cflinuxfs3-a72dc47f.tgz"
-version = "2.3.7"
-
-[[metadata.dependencies]]
-id = "ruby"
-sha256 = "d595bca3421b756a0e0767ae4c9645ee0cb0c66f259db98088507fb303708333"
-source = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.8.tar.gz"
-source_sha256 = "b5016d61440e939045d4e22979e04708ed6c8e1c52e7edb2553cf40b73c59abf"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.3.8-linux-x64-cflinuxfs2-d595bca3.tgz"
-version = "2.3.8"
-
-[[metadata.dependencies]]
-id = "ruby"
-name = "Ruby"
-sha256 = "7751357a5e72d445ce3739448a9852fa4fc0efacf2fdad9e489744e84f0e5fb0"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.3.8-linux-x64-cflinuxfs2-7751357a.tgz"
-version = "2.3.8"
-
-[[metadata.dependencies]]
-id = "ruby"
-sha256 = "dc0bf492b9c063d93ecbc04dc8a6b89f8db144e9498d4ee850bb1dece504445f"
-source = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.8.tar.gz"
-source_sha256 = "b5016d61440e939045d4e22979e04708ed6c8e1c52e7edb2553cf40b73c59abf"
-stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
-uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.3.8-linux-x64-cflinuxfs3-dc0bf492.tgz"
-version = "2.3.8"
-
-[[metadata.dependencies]]
-id = "ruby"
-name = "Ruby"
 sha256 = "3131cb19beeee3701e905bb1738817c5af8be7c150994510e956a1cba98a8ade"
 stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
 uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.4.5-linux-x64-cflinuxfs2-3131cb19.tgz"
