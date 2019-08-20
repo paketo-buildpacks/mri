@@ -1,13 +1,14 @@
 package ruby_test
 
 import (
-	"github.com/buildpack/libbuildpack/buildplan"
-	"github.com/cloudfoundry/libcfbuildpack/test"
-	"github.com/sclevine/spec"
-	"github.com/sclevine/spec/report"
 	"path/filepath"
 	"ruby-cnb/ruby"
 	"testing"
+
+	"github.com/cloudfoundry/libcfbuildpack/buildpackplan"
+	"github.com/cloudfoundry/libcfbuildpack/test"
+	"github.com/sclevine/spec"
+	"github.com/sclevine/spec/report"
 
 	. "github.com/onsi/gomega"
 )
@@ -23,7 +24,7 @@ func testRuby(t *testing.T, when spec.G, it spec.S) {
 
 		it("will contribute if the dep is in the build plan", func() {
 			f := test.NewBuildFactory(t)
-			f.AddBuildPlan(ruby.Dependency, buildplan.Dependency{})
+			f.AddPlan(buildpackplan.Plan{Name: ruby.Dependency})
 			f.AddDependency(ruby.Dependency, stubRubyFixture)
 
 			_, willContribute, err := ruby.NewContributor(f.Build)
@@ -41,8 +42,9 @@ func testRuby(t *testing.T, when spec.G, it spec.S) {
 
 		it("contributes for build phase", func() {
 			f := test.NewBuildFactory(t)
-			f.AddBuildPlan(ruby.Dependency, buildplan.Dependency{
-				Metadata: buildplan.Metadata{"build": true},
+			f.AddPlan(buildpackplan.Plan{
+				Name:     ruby.Dependency,
+				Metadata: buildpackplan.Metadata{"build": true},
 			})
 			f.AddDependency(ruby.Dependency, stubRubyFixture)
 
@@ -59,8 +61,9 @@ func testRuby(t *testing.T, when spec.G, it spec.S) {
 
 		it("contributes for launch phase", func() {
 			f := test.NewBuildFactory(t)
-			f.AddBuildPlan(ruby.Dependency, buildplan.Dependency{
-				Metadata: buildplan.Metadata{"launch": true},
+			f.AddPlan(buildpackplan.Plan{
+				Name:     ruby.Dependency,
+				Metadata: buildpackplan.Metadata{"launch": true},
 			})
 			f.AddDependency(ruby.Dependency, stubRubyFixture)
 

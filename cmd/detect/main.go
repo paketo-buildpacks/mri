@@ -33,7 +33,7 @@ func runDetect(context detect.Detect) (int, error) {
 		return detect.FailStatusCode, err
 	}
 
-	version := context.BuildPlan[ruby.Dependency].Version
+	version := ""
 	if exists {
 		bpYml := &BuildpackYaml{}
 		err = helper.ReadBuildpackYaml(buildpackYAMLPath, bpYml)
@@ -41,13 +41,18 @@ func runDetect(context detect.Detect) (int, error) {
 			return detect.FailStatusCode, err
 		}
 		version = bpYml.Ruby.Version
-
 	}
 
-	return context.Pass(buildplan.BuildPlan{
-		ruby.Dependency: buildplan.Dependency{
-			Version:  version,
-			Metadata: buildplan.Metadata{"build": true, "launch": true},
+	return context.Pass(buildplan.Plan{
+		Requires: []buildplan.Required{
+			{
+				Name:     ruby.Dependency,
+				Version:  version,
+				Metadata: buildplan.Metadata{"build": true, "launch": true},
+			},
+		},
+		Provides: []buildplan.Provided{
+			{ruby.Dependency},
 		},
 	})
 }

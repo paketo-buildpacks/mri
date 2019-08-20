@@ -5,8 +5,6 @@ import (
 	"os"
 	"ruby-cnb/ruby"
 
-	"github.com/buildpack/libbuildpack/buildplan"
-
 	"github.com/cloudfoundry/libcfbuildpack/build"
 )
 
@@ -39,5 +37,5 @@ func runBuild(context build.Build) (int, error) {
 		}
 	}
 
-	return context.Success(buildplan.BuildPlan{})
+	return context.Success()
 }
