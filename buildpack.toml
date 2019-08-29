@@ -99,5 +99,15 @@ stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
 uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.6.3-linux-x64-cflinuxfs3-5f783afa.tgz"
 version = "2.6.3"
 
+[[metadata.dependencies]]
+id = "ruby"
+name = "Ruby"
+sha256 = "07b3393d88022466bb38794be7e8d4c67131c30ebfc29306df59d084322a861d"
+source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.4.tar.gz"
+source_sha256 = "4fc1d8ba75505b3797020a6ffc85a8bcff6adc4dabae343b6572bf281ee17937"
+stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.6.4-linux-x64-cflinuxfs3-07b3393d.tgz"
+version = "2.6.4"
+
 [[stacks]]
 id = "org.cloudfoundry.stacks.cflinuxfs3"
