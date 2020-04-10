@@ -51,23 +51,6 @@ api = "0.2"
   [[metadata.dependencies]]
     id = "ruby"
     name = "Ruby"
-    sha256 = "b8584ecae59e2ba059bff91f01522c4b012f767a9dfb999883b1e3d8347b3aa3"
-    stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.3-linux-x64-cflinuxfs2-b8584eca.tgz"
-    version = "2.5.3"
-
-  [[metadata.dependencies]]
-    id = "ruby"
-    sha256 = "d64c96b624aa2be09acc0c766f9bad3ec868b8a4f686ff91eea8f29216079801"
-    source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.5.tar.gz"
-    source_sha256 = "28a945fdf340e6ba04fc890b98648342e3cccfd6d223a48f3810572f11b2514c"
-    stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.5-linux-x64-cflinuxfs2-d64c96b6.tgz"
-    version = "2.5.5"
-
-  [[metadata.dependencies]]
-    id = "ruby"
-    name = "Ruby"
     sha256 = "1edf7db5c8642aae54f00a6428e8246ccdb1d6a160ae5d328a800a1ef47b858c"
     source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.6.tar.gz"
     source_sha256 = "1d7ed06c673020cd12a737ed686470552e8e99d72b82cd3c26daa3115c36bea7"
@@ -84,15 +67,6 @@ api = "0.2"
     stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.7-linux-x64-cflinuxfs3-01b7d7a8.tgz"
     version = "2.5.7"
-
-  [[metadata.dependencies]]
-    id = "ruby"
-    sha256 = "28d42bddf876152f80bb14f33dc45d008a5700538c339fe3fd73921e15546602"
-    source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz"
-    source_sha256 = "577fd3795f22b8d91c1d4e6733637b0394d4082db659fccf224c774a2b1c82fb"
-    stacks = ["org.cloudfoundry.stacks.cflinuxfs2"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.6.3-linux-x64-cflinuxfs2-28d42bdd.tgz"
-    version = "2.6.3"
 
   [[metadata.dependencies]]
     id = "ruby"
