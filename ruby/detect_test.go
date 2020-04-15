@@ -58,6 +58,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 						Version: "4.5.6",
 						Metadata: ruby.BuildPlanMetadata{
 							VersionSource: "buildpack.yml",
+							Launch:        true,
 						},
 					},
 				},

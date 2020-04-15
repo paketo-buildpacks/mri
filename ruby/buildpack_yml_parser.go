@@ -6,10 +6,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Config struct {
-	Version string `yaml:"version"`
-}
-
 type BuildpackYMLParser struct{}
 
 func NewBuildpackYMLParser() BuildpackYMLParser {
@@ -18,7 +14,9 @@ func NewBuildpackYMLParser() BuildpackYMLParser {
 
 func (p BuildpackYMLParser) ParseVersion(path string) (string, error) {
 	var buildpack struct {
-		Ruby Config `yaml:"ruby"`
+		Ruby struct {
+			Version string `yaml:"version"`
+		} `yaml:"ruby"`
 	}
 
 	file, err := os.Open(path)

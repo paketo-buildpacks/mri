@@ -68,6 +68,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Version: "2.5.x",
 			Metadata: map[string]interface{}{
 				"version-source": "buildpack.yml",
+				"launch":         true,
 			},
 		}
 
@@ -88,6 +89,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Version: "2.5.x",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
+						"launch":         true,
 					},
 				},
 			},
@@ -119,6 +121,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Version: "2.5.x",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
+							"launch":         true,
 						},
 					},
 				},
@@ -134,6 +137,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Version: "2.5.x",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
+							"launch":         true,
 						},
 					},
 				},
@@ -164,6 +168,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Version: "2.5.x",
 				Metadata: map[string]interface{}{
 					"version-source": "buildpack.yml",
+					"launch":         true,
 				},
 			},
 		}))
@@ -201,6 +206,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Metadata: map[string]interface{}{
 					"version-source": "buildpack.yml",
 					"build":          true,
+					"launch":         true,
 				},
 			}
 
@@ -212,6 +218,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
 							"build":          true,
+							"launch":         true,
 						},
 					},
 				},
@@ -235,6 +242,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
 								"build":          true,
+								"launch":         true,
 							},
 						},
 					},
@@ -251,6 +259,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
 								"build":          true,
+								"launch":         true,
 							},
 						},
 					},
@@ -284,6 +293,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Version: "some-version",
 						Metadata: map[string]interface{}{
 							"some-extra-field": "an-extra-value",
+							"launch":           true,
 						},
 					},
 				},
@@ -300,6 +310,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 							Version: "2.5.x",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
+								"launch":         true,
 							},
 						},
 					},
@@ -316,6 +327,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 							Version: "some-version",
 							Metadata: map[string]interface{}{
 								"some-extra-field": "an-extra-value",
+								"launch":           true,
 							},
 						},
 					},
@@ -337,7 +349,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					},
 				},
 			}))
-
 		})
 	})
 
@@ -367,6 +378,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 							Version: "2.5.x",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
+								"launch":         true,
 							},
 						},
 					},

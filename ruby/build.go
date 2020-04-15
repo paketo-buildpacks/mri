@@ -38,11 +38,12 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 
 		logger.SelectedDependency(entry, dependency, clock.Now())
 
-		rubyLayer, err := context.Layers.Get(Ruby, packit.LaunchLayer)
+		rubyLayer, err := context.Layers.Get(Ruby)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
 
+		rubyLayer.Launch = entry.Metadata["launch"] == true
 		rubyLayer.Build = entry.Metadata["build"] == true
 		rubyLayer.Cache = entry.Metadata["build"] == true
 
