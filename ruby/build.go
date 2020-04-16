@@ -1,10 +1,15 @@
 package ruby
 
 import (
+	"bytes"
+	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/cloudfoundry/packit"
+	"github.com/cloudfoundry/packit/pexec"
 	"github.com/cloudfoundry/packit/postal"
 )
 
@@ -24,7 +29,12 @@ type BuildPlanRefinery interface {
 	BillOfMaterial(dependency postal.Dependency) packit.BuildpackPlan
 }
 
-func Build(entries EntryResolver, dependencies DependencyManager, planRefinery BuildPlanRefinery, logger LogEmitter, clock Clock) packit.BuildFunc {
+//go:generate faux --interface Executable --output fakes/executable.go
+type Executable interface {
+	Execute(pexec.Execution) error
+}
+
+func Build(entries EntryResolver, dependencies DependencyManager, planRefinery BuildPlanRefinery, logger LogEmitter, clock Clock, gem Executable) packit.BuildFunc {
 	return func(context packit.BuildContext) (packit.BuildResult, error) {
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 		logger.Process("Resolving Ruby MRI version")
@@ -87,6 +97,21 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 		}
 		logger.Action("Completed in %s", time.Since(then).Round(time.Millisecond))
 		logger.Break()
+
+		os.Setenv("PATH", fmt.Sprintf("%s:%s", filepath.Join(rubyLayer.Path, "bin"), os.Getenv("PATH")))
+
+		buffer := bytes.NewBuffer(nil)
+		err = gem.Execute(pexec.Execution{
+			Args:   []string{"env", "path"},
+			Stdout: buffer,
+		})
+		if err != nil {
+			return packit.BuildResult{}, err
+		}
+
+		rubyLayer.SharedEnv.Override("GEM_PATH", strings.TrimSpace(buffer.String()))
+
+		logger.Environment(rubyLayer.SharedEnv)
 
 		return packit.BuildResult{
 			Plan:   bom,

@@ -6,6 +6,7 @@ import (
 
 	"github.com/cloudfoundry/packit"
 	"github.com/cloudfoundry/packit/cargo"
+	"github.com/cloudfoundry/packit/pexec"
 	"github.com/cloudfoundry/packit/postal"
 	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
 )
@@ -16,6 +17,7 @@ func main() {
 	dependencyManager := postal.NewService(cargo.NewTransport())
 	planRefinery := ruby.NewPlanRefinery()
 	clock := ruby.NewClock(time.Now)
+	gem := pexec.NewExecutable("gem")
 
-	packit.Build(ruby.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock))
+	packit.Build(ruby.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem))
 }

@@ -75,3 +75,9 @@ func (e LogEmitter) Candidates(entries []packit.BuildpackPlanEntry) {
 
 	e.Break()
 }
+
+func (l LogEmitter) Environment(env packit.Environment) {
+	l.Process("Configuring environment")
+	l.Subprocess("%s", scribe.NewFormattedMapFromEnvironment(env))
+	l.Break()
+}

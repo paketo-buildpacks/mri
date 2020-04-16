@@ -89,6 +89,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"  Executing build process",
 				MatchRegexp(`    Installing Ruby MRI 2\.\d+\.\d+`),
 				MatchRegexp(`      Completed in \d+\.\d+`),
+				"",
+				"  Configuring environment",
+				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/org.cloudfoundry.ruby-mri/ruby/lib/ruby/gems/2\.7\.\d+"`),
 			}), logs.String())
 
 			firstContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(firstImage.ID)
@@ -179,6 +182,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"  Executing build process",
 				MatchRegexp(`    Installing Ruby MRI 2\.7\.\d+`),
 				MatchRegexp(`      Completed in \d+\.\d+`),
+				"",
+				"  Configuring environment",
+				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/org.cloudfoundry.ruby-mri/ruby/lib/ruby/gems/2\.7\.\d+"`),
 			}), logs.String())
 
 			firstContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(firstImage.ID)
@@ -212,6 +218,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"  Executing build process",
 				MatchRegexp(`    Installing Ruby MRI 2\.6\.\d+`),
 				MatchRegexp(`      Completed in \d+\.\d+`),
+				"",
+				"  Configuring environment",
+				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.6\.\d+:/layers/org.cloudfoundry.ruby-mri/ruby/lib/ruby/gems/2\.6\.\d+"`),
 			}), logs.String())
 
 			secondContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(secondImage.ID)

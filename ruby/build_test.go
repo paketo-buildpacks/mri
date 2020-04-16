@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cloudfoundry/packit"
+	"github.com/cloudfoundry/packit/pexec"
 	"github.com/cloudfoundry/packit/postal"
 	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
 	"github.com/cloudfoundry/ruby-mri-cnb/ruby/fakes"
@@ -30,6 +31,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		timeStamp         time.Time
 		planRefinery      *fakes.BuildPlanRefinery
 		buffer            *bytes.Buffer
+		gem               *fakes.Executable
 
 		build packit.BuildFunc
 	)
@@ -97,8 +99,13 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		buffer = bytes.NewBuffer(nil)
 		logEmitter := ruby.NewLogEmitter(buffer)
+		gem = &fakes.Executable{}
+		gem.ExecuteCall.Stub = func(execution pexec.Execution) error {
+			execution.Stdout.Write([]byte("/some/ruby/gems/path\n"))
+			return nil
+		}
 
-		build = ruby.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock)
+		build = ruby.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem)
 	})
 
 	it.After(func() {
@@ -144,9 +151,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			},
 			Layers: []packit.Layer{
 				{
-					Name:      "ruby",
-					Path:      filepath.Join(layersDir, "ruby"),
-					SharedEnv: packit.Environment{},
+					Name: "ruby",
+					Path: filepath.Join(layersDir, "ruby"),
+					SharedEnv: packit.Environment{
+						"GEM_PATH.override": "/some/ruby/gems/path",
+					},
 					BuildEnv:  packit.Environment{},
 					LaunchEnv: packit.Environment{},
 					Build:     false,
@@ -185,10 +194,13 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(dependencyManager.InstallCall.Receives.CnbPath).To(Equal(cnbDir))
 		Expect(dependencyManager.InstallCall.Receives.LayerPath).To(Equal(filepath.Join(layersDir, "ruby")))
 
+		Expect(gem.ExecuteCall.Receives.Execution.Args).To(Equal([]string{"env", "path"}))
+
 		Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
 		Expect(buffer.String()).To(ContainSubstring("Resolving Ruby MRI version"))
 		Expect(buffer.String()).To(ContainSubstring("Selected Ruby MRI version (using buildpack.yml): "))
 		Expect(buffer.String()).To(ContainSubstring("Executing build process"))
+		Expect(buffer.String()).To(ContainSubstring("Configuring environment"))
 	})
 
 	context("when the build plan entry includes the build flag", func() {
@@ -266,9 +278,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 				Layers: []packit.Layer{
 					{
-						Name:      "ruby",
-						Path:      filepath.Join(layersDir, "ruby"),
-						SharedEnv: packit.Environment{},
+						Name: "ruby",
+						Path: filepath.Join(layersDir, "ruby"),
+						SharedEnv: packit.Environment{
+							"GEM_PATH.override": "/some/ruby/gems/path",
+						},
 						BuildEnv:  packit.Environment{},
 						LaunchEnv: packit.Environment{},
 						Build:     true,
@@ -334,9 +348,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 				Layers: []packit.Layer{
 					{
-						Name:      "ruby",
-						Path:      filepath.Join(layersDir, "ruby"),
-						SharedEnv: packit.Environment{},
+						Name: "ruby",
+						Path: filepath.Join(layersDir, "ruby"),
+						SharedEnv: packit.Environment{
+							"GEM_PATH.override": "/some/ruby/gems/path",
+						},
 						BuildEnv:  packit.Environment{},
 						LaunchEnv: packit.Environment{},
 						Build:     false,
@@ -513,6 +529,32 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Layers: packit.Layers{Path: layersDir},
 				})
 				Expect(err).To(MatchError(ContainSubstring("permission denied")))
+			})
+		})
+
+		context("when the executable errors", func() {
+			it.Before(func() {
+				gem.ExecuteCall.Stub = nil
+				gem.ExecuteCall.Returns.Error = errors.New("gem executable failed")
+			})
+
+			it("returns an error", func() {
+				_, err := build(packit.BuildContext{
+					CNBPath: cnbDir,
+					Plan: packit.BuildpackPlan{
+						Entries: []packit.BuildpackPlanEntry{
+							{
+								Name:    "ruby",
+								Version: "2.5.x",
+								Metadata: map[string]interface{}{
+									"version-source": "buildpack.yml",
+								},
+							},
+						},
+					},
+					Layers: packit.Layers{Path: layersDir},
+				})
+				Expect(err).To(MatchError(ContainSubstring("gem executable failed")))
 			})
 		})
 	})
