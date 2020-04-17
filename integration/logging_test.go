@@ -64,6 +64,8 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(`    Installing Ruby MRI 2\.7\.\d+`),
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
+				"  Configuring environment",
+				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/org.cloudfoundry.ruby-mri/ruby/lib/ruby/gems/2\.7\.\d+"`),
 			}
 
 			Expect(GetBuildLogs(logs.String())).To(ContainSequence(sequence), logs.String())

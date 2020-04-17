@@ -151,4 +151,15 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 			Expect(buffer.String()).To(ContainSubstring("      <unknown>     -> \"*\""))
 		})
 	})
+
+	context("Environment", func() {
+		it("prints details about the environment", func() {
+			emitter.Environment(packit.Environment{
+				"GEM_PATH.override": "/some/path",
+			})
+
+			Expect(buffer.String()).To(ContainSubstring("  Configuring environment"))
+			Expect(buffer.String()).To(ContainSubstring("    GEM_PATH -> \"/some/path\""))
+		})
+	})
 }
