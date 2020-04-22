@@ -37,7 +37,7 @@ type Executable interface {
 func Build(entries EntryResolver, dependencies DependencyManager, planRefinery BuildPlanRefinery, logger LogEmitter, clock Clock, gem Executable) packit.BuildFunc {
 	return func(context packit.BuildContext) (packit.BuildResult, error) {
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
-		logger.Process("Resolving Ruby MRI version")
+		logger.Process("Resolving MRI version")
 
 		entry := entries.Resolve(context.Plan.Entries)
 
@@ -89,7 +89,7 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 			"built_at": clock.Now().Format(time.RFC3339Nano),
 		}
 
-		logger.Subprocess("Installing Ruby MRI %s", dependency.Version)
+		logger.Subprocess("Installing MRI %s", dependency.Version)
 		then := clock.Now()
 		err = dependencies.Install(dependency, context.CNBPath, rubyLayer.Path)
 		if err != nil {

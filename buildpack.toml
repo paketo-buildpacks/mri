@@ -2,7 +2,7 @@ api = "0.2"
 
 [buildpack]
   id = "org.cloudfoundry.ruby-mri"
-  name = "Ruby MRI Buildpack"
+  name = "MRI Buildpack"
   version = "{{ .Version }}"
 
 [metadata]
@@ -13,7 +13,7 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "ruby"
-    name = "Ruby MRI"
+    name = "MRI"
     sha256 = "01b7d7a8a3031f15079e0ca1245e002575f47c8943f68508d86ba4f46ac24190"
     source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.7.tar.gz"
     source_sha256 = "0b2d0d5e3451b6ab454f81b1bfca007407c0548dea403f1eba2e429da4add6d4"
@@ -23,7 +23,7 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "ruby"
-    name = "Ruby MRI"
+    name = "MRI"
     sha256 = "738900eab9e0cb8139415556d4022d6d9c4947ed7c46f78862785028f45fa239"
     source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.8.tar.gz"
     source_sha256 = "6c0bdf07876c69811a9e7dc237c43d40b1cb6369f68e0e17953d7279b524ad9a"
@@ -33,7 +33,7 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "ruby"
-    name = "Ruby MRI"
+    name = "MRI"
     sha256 = "a23c26ec93e34ca05328390107ff40034b5103afb91194ebf70f66f0c0866db4"
     source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.5.tar.gz"
     source_sha256 = "66976b716ecc1fd34f9b7c3c2b07bbd37631815377a2e3e85a5b194cfdcbed7d"
@@ -43,7 +43,7 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "ruby"
-    name = "Ruby MRI"
+    name = "MRI"
     sha256 = "9f860a6520bf8774fcb06ea9a33ae17818875b747b58ca11b0690223c7126493"
     source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.6.tar.gz"
     source_sha256 = "364b143def360bac1b74eb56ed60b1a0dca6439b00157ae11ff77d5cd2e92291"
@@ -53,7 +53,7 @@ api = "0.2"
 
   [[metadata.dependencies]]
     id = "ruby"
-    name = "Ruby MRI"
+    name = "MRI"
     sha256 = "68cd2baeb33c1f10a873aab8e492d4547f3b13d1a6302930ac25bcedf45d51ce"
     source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.0.tar.gz"
     source_sha256 = "8c99aa93b5e2f1bc8437d1bbbefd27b13e7694025331f77245d0c068ef1f8cbe"
@@ -64,7 +64,7 @@ api = "0.2"
   [[metadata.dependencies]]
     deprecation_date = "2023-04-01T00:00:00Z"
     id = "ruby"
-    name = "Ruby MRI"
+    name = "MRI"
     sha256 = "e25620088c536685f81aaae0f7f03c2143aa3dc9078a99707168915e85568f04"
     source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz"
     source_sha256 = "d418483bdd0000576c1370571121a6eb24582116db0b7bb2005e90e250eae418"

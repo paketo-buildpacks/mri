@@ -79,15 +79,15 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).ToNot(HaveOccurred())
 
 			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
-				fmt.Sprintf("Ruby MRI Buildpack %s", buildpackVersion),
-				"  Resolving Ruby MRI version",
+				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
 				"",
-				MatchRegexp(`    Selected Ruby MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
 				"",
 				"  Executing build process",
-				MatchRegexp(`    Installing Ruby MRI 2\.\d+\.\d+`),
+				MatchRegexp(`    Installing MRI 2\.\d+\.\d+`),
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
@@ -115,12 +115,12 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("ruby"))
 
 			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
-				fmt.Sprintf("Ruby MRI Buildpack %s", buildpackVersion),
-				"  Resolving Ruby MRI version",
+				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
 				"",
-				MatchRegexp(`    Selected Ruby MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
 				"",
 				"  Reusing cached layer /layers/org.cloudfoundry.ruby-mri/ruby",
 			}), logs.String())
@@ -172,15 +172,15 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).ToNot(HaveOccurred())
 
 			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
-				fmt.Sprintf("Ruby MRI Buildpack %s", buildpackVersion),
-				"  Resolving Ruby MRI version",
+				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
 				"",
-				MatchRegexp(`    Selected Ruby MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
 				"",
 				"  Executing build process",
-				MatchRegexp(`    Installing Ruby MRI 2\.7\.\d+`),
+				MatchRegexp(`    Installing MRI 2\.7\.\d+`),
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
@@ -208,15 +208,15 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("ruby"))
 
 			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
-				fmt.Sprintf("Ruby MRI Buildpack %s", buildpackVersion),
-				"  Resolving Ruby MRI version",
+				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.6.x\"",
 				"",
-				MatchRegexp(`    Selected Ruby MRI version \(using buildpack\.yml\): 2\.6\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.6\.\d+`),
 				"",
 				"  Executing build process",
-				MatchRegexp(`    Installing Ruby MRI 2\.6\.\d+`),
+				MatchRegexp(`    Installing MRI 2\.6\.\d+`),
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
