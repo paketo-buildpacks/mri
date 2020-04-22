@@ -32,23 +32,23 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 				Metadata: map[string]interface{}{"version-source": "some-source"},
 			}
 			dependency := postal.Dependency{
-				Name:    "Ruby MRI",
+				Name:    "MRI",
 				Version: "some-version",
 			}
 
 			emitter.SelectedDependency(entry, dependency, time.Now())
-			Expect(buffer.String()).To(Equal("    Selected Ruby MRI version (using some-source): some-version\n\n"))
+			Expect(buffer.String()).To(Equal("    Selected MRI version (using some-source): some-version\n\n"))
 		})
 
 		context("when the version source is missing", func() {
 			it("prints details about the selected dependency", func() {
 				dependency := postal.Dependency{
-					Name:    "Ruby MRI",
+					Name:    "MRI",
 					Version: "some-version",
 				}
 
 				emitter.SelectedDependency(packit.BuildpackPlanEntry{}, dependency, time.Now())
-				Expect(buffer.String()).To(Equal("    Selected Ruby MRI version (using <unknown>): some-version\n\n"))
+				Expect(buffer.String()).To(Equal("    Selected MRI version (using <unknown>): some-version\n\n"))
 			})
 		})
 
@@ -63,14 +63,14 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 				}
 				dependency := postal.Dependency{
 					DeprecationDate: deprecationDate,
-					Name:            "Ruby MRI",
+					Name:            "MRI",
 					Version:         "some-version",
 				}
 
 				emitter.SelectedDependency(entry, dependency, now)
-				Expect(buffer.String()).To(ContainSubstring("    Selected Ruby MRI version (using some-source): some-version\n"))
-				Expect(buffer.String()).To(ContainSubstring("      Version some-version of Ruby MRI will be deprecated after 2021-04-01.\n"))
-				Expect(buffer.String()).To(ContainSubstring("      Migrate your application to a supported version of Ruby MRI before this time.\n\n"))
+				Expect(buffer.String()).To(ContainSubstring("    Selected MRI version (using some-source): some-version\n"))
+				Expect(buffer.String()).To(ContainSubstring("      Version some-version of MRI will be deprecated after 2021-04-01.\n"))
+				Expect(buffer.String()).To(ContainSubstring("      Migrate your application to a supported version of MRI before this time.\n\n"))
 			})
 		})
 
@@ -85,14 +85,14 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 				}
 				dependency := postal.Dependency{
 					DeprecationDate: deprecationDate,
-					Name:            "Ruby MRI",
+					Name:            "MRI",
 					Version:         "some-version",
 				}
 
 				emitter.SelectedDependency(entry, dependency, now)
-				Expect(buffer.String()).To(ContainSubstring("    Selected Ruby MRI version (using some-source): some-version\n"))
-				Expect(buffer.String()).To(ContainSubstring("      Version some-version of Ruby MRI is deprecated.\n"))
-				Expect(buffer.String()).To(ContainSubstring("      Migrate your application to a supported version of Ruby MRI.\n\n"))
+				Expect(buffer.String()).To(ContainSubstring("    Selected MRI version (using some-source): some-version\n"))
+				Expect(buffer.String()).To(ContainSubstring("      Version some-version of MRI is deprecated.\n"))
+				Expect(buffer.String()).To(ContainSubstring("      Migrate your application to a supported version of MRI.\n\n"))
 			})
 		})
 
@@ -107,14 +107,14 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 				}
 				dependency := postal.Dependency{
 					DeprecationDate: deprecationDate,
-					Name:            "Ruby MRI",
+					Name:            "MRI",
 					Version:         "some-version",
 				}
 
 				emitter.SelectedDependency(entry, dependency, now)
-				Expect(buffer.String()).To(ContainSubstring("    Selected Ruby MRI version (using some-source): some-version\n"))
-				Expect(buffer.String()).To(ContainSubstring("      Version some-version of Ruby MRI is deprecated.\n"))
-				Expect(buffer.String()).To(ContainSubstring("      Migrate your application to a supported version of Ruby MRI.\n\n"))
+				Expect(buffer.String()).To(ContainSubstring("    Selected MRI version (using some-source): some-version\n"))
+				Expect(buffer.String()).To(ContainSubstring("      Version some-version of MRI is deprecated.\n"))
+				Expect(buffer.String()).To(ContainSubstring("      Migrate your application to a supported version of MRI.\n\n"))
 			})
 		})
 	})

@@ -75,7 +75,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		}
 
 		dependencyManager = &fakes.DependencyManager{}
-		dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{Name: "Ruby MRI"}
+		dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{Name: "MRI"}
 
 		planRefinery = &fakes.BuildPlanRefinery{}
 
@@ -188,17 +188,17 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(dependencyManager.ResolveCall.Receives.Stack).To(Equal("some-stack"))
 
 		Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
-		Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{Name: "Ruby MRI"}))
+		Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{Name: "MRI"}))
 
-		Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{Name: "Ruby MRI"}))
+		Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{Name: "MRI"}))
 		Expect(dependencyManager.InstallCall.Receives.CnbPath).To(Equal(cnbDir))
 		Expect(dependencyManager.InstallCall.Receives.LayerPath).To(Equal(filepath.Join(layersDir, "ruby")))
 
 		Expect(gem.ExecuteCall.Receives.Execution.Args).To(Equal([]string{"env", "path"}))
 
 		Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
-		Expect(buffer.String()).To(ContainSubstring("Resolving Ruby MRI version"))
-		Expect(buffer.String()).To(ContainSubstring("Selected Ruby MRI version (using buildpack.yml): "))
+		Expect(buffer.String()).To(ContainSubstring("Resolving MRI version"))
+		Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using buildpack.yml): "))
 		Expect(buffer.String()).To(ContainSubstring("Executing build process"))
 		Expect(buffer.String()).To(ContainSubstring("Configuring environment"))
 	})
@@ -374,7 +374,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{
-				Name:   "Ruby MRI",
+				Name:   "MRI",
 				SHA256: "some-sha",
 			}
 		})
@@ -405,15 +405,15 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
 			Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{
-				Name:   "Ruby MRI",
+				Name:   "MRI",
 				SHA256: "some-sha",
 			}))
 
 			Expect(dependencyManager.InstallCall.CallCount).To(Equal(0))
 
 			Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
-			Expect(buffer.String()).To(ContainSubstring("Resolving Ruby MRI version"))
-			Expect(buffer.String()).To(ContainSubstring("Selected Ruby MRI version (using buildpack.yml): "))
+			Expect(buffer.String()).To(ContainSubstring("Resolving MRI version"))
+			Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using buildpack.yml): "))
 			Expect(buffer.String()).To(ContainSubstring("Reusing cached layer"))
 			Expect(buffer.String()).ToNot(ContainSubstring("Executing build process"))
 		})
