@@ -1,7 +1,7 @@
 api = "0.2"
 
 [buildpack]
-  id = "org.cloudfoundry.ruby-mri"
+  id = "org.cloudfoundry.mri"
   name = "MRI Buildpack"
   version = "{{ .Version }}"
 
@@ -9,10 +9,10 @@ api = "0.2"
   include_files = ["bin/build", "bin/detect", "buildpack.toml"]
   pre_package = "./scripts/build.sh"
   [metadata.default-versions]
-    ruby = "2.7.*"
+    mri = "2.7.*"
 
   [[metadata.dependencies]]
-    id = "ruby"
+    id = "mri"
     name = "MRI"
     sha256 = "01b7d7a8a3031f15079e0ca1245e002575f47c8943f68508d86ba4f46ac24190"
     source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.7.tar.gz"
@@ -22,7 +22,7 @@ api = "0.2"
     version = "2.5.7"
 
   [[metadata.dependencies]]
-    id = "ruby"
+    id = "mri"
     name = "MRI"
     sha256 = "738900eab9e0cb8139415556d4022d6d9c4947ed7c46f78862785028f45fa239"
     source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.8.tar.gz"
@@ -32,7 +32,7 @@ api = "0.2"
     version = "2.5.8"
 
   [[metadata.dependencies]]
-    id = "ruby"
+    id = "mri"
     name = "MRI"
     sha256 = "a23c26ec93e34ca05328390107ff40034b5103afb91194ebf70f66f0c0866db4"
     source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.5.tar.gz"
@@ -42,7 +42,7 @@ api = "0.2"
     version = "2.6.5"
 
   [[metadata.dependencies]]
-    id = "ruby"
+    id = "mri"
     name = "MRI"
     sha256 = "9f860a6520bf8774fcb06ea9a33ae17818875b747b58ca11b0690223c7126493"
     source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.6.tar.gz"
@@ -52,7 +52,7 @@ api = "0.2"
     version = "2.6.6"
 
   [[metadata.dependencies]]
-    id = "ruby"
+    id = "mri"
     name = "MRI"
     sha256 = "68cd2baeb33c1f10a873aab8e492d4547f3b13d1a6302930ac25bcedf45d51ce"
     source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.0.tar.gz"
@@ -63,7 +63,7 @@ api = "0.2"
 
   [[metadata.dependencies]]
     deprecation_date = "2023-04-01T00:00:00Z"
-    id = "ruby"
+    id = "mri"
     name = "MRI"
     sha256 = "e25620088c536685f81aaae0f7f03c2143aa3dc9078a99707168915e85568f04"
     source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz"
@@ -75,7 +75,7 @@ api = "0.2"
   [[metadata.dependency_deprecation_dates]]
     date = 2023-04-01T00:00:00Z
     link = "https://www.ruby-lang.org/en/news/2020/03/31/ruby-2-7-1-released/"
-    name = "ruby"
+    name = "mri"
     version_line = "2.7.x"
 
 [[stacks]]

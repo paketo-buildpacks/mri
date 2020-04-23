@@ -1,10 +1,10 @@
-package ruby_test
+package mri_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
+	"github.com/cloudfoundry/mri-cnb/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -17,7 +17,7 @@ func testClock(t *testing.T, context spec.G, it spec.S) {
 		it("returns the value from the given Now function", func() {
 			now := time.Now()
 
-			clock := ruby.NewClock(func() time.Time {
+			clock := mri.NewClock(func() time.Time {
 				return now
 			})
 

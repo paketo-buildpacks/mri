@@ -1,11 +1,11 @@
-package ruby_test
+package mri_test
 
 import (
 	"io/ioutil"
 	"os"
 	"testing"
 
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
+	"github.com/cloudfoundry/mri-cnb/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -16,7 +16,7 @@ func testBuildpackYMLParser(t *testing.T, context spec.G, it spec.S) {
 		Expect = NewWithT(t).Expect
 
 		path   string
-		parser ruby.BuildpackYMLParser
+		parser mri.BuildpackYMLParser
 	)
 
 	it.Before(func() {
@@ -25,14 +25,14 @@ func testBuildpackYMLParser(t *testing.T, context spec.G, it spec.S) {
 		defer file.Close()
 
 		_, err = file.WriteString(`---
-ruby:
+mri:
   version: 1.2.3
 `)
 		Expect(err).NotTo(HaveOccurred())
 
 		path = file.Name()
 
-		parser = ruby.NewBuildpackYMLParser()
+		parser = mri.NewBuildpackYMLParser()
 	})
 
 	it.After(func() {
@@ -40,7 +40,7 @@ ruby:
 	})
 
 	context("ParseVersion", func() {
-		it("parses the ruby version from a buildpack.yml file", func() {
+		it("parses the mri version from a buildpack.yml file", func() {
 			version, err := parser.ParseVersion(path)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(version).To(Equal("1.2.3"))

@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/cloudfoundry/packit"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
+	"github.com/cloudfoundry/mri-cnb/mri"
 )
 
 func main() {
-	buildpackYMLParser := ruby.NewBuildpackYMLParser()
+	buildpackYMLParser := mri.NewBuildpackYMLParser()
 
-	packit.Detect(ruby.Detect(buildpackYMLParser))
+	packit.Detect(mri.Detect(buildpackYMLParser))
 }

@@ -1,4 +1,4 @@
-package ruby_test
+package mri_test
 
 import (
 	"bytes"
@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cloudfoundry/mri-cnb/mri"
+	"github.com/cloudfoundry/mri-cnb/mri/fakes"
 	"github.com/cloudfoundry/packit"
 	"github.com/cloudfoundry/packit/pexec"
 	"github.com/cloudfoundry/packit/postal"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby/fakes"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -27,7 +27,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		cnbDir            string
 		entryResolver     *fakes.EntryResolver
 		dependencyManager *fakes.DependencyManager
-		clock             ruby.Clock
+		clock             mri.Clock
 		timeStamp         time.Time
 		planRefinery      *fakes.BuildPlanRefinery
 		buffer            *bytes.Buffer
@@ -52,7 +52,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 [metadata]
   [metadata.default-versions]
-    ruby = "2.5.x"
+    mri = "2.5.x"
 
   [[metadata.dependencies]]
     id = "some-dep"
@@ -66,7 +66,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		entryResolver = &fakes.EntryResolver{}
 		entryResolver.ResolveCall.Returns.BuildpackPlanEntry = packit.BuildpackPlanEntry{
-			Name:    "ruby",
+			Name:    "mri",
 			Version: "2.5.x",
 			Metadata: map[string]interface{}{
 				"version-source": "buildpack.yml",
@@ -80,14 +80,14 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		planRefinery = &fakes.BuildPlanRefinery{}
 
 		timeStamp = time.Now()
-		clock = ruby.NewClock(func() time.Time {
+		clock = mri.NewClock(func() time.Time {
 			return timeStamp
 		})
 
 		planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
 			Entries: []packit.BuildpackPlanEntry{
 				{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "2.5.x",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
@@ -98,14 +98,14 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		}
 
 		buffer = bytes.NewBuffer(nil)
-		logEmitter := ruby.NewLogEmitter(buffer)
+		logEmitter := mri.NewLogEmitter(buffer)
 		gem = &fakes.Executable{}
 		gem.ExecuteCall.Stub = func(execution pexec.Execution) error {
-			execution.Stdout.Write([]byte("/some/ruby/gems/path\n"))
+			execution.Stdout.Write([]byte("/some/mri/gems/path\n"))
 			return nil
 		}
 
-		build = ruby.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem)
+		build = mri.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem)
 	})
 
 	it.After(func() {
@@ -113,7 +113,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.RemoveAll(cnbDir)).To(Succeed())
 	})
 
-	it("returns a result that installs ruby", func() {
+	it("returns a result that installs mri", func() {
 		result, err := build(packit.BuildContext{
 			CNBPath: cnbDir,
 			Stack:   "some-stack",
@@ -124,7 +124,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Plan: packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
 					{
-						Name:    "ruby",
+						Name:    "mri",
 						Version: "2.5.x",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
@@ -140,7 +140,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Plan: packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
 					{
-						Name:    "ruby",
+						Name:    "mri",
 						Version: "2.5.x",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
@@ -151,10 +151,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			},
 			Layers: []packit.Layer{
 				{
-					Name: "ruby",
-					Path: filepath.Join(layersDir, "ruby"),
+					Name: "mri",
+					Path: filepath.Join(layersDir, "mri"),
 					SharedEnv: packit.Environment{
-						"GEM_PATH.override": "/some/ruby/gems/path",
+						"GEM_PATH.override": "/some/mri/gems/path",
 					},
 					BuildEnv:  packit.Environment{},
 					LaunchEnv: packit.Environment{},
@@ -162,18 +162,18 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Launch:    true,
 					Cache:     false,
 					Metadata: map[string]interface{}{
-						ruby.DepKey: "",
-						"built_at":  timeStamp.Format(time.RFC3339Nano),
+						mri.DepKey: "",
+						"built_at": timeStamp.Format(time.RFC3339Nano),
 					},
 				},
 			},
 		}))
 
-		Expect(filepath.Join(layersDir, "ruby")).To(BeADirectory())
+		Expect(filepath.Join(layersDir, "mri")).To(BeADirectory())
 
 		Expect(entryResolver.ResolveCall.Receives.BuildpackPlanEntrySlice).To(Equal([]packit.BuildpackPlanEntry{
 			{
-				Name:    "ruby",
+				Name:    "mri",
 				Version: "2.5.x",
 				Metadata: map[string]interface{}{
 					"version-source": "buildpack.yml",
@@ -183,7 +183,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		}))
 
 		Expect(dependencyManager.ResolveCall.Receives.Path).To(Equal(filepath.Join(cnbDir, "buildpack.toml")))
-		Expect(dependencyManager.ResolveCall.Receives.Id).To(Equal("ruby"))
+		Expect(dependencyManager.ResolveCall.Receives.Id).To(Equal("mri"))
 		Expect(dependencyManager.ResolveCall.Receives.Version).To(Equal("2.5.x"))
 		Expect(dependencyManager.ResolveCall.Receives.Stack).To(Equal("some-stack"))
 
@@ -192,7 +192,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{Name: "MRI"}))
 		Expect(dependencyManager.InstallCall.Receives.CnbPath).To(Equal(cnbDir))
-		Expect(dependencyManager.InstallCall.Receives.LayerPath).To(Equal(filepath.Join(layersDir, "ruby")))
+		Expect(dependencyManager.InstallCall.Receives.LayerPath).To(Equal(filepath.Join(layersDir, "mri")))
 
 		Expect(gem.ExecuteCall.Receives.Execution.Args).To(Equal([]string{"env", "path"}))
 
@@ -212,7 +212,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			entryResolver.ResolveCall.Returns.BuildpackPlanEntry = packit.BuildpackPlanEntry{
-				Name: "ruby",
+				Name: "mri",
 
 				Version: "2.5.x",
 				Metadata: map[string]interface{}{
@@ -225,7 +225,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
 					{
-						Name:    "ruby",
+						Name:    "mri",
 						Version: "2.5.x",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
@@ -241,7 +241,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(os.RemoveAll(workingDir)).To(Succeed())
 		})
 
-		it("marks the ruby layer as cached", func() {
+		it("marks the mri layer as cached", func() {
 			result, err := build(packit.BuildContext{
 				CNBPath:    cnbDir,
 				Stack:      "some-stack",
@@ -249,7 +249,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "ruby",
+							Name:    "mri",
 							Version: "2.5.x",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
@@ -266,7 +266,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "ruby",
+							Name:    "mri",
 							Version: "2.5.x",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
@@ -278,10 +278,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 				Layers: []packit.Layer{
 					{
-						Name: "ruby",
-						Path: filepath.Join(layersDir, "ruby"),
+						Name: "mri",
+						Path: filepath.Join(layersDir, "mri"),
 						SharedEnv: packit.Environment{
-							"GEM_PATH.override": "/some/ruby/gems/path",
+							"GEM_PATH.override": "/some/mri/gems/path",
 						},
 						BuildEnv:  packit.Environment{},
 						LaunchEnv: packit.Environment{},
@@ -289,8 +289,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Launch:    true,
 						Cache:     true,
 						Metadata: map[string]interface{}{
-							ruby.DepKey: "",
-							"built_at":  timeStamp.Format(time.RFC3339Nano),
+							mri.DepKey: "",
+							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
@@ -320,7 +320,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "ruby",
+							Name:    "mri",
 							Version: "2.5.x",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
@@ -348,10 +348,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 				Layers: []packit.Layer{
 					{
-						Name: "ruby",
-						Path: filepath.Join(layersDir, "ruby"),
+						Name: "mri",
+						Path: filepath.Join(layersDir, "mri"),
 						SharedEnv: packit.Environment{
-							"GEM_PATH.override": "/some/ruby/gems/path",
+							"GEM_PATH.override": "/some/mri/gems/path",
 						},
 						BuildEnv:  packit.Environment{},
 						LaunchEnv: packit.Environment{},
@@ -359,8 +359,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Launch:    true,
 						Cache:     false,
 						Metadata: map[string]interface{}{
-							ruby.DepKey: "",
-							"built_at":  timeStamp.Format(time.RFC3339Nano),
+							mri.DepKey: "",
+							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
@@ -370,7 +370,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 	context("when there is a dependency cache match", func() {
 		it.Before(func() {
-			err := ioutil.WriteFile(filepath.Join(layersDir, "ruby.toml"), []byte("[metadata]\ndependency-sha = \"some-sha\"\n"), 0644)
+			err := ioutil.WriteFile(filepath.Join(layersDir, "mri.toml"), []byte("[metadata]\ndependency-sha = \"some-sha\"\n"), 0644)
 			Expect(err).NotTo(HaveOccurred())
 
 			dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{
@@ -390,7 +390,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "ruby",
+							Name:    "mri",
 							Version: "2.5.x",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
@@ -431,7 +431,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "ruby",
+								Name:    "mri",
 								Version: "2.5.x",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
@@ -456,7 +456,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "ruby",
+								Name:    "mri",
 								Version: "2.5.x",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
@@ -485,7 +485,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "ruby",
+								Name:    "mri",
 								Version: "2.5.x",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
@@ -502,7 +502,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		context("when the layer directory cannot be removed", func() {
 			var layerDir string
 			it.Before(func() {
-				layerDir = filepath.Join(layersDir, ruby.Ruby)
+				layerDir = filepath.Join(layersDir, mri.Ruby)
 				Expect(os.MkdirAll(filepath.Join(layerDir, "baller"), os.ModePerm)).To(Succeed())
 				Expect(os.Chmod(layerDir, 0000)).To(Succeed())
 			})
@@ -518,7 +518,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "ruby",
+								Name:    "mri",
 								Version: "2.5.x",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
@@ -544,7 +544,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "ruby",
+								Name:    "mri",
 								Version: "2.5.x",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",

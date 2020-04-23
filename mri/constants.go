@@ -1,7 +1,7 @@
-package ruby
+package mri
 
 const (
-	Ruby               = "ruby"
+	Ruby               = "mri"
 	BuildpackYMLSource = "buildpack.yml"
 
 	DepKey = "dependency-sha"

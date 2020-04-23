@@ -1,4 +1,4 @@
-module github.com/cloudfoundry/ruby-mri-cnb
+module github.com/cloudfoundry/mri-cnb
 
 require (
 	cloud.google.com/go v0.55.0 // indirect

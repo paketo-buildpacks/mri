@@ -1,12 +1,12 @@
-package ruby_test
+package mri_test
 
 import (
 	"errors"
 	"testing"
 
+	"github.com/cloudfoundry/mri-cnb/mri"
+	"github.com/cloudfoundry/mri-cnb/mri/fakes"
 	"github.com/cloudfoundry/packit"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby/fakes"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -23,17 +23,17 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		buildpackYMLParser = &fakes.VersionParser{}
 
-		detect = ruby.Detect(buildpackYMLParser)
+		detect = mri.Detect(buildpackYMLParser)
 	})
 
-	it("returns a plan that provides ruby", func() {
+	it("returns a plan that provides mri", func() {
 		result, err := detect(packit.DetectContext{
 			WorkingDir: "/working-dir",
 		})
 		Expect(err).NotTo(HaveOccurred())
 		Expect(result.Plan).To(Equal(packit.BuildPlan{
 			Provides: []packit.BuildPlanProvision{
-				{Name: ruby.Ruby},
+				{Name: mri.Ruby},
 			},
 		}))
 	})
@@ -43,20 +43,20 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 			buildpackYMLParser.ParseVersionCall.Returns.Version = "4.5.6"
 		})
 
-		it("returns a plan that provides and requires that version of ruby", func() {
+		it("returns a plan that provides and requires that version of mri", func() {
 			result, err := detect(packit.DetectContext{
 				WorkingDir: "/working-dir",
 			})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Plan).To(Equal(packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
-					{Name: ruby.Ruby},
+					{Name: mri.Ruby},
 				},
 				Requires: []packit.BuildPlanRequirement{
 					{
-						Name:    ruby.Ruby,
+						Name:    mri.Ruby,
 						Version: "4.5.6",
-						Metadata: ruby.BuildPlanMetadata{
+						Metadata: mri.BuildPlanMetadata{
 							VersionSource: "buildpack.yml",
 							Launch:        true,
 						},

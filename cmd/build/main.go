@@ -8,16 +8,16 @@ import (
 	"github.com/cloudfoundry/packit/cargo"
 	"github.com/cloudfoundry/packit/pexec"
 	"github.com/cloudfoundry/packit/postal"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
+	"github.com/cloudfoundry/mri-cnb/mri"
 )
 
 func main() {
-	logEmitter := ruby.NewLogEmitter(os.Stdout)
-	entryResolver := ruby.NewPlanEntryResolver(logEmitter)
+	logEmitter := mri.NewLogEmitter(os.Stdout)
+	entryResolver := mri.NewPlanEntryResolver(logEmitter)
 	dependencyManager := postal.NewService(cargo.NewTransport())
-	planRefinery := ruby.NewPlanRefinery()
-	clock := ruby.NewClock(time.Now)
+	planRefinery := mri.NewPlanRefinery()
+	clock := mri.NewClock(time.Now)
 	gem := pexec.NewExecutable("gem")
 
-	packit.Build(ruby.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem))
+	packit.Build(mri.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem))
 }

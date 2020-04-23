@@ -1,4 +1,4 @@
-package ruby
+package mri
 
 import (
 	"os"
@@ -16,7 +16,7 @@ func (p BuildpackYMLParser) ParseVersion(path string) (string, error) {
 	var buildpack struct {
 		Ruby struct {
 			Version string `yaml:"version"`
-		} `yaml:"ruby"`
+		} `yaml:"mri"`
 	}
 
 	file, err := os.Open(path)

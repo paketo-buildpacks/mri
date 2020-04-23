@@ -72,8 +72,8 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			imageIDs[firstImage.ID] = struct{}{}
 
 			Expect(firstImage.Buildpacks).To(HaveLen(1))
-			Expect(firstImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.ruby-mri"))
-			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("ruby"))
+			Expect(firstImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.mri"))
+			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			buildpackVersion, err := GetGitVersion()
 			Expect(err).ToNot(HaveOccurred())
@@ -91,7 +91,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
-				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/org.cloudfoundry.ruby-mri/ruby/lib/ruby/gems/2\.7\.\d+"`),
+				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/org.cloudfoundry.mri/mri/lib/ruby/gems/2\.7\.\d+"`),
 			}), logs.String())
 
 			firstContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(firstImage.ID)
@@ -111,8 +111,8 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			imageIDs[secondImage.ID] = struct{}{}
 
 			Expect(secondImage.Buildpacks).To(HaveLen(1))
-			Expect(secondImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.ruby-mri"))
-			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("ruby"))
+			Expect(secondImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.mri"))
+			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
 				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
@@ -122,7 +122,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"",
 				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
 				"",
-				"  Reusing cached layer /layers/org.cloudfoundry.ruby-mri/ruby",
+				"  Reusing cached layer /layers/org.cloudfoundry.mri/mri",
 			}), logs.String())
 
 			secondContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(secondImage.ID)
@@ -140,7 +140,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(content).To(ContainSubstring("Hello world"))
 
-			Expect(secondImage.Buildpacks[0].Layers["ruby"].Metadata["built_at"]).To(Equal(firstImage.Buildpacks[0].Layers["ruby"].Metadata["built_at"]))
+			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).To(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
 		})
 	})
 
@@ -165,8 +165,8 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			imageIDs[firstImage.ID] = struct{}{}
 
 			Expect(firstImage.Buildpacks).To(HaveLen(1))
-			Expect(firstImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.ruby-mri"))
-			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("ruby"))
+			Expect(firstImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.mri"))
+			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			buildpackVersion, err := GetGitVersion()
 			Expect(err).ToNot(HaveOccurred())
@@ -184,7 +184,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
-				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/org.cloudfoundry.ruby-mri/ruby/lib/ruby/gems/2\.7\.\d+"`),
+				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/org.cloudfoundry.mri/mri/lib/ruby/gems/2\.7\.\d+"`),
 			}), logs.String())
 
 			firstContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(firstImage.ID)
@@ -204,8 +204,8 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			imageIDs[secondImage.ID] = struct{}{}
 
 			Expect(secondImage.Buildpacks).To(HaveLen(1))
-			Expect(secondImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.ruby-mri"))
-			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("ruby"))
+			Expect(secondImage.Buildpacks[0].Key).To(Equal("org.cloudfoundry.mri"))
+			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
 				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
@@ -220,7 +220,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
-				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.6\.\d+:/layers/org.cloudfoundry.ruby-mri/ruby/lib/ruby/gems/2\.6\.\d+"`),
+				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.6\.\d+:/layers/org.cloudfoundry.mri/mri/lib/ruby/gems/2\.6\.\d+"`),
 			}), logs.String())
 
 			secondContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(secondImage.ID)
@@ -239,7 +239,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(content).To(ContainSubstring("Hello world"))
 
-			Expect(secondImage.Buildpacks[0].Layers["ruby"].Metadata["built_at"]).NotTo(Equal(firstImage.Buildpacks[0].Layers["ruby"].Metadata["built_at"]))
+			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
 		})
 	})
 }

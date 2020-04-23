@@ -1,4 +1,4 @@
-package ruby
+package mri
 
 import (
 	"path/filepath"

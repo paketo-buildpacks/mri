@@ -1,11 +1,11 @@
-package ruby_test
+package mri_test
 
 import (
 	"bytes"
 	"testing"
 
+	"github.com/cloudfoundry/mri-cnb/mri"
 	"github.com/cloudfoundry/packit"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -16,23 +16,23 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 		Expect = NewWithT(t).Expect
 
 		buffer   *bytes.Buffer
-		resolver ruby.PlanEntryResolver
+		resolver mri.PlanEntryResolver
 	)
 
 	it.Before(func() {
 		buffer = bytes.NewBuffer(nil)
-		resolver = ruby.NewPlanEntryResolver(ruby.NewLogEmitter(buffer))
+		resolver = mri.NewPlanEntryResolver(mri.NewLogEmitter(buffer))
 	})
 
 	context("when a buildpack.yml entry is included", func() {
 		it("resolves the best plan entry", func() {
 			entry := resolver.Resolve([]packit.BuildpackPlanEntry{
 				{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "other-version",
 				},
 				{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "buildpack-yml-version",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
@@ -40,7 +40,7 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 				},
 			})
 			Expect(entry).To(Equal(packit.BuildpackPlanEntry{
-				Name:    "ruby",
+				Name:    "mri",
 				Version: "buildpack-yml-version",
 				Metadata: map[string]interface{}{
 					"version-source": "buildpack.yml",
@@ -58,14 +58,14 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 			it("has all flags", func() {
 				entry := resolver.Resolve([]packit.BuildpackPlanEntry{
 					{
-						Name:    "ruby",
+						Name:    "mri",
 						Version: "buildpack-yml-version",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
 						},
 					},
 					{
-						Name:    "ruby",
+						Name:    "mri",
 						Version: "",
 						Metadata: map[string]interface{}{
 							"build": true,
@@ -73,7 +73,7 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 					},
 				})
 				Expect(entry).To(Equal(packit.BuildpackPlanEntry{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "buildpack-yml-version",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
@@ -88,12 +88,12 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 		it("resolves the best plan entry", func() {
 			entry := resolver.Resolve([]packit.BuildpackPlanEntry{
 				{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "other-version",
 				},
 			})
 			Expect(entry).To(Equal(packit.BuildpackPlanEntry{
-				Name:     "ruby",
+				Name:     "mri",
 				Version:  "other-version",
 				Metadata: map[string]interface{}{},
 			}))

@@ -1,10 +1,10 @@
-package ruby_test
+package mri_test
 
 import (
 	"testing"
 
+	"github.com/cloudfoundry/mri-cnb/mri"
 	"github.com/cloudfoundry/packit/postal"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -14,11 +14,11 @@ func testPlanRefinery(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 
-		planRefinery ruby.PlanRefinery
+		planRefinery mri.PlanRefinery
 	)
 
 	it.Before(func() {
-		planRefinery = ruby.NewPlanRefinery()
+		planRefinery = mri.NewPlanRefinery()
 	})
 
 	context("BillOfMaterial", func() {

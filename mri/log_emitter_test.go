@@ -1,13 +1,13 @@
-package ruby_test
+package mri_test
 
 import (
 	"bytes"
 	"testing"
 	"time"
 
+	"github.com/cloudfoundry/mri-cnb/mri"
 	"github.com/cloudfoundry/packit"
 	"github.com/cloudfoundry/packit/postal"
-	"github.com/cloudfoundry/ruby-mri-cnb/ruby"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -18,12 +18,12 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 		Expect = NewWithT(t).Expect
 
 		buffer  *bytes.Buffer
-		emitter ruby.LogEmitter
+		emitter mri.LogEmitter
 	)
 
 	it.Before(func() {
 		buffer = bytes.NewBuffer(nil)
-		emitter = ruby.NewLogEmitter(buffer)
+		emitter = mri.NewLogEmitter(buffer)
 	})
 
 	context("SelectedDependency", func() {
@@ -123,25 +123,25 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 		it("prints a formatted map of version source inputs", func() {
 			emitter.Candidates([]packit.BuildpackPlanEntry{
 				{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "package-json-version",
 					Metadata: map[string]interface{}{
 						"version-source": "package.json",
 					},
 				},
 				{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "other-version",
 				},
 				{
-					Name:    "ruby",
+					Name:    "mri",
 					Version: "buildpack-yml-version",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
 					},
 				},
 				{
-					Name: "ruby",
+					Name: "mri",
 				},
 			})
 

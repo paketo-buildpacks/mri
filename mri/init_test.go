@@ -1,4 +1,4 @@
-package ruby_test
+package mri_test
 
 import (
 	"testing"
