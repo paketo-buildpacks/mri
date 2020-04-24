@@ -21,8 +21,8 @@ import (
 )
 
 var (
-	rubyBuildpack        string
-	offlineRubyBuildpack string
+	mriBuildpack        string
+	offlineMRIBuildpack string
 )
 
 func TestIntegration(t *testing.T) {
@@ -31,19 +31,19 @@ func TestIntegration(t *testing.T) {
 	root, err := dagger.FindBPRoot()
 	Expect(err).ToNot(HaveOccurred())
 
-	rubyBuildpack, err = dagger.PackageBuildpack(root)
+	mriBuildpack, err = dagger.PackageBuildpack(root)
 	Expect(err).NotTo(HaveOccurred())
 
-	offlineRubyBuildpack, _, err = dagger.PackageCachedBuildpack(root)
+	offlineMRIBuildpack, _, err = dagger.PackageCachedBuildpack(root)
 	Expect(err).NotTo(HaveOccurred())
 
 	// HACK: we need to fix dagger and the package.sh scripts so that this isn't required
-	rubyBuildpack = fmt.Sprintf("%s.tgz", rubyBuildpack)
-	offlineRubyBuildpack = fmt.Sprintf("%s.tgz", offlineRubyBuildpack)
+	mriBuildpack = fmt.Sprintf("%s.tgz", mriBuildpack)
+	offlineMRIBuildpack = fmt.Sprintf("%s.tgz", offlineMRIBuildpack)
 
 	defer func() {
-		dagger.DeleteBuildpack(rubyBuildpack)
-		dagger.DeleteBuildpack(offlineRubyBuildpack)
+		dagger.DeleteBuildpack(mriBuildpack)
+		dagger.DeleteBuildpack(offlineMRIBuildpack)
 	}()
 
 	SetDefaultEventuallyTimeout(5 * time.Second)

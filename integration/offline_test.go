@@ -51,7 +51,7 @@ func testOffline(t *testing.T, context spec.G, it spec.S) {
 			var err error
 			image, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(offlineRubyBuildpack).
+				WithBuildpacks(offlineMRIBuildpack).
 				WithNetwork("none").
 				Execute(name, filepath.Join("testdata", "simple_app"))
 

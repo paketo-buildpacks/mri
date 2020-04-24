@@ -7,8 +7,8 @@ import (
 	"github.com/sclevine/spec/report"
 )
 
-func TestUnitRuby(t *testing.T) {
-	suite := spec.New("ruby", spec.Report(report.Terminal{}))
+func TestUnitMRI(t *testing.T) {
+	suite := spec.New("mri", spec.Report(report.Terminal{}))
 	suite("BuildpackYMLParser", testBuildpackYMLParser)
 	suite("Detect", testDetect)
 	suite("LogEmitter", testLogEmitter)

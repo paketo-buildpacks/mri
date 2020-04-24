@@ -26,7 +26,7 @@ func Detect(buildpackYMLParser VersionParser) packit.DetectFunc {
 
 		if version != "" {
 			requirements = append(requirements, packit.BuildPlanRequirement{
-				Name:    Ruby,
+				Name:    MRI,
 				Version: version,
 				Metadata: BuildPlanMetadata{
 					VersionSource: BuildpackYMLSource,
@@ -38,7 +38,7 @@ func Detect(buildpackYMLParser VersionParser) packit.DetectFunc {
 		return packit.DetectResult{
 			Plan: packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
-					{Name: Ruby},
+					{Name: MRI},
 				},
 				Requires: requirements,
 			},

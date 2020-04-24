@@ -65,7 +65,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			firstImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(rubyBuildpack).
+				WithBuildpacks(mriBuildpack).
 				Execute(name, filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 
@@ -104,7 +104,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			// Second pack build
 			secondImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(rubyBuildpack).
+				WithBuildpacks(mriBuildpack).
 				Execute(name, filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 
@@ -158,7 +158,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			firstImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(rubyBuildpack).
+				WithBuildpacks(mriBuildpack).
 				Execute(name, filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 
@@ -197,7 +197,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			// Second pack build
 			secondImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(rubyBuildpack).
+				WithBuildpacks(mriBuildpack).
 				Execute(name, filepath.Join("testdata", "different_version_simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 

@@ -14,7 +14,7 @@ func NewBuildpackYMLParser() BuildpackYMLParser {
 
 func (p BuildpackYMLParser) ParseVersion(path string) (string, error) {
 	var buildpack struct {
-		Ruby struct {
+		MRI struct {
 			Version string `yaml:"version"`
 		} `yaml:"mri"`
 	}
@@ -32,5 +32,5 @@ func (p BuildpackYMLParser) ParseVersion(path string) (string, error) {
 		}
 	}
 
-	return buildpack.Ruby.Version, nil
+	return buildpack.MRI.Version, nil
 }

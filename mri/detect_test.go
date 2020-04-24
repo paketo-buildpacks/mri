@@ -33,7 +33,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(result.Plan).To(Equal(packit.BuildPlan{
 			Provides: []packit.BuildPlanProvision{
-				{Name: mri.Ruby},
+				{Name: mri.MRI},
 			},
 		}))
 	})
@@ -50,11 +50,11 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Plan).To(Equal(packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
-					{Name: mri.Ruby},
+					{Name: mri.MRI},
 				},
 				Requires: []packit.BuildPlanRequirement{
 					{
-						Name:    mri.Ruby,
+						Name:    mri.MRI,
 						Version: "4.5.6",
 						Metadata: mri.BuildPlanMetadata{
 							VersionSource: "buildpack.yml",

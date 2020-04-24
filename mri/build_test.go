@@ -502,7 +502,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		context("when the layer directory cannot be removed", func() {
 			var layerDir string
 			it.Before(func() {
-				layerDir = filepath.Join(layersDir, mri.Ruby)
+				layerDir = filepath.Join(layersDir, mri.MRI)
 				Expect(os.MkdirAll(filepath.Join(layerDir, "baller"), os.ModePerm)).To(Succeed())
 				Expect(os.Chmod(layerDir, 0000)).To(Succeed())
 			})

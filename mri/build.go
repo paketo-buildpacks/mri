@@ -48,14 +48,14 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 
 		logger.SelectedDependency(entry, dependency, clock.Now())
 
-		rubyLayer, err := context.Layers.Get(Ruby)
+		mriLayer, err := context.Layers.Get(MRI)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
 
-		rubyLayer.Launch = entry.Metadata["launch"] == true
-		rubyLayer.Build = entry.Metadata["build"] == true
-		rubyLayer.Cache = entry.Metadata["build"] == true
+		mriLayer.Launch = entry.Metadata["launch"] == true
+		mriLayer.Build = entry.Metadata["build"] == true
+		mriLayer.Cache = entry.Metadata["build"] == true
 
 		bom := planRefinery.BillOfMaterial(postal.Dependency{
 			ID:      dependency.ID,
@@ -66,39 +66,39 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 			Version: dependency.Version,
 		})
 
-		cachedSHA, ok := rubyLayer.Metadata[DepKey].(string)
+		cachedSHA, ok := mriLayer.Metadata[DepKey].(string)
 		if ok && cachedSHA == dependency.SHA256 {
-			logger.Process("Reusing cached layer %s", rubyLayer.Path)
+			logger.Process("Reusing cached layer %s", mriLayer.Path)
 			logger.Break()
 
 			return packit.BuildResult{
 				Plan:   bom,
-				Layers: []packit.Layer{rubyLayer},
+				Layers: []packit.Layer{mriLayer},
 			}, nil
 		}
 
 		logger.Process("Executing build process")
 
-		err = rubyLayer.Reset()
+		err = mriLayer.Reset()
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
 
-		rubyLayer.Metadata = map[string]interface{}{
+		mriLayer.Metadata = map[string]interface{}{
 			DepKey:     dependency.SHA256,
 			"built_at": clock.Now().Format(time.RFC3339Nano),
 		}
 
 		logger.Subprocess("Installing MRI %s", dependency.Version)
 		then := clock.Now()
-		err = dependencies.Install(dependency, context.CNBPath, rubyLayer.Path)
+		err = dependencies.Install(dependency, context.CNBPath, mriLayer.Path)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
 		logger.Action("Completed in %s", time.Since(then).Round(time.Millisecond))
 		logger.Break()
 
-		os.Setenv("PATH", fmt.Sprintf("%s:%s", filepath.Join(rubyLayer.Path, "bin"), os.Getenv("PATH")))
+		os.Setenv("PATH", fmt.Sprintf("%s:%s", filepath.Join(mriLayer.Path, "bin"), os.Getenv("PATH")))
 
 		buffer := bytes.NewBuffer(nil)
 		err = gem.Execute(pexec.Execution{
@@ -109,13 +109,13 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 			return packit.BuildResult{}, err
 		}
 
-		rubyLayer.SharedEnv.Override("GEM_PATH", strings.TrimSpace(buffer.String()))
+		mriLayer.SharedEnv.Override("GEM_PATH", strings.TrimSpace(buffer.String()))
 
-		logger.Environment(rubyLayer.SharedEnv)
+		logger.Environment(mriLayer.SharedEnv)
 
 		return packit.BuildResult{
 			Plan:   bom,
-			Layers: []packit.Layer{rubyLayer},
+			Layers: []packit.Layer{mriLayer},
 		}, nil
 	}
 }

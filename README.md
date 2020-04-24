@@ -7,17 +7,17 @@ the `$GEM_PATH` environment variable.
 
 ## Integration
 
-The MRI CNB provides `ruby` as a dependency. Downstream buildpacks,
-can require the ruby dependency by generating
+The MRI CNB provides `mri` as a dependency. Downstream buildpacks,
+can require the mri dependency by generating
 [Build Plan TOML](https://github.com/buildpacks/spec/blob/master/buildpack.md#build-plan-toml)
 file that looks like the following:
 
 ```toml
 [[requires]]
-  # The name of the MRI dependency is "ruby". This value is considered
+  # The name of the MRI dependency is "mri". This value is considered
   # part of the public API for the buildpack and will not change without a plan
   # for deprecation.
-  name = "ruby"
+  name = "mri"
   # The version of the MRI dependency is not required. In the case it
   # is not specified, the buildpack will provide the default version, which can
   # be seen in the buildpack.toml file.
