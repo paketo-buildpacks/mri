@@ -8,7 +8,7 @@ import (
 	"github.com/cloudfoundry/packit/cargo"
 	"github.com/cloudfoundry/packit/pexec"
 	"github.com/cloudfoundry/packit/postal"
-	"github.com/cloudfoundry/mri-cnb/mri"
+	"github.com/paketo-community/mri/mri"
 )
 
 func main() {

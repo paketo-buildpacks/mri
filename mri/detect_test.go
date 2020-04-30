@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/cloudfoundry/mri-cnb/mri"
-	"github.com/cloudfoundry/mri-cnb/mri/fakes"
 	"github.com/cloudfoundry/packit"
+	"github.com/paketo-community/mri/mri"
+	"github.com/paketo-community/mri/mri/fakes"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"

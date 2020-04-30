@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudfoundry/mri-cnb/mri"
 	"github.com/cloudfoundry/packit"
 	"github.com/cloudfoundry/packit/postal"
+	"github.com/paketo-community/mri/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
