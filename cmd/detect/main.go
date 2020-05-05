@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/cloudfoundry/packit"
-	"github.com/cloudfoundry/mri-cnb/mri"
+	"github.com/paketo-community/mri/mri"
 )
 
 func main() {

@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudfoundry/mri-cnb/mri"
+	"github.com/paketo-community/mri/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
