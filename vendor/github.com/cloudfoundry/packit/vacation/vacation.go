@@ -7,14 +7,24 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/ulikunitz/xz"
 )
 
 type TarArchive struct {
-	reader io.Reader
+	reader     io.Reader
+	components int
 }
 
 type TarGzipArchive struct {
-	reader io.Reader
+	reader     io.Reader
+	components int
+}
+
+type TarXZArchive struct {
+	reader     io.Reader
+	components int
 }
 
 func NewTarArchive(inputReader io.Reader) TarArchive {
@@ -23,6 +33,10 @@ func NewTarArchive(inputReader io.Reader) TarArchive {
 
 func NewTarGzipArchive(inputReader io.Reader) TarGzipArchive {
 	return TarGzipArchive{reader: inputReader}
+}
+
+func NewTarXZArchive(inputReader io.Reader) TarXZArchive {
+	return TarXZArchive{reader: inputReader}
 }
 
 func (ta TarArchive) Decompress(destination string) error {
@@ -36,7 +50,13 @@ func (ta TarArchive) Decompress(destination string) error {
 			return fmt.Errorf("failed to read tar response: %s", err)
 		}
 
-		path := filepath.Join(destination, hdr.Name)
+		fileNames := strings.Split(hdr.Name, string(filepath.Separator))
+
+		if len(fileNames) <= ta.components {
+			continue
+		}
+
+		path := filepath.Join(append([]string{destination}, fileNames[ta.components:]...)...)
 		switch hdr.Typeflag {
 		case tar.TypeDir:
 			err = os.MkdirAll(path, os.ModePerm)
@@ -75,8 +95,32 @@ func (ta TarArchive) Decompress(destination string) error {
 func (gz TarGzipArchive) Decompress(destination string) error {
 	gzr, err := gzip.NewReader(gz.reader)
 	if err != nil {
-		return fmt.Errorf("failed to create gzip reader: %s", err)
+		return fmt.Errorf("failed to create gzip reader: %w", err)
 	}
 
-	return NewTarArchive(gzr).Decompress(destination)
+	return NewTarArchive(gzr).StripComponents(gz.components).Decompress(destination)
+}
+
+func (txz TarXZArchive) Decompress(destination string) error {
+	xzr, err := xz.NewReader(txz.reader)
+	if err != nil {
+		return fmt.Errorf("failed to create xz reader: %w", err)
+	}
+
+	return NewTarArchive(xzr).StripComponents(txz.components).Decompress(destination)
+}
+
+func (ta TarArchive) StripComponents(components int) TarArchive {
+	ta.components = components
+	return ta
+}
+
+func (gz TarGzipArchive) StripComponents(components int) TarGzipArchive {
+	gz.components = components
+	return gz
+}
+
+func (txz TarXZArchive) StripComponents(components int) TarXZArchive {
+	txz.components = components
+	return txz
 }
