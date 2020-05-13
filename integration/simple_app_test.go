@@ -14,12 +14,13 @@ import (
 	. "github.com/paketo-buildpacks/occam/matchers"
 )
 
-func testOffline(t *testing.T, context spec.G, it spec.S) {
+func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect     = NewWithT(t).Expect
 		Eventually = NewWithT(t).Eventually
-		pack       occam.Pack
-		docker     occam.Docker
+
+		pack   occam.Pack
+		docker occam.Docker
 	)
 
 	it.Before(func() {
@@ -27,7 +28,7 @@ func testOffline(t *testing.T, context spec.G, it spec.S) {
 		docker = occam.NewDocker()
 	})
 
-	context("when offline", func() {
+	context("when the buildpack is run with pack build", func() {
 		var (
 			image     occam.Image
 			container occam.Container
@@ -47,15 +48,13 @@ func testOffline(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("pack builds and runs the app successfully", func() {
-			var logs fmt.Stringer
 			var err error
+			var logs fmt.Stringer
 			image, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(offlineMRIBuildpack, buildPlanBuildpack).
-				WithNetwork("none").
+				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
 				Execute(name, filepath.Join("testdata", "simple_app"))
-
-			Expect(err).NotTo(HaveOccurred(), logs.String())
+			Expect(err).ToNot(HaveOccurred(), logs.String)
 
 			container, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(image.ID)
 			Expect(err).NotTo(HaveOccurred())

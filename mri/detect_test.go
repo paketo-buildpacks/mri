@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/cloudfoundry/packit"
+	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-community/mri/mri"
 	"github.com/paketo-community/mri/mri/fakes"
 	"github.com/sclevine/spec"
@@ -58,7 +58,6 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 						Version: "4.5.6",
 						Metadata: mri.BuildPlanMetadata{
 							VersionSource: "buildpack.yml",
-							Launch:        true,
 						},
 					},
 				},

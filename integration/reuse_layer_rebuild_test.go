@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/cloudfoundry/occam"
+	"github.com/paketo-buildpacks/occam"
 	"github.com/sclevine/spec"
 
-	. "github.com/cloudfoundry/occam/matchers"
 	. "github.com/onsi/gomega"
+	. "github.com/paketo-buildpacks/occam/matchers"
 )
 
 func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
@@ -65,24 +65,25 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			firstImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(mriBuildpack).
+				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
 				Execute(name, filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[firstImage.ID] = struct{}{}
 
-			Expect(firstImage.Buildpacks).To(HaveLen(1))
+			Expect(firstImage.Buildpacks).To(HaveLen(2))
 			Expect(firstImage.Buildpacks[0].Key).To(Equal("paketo-community/mri"))
 			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			buildpackVersion, err := GetGitVersion()
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
+			Expect(logs).To(ContainLines(
 				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
+				"      <unknown>     -> \"*\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
 				"",
@@ -92,9 +93,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"",
 				"  Configuring environment",
 				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.7\.\d+"`),
-			}), logs.String())
+			))
 
-			firstContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(firstImage.ID)
+			firstContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(firstImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[firstContainer.ID] = struct{}{}
@@ -104,28 +105,29 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			// Second pack build
 			secondImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(mriBuildpack).
+				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
 				Execute(name, filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
 
-			Expect(secondImage.Buildpacks).To(HaveLen(1))
+			Expect(secondImage.Buildpacks).To(HaveLen(2))
 			Expect(secondImage.Buildpacks[0].Key).To(Equal("paketo-community/mri"))
 			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
-			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
+			Expect(logs).To(ContainLines(
 				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
+				"      <unknown>     -> \"*\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
 				"",
 				"  Reusing cached layer /layers/paketo-community_mri/mri",
-			}), logs.String())
+			))
 
-			secondContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(secondImage.ID)
+			secondContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(secondImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[secondContainer.ID] = struct{}{}
@@ -138,7 +140,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			content, err := ioutil.ReadAll(response.Body)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(content).To(ContainSubstring("Hello world"))
+			Expect(content).To(MatchRegexp(`Hello from Ruby 2\.7\.\d+`))
 
 			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).To(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
 		})
@@ -158,24 +160,25 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			firstImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(mriBuildpack).
+				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
 				Execute(name, filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[firstImage.ID] = struct{}{}
 
-			Expect(firstImage.Buildpacks).To(HaveLen(1))
+			Expect(firstImage.Buildpacks).To(HaveLen(2))
 			Expect(firstImage.Buildpacks[0].Key).To(Equal("paketo-community/mri"))
 			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			buildpackVersion, err := GetGitVersion()
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
+			Expect(logs).To(ContainLines(
 				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
+				"      <unknown>     -> \"*\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
 				"",
@@ -185,9 +188,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"",
 				"  Configuring environment",
 				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.7\.\d+"`),
-			}), logs.String())
+			))
 
-			firstContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(firstImage.ID)
+			firstContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(firstImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[firstContainer.ID] = struct{}{}
@@ -197,21 +200,22 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			// Second pack build
 			secondImage, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(mriBuildpack).
+				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
 				Execute(name, filepath.Join("testdata", "different_version_simple_app"))
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
 
-			Expect(secondImage.Buildpacks).To(HaveLen(1))
+			Expect(secondImage.Buildpacks).To(HaveLen(2))
 			Expect(secondImage.Buildpacks[0].Key).To(Equal("paketo-community/mri"))
 			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
-			Expect(GetBuildLogs(logs.String())).To(ContainSequence([]interface{}{
+			Expect(logs).To(ContainLines(
 				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.6.x\"",
+				"      <unknown>     -> \"*\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.6\.\d+`),
 				"",
@@ -221,9 +225,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"",
 				"  Configuring environment",
 				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.6\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.6\.\d+"`),
-			}), logs.String())
+			))
 
-			secondContainer, err = docker.Container.Run.WithMemory("128m").WithCommand("ruby run.rb").Execute(secondImage.ID)
+			secondContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(secondImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[secondContainer.ID] = struct{}{}
@@ -237,7 +241,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			content, err := ioutil.ReadAll(response.Body)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(content).To(ContainSubstring("Hello world"))
+			Expect(content).To(MatchRegexp(`Hello from Ruby 2\.6\.\d+`))
 
 			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
 		})

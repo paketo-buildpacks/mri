@@ -1,0 +1,5 @@
+[[requires]]
+  name = "mri"
+
+  [requires.metadata]
+    launch = true

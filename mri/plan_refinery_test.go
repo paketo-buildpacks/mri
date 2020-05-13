@@ -3,7 +3,7 @@ package mri_test
 import (
 	"testing"
 
-	"github.com/cloudfoundry/packit/postal"
+	"github.com/paketo-buildpacks/packit/postal"
 	"github.com/paketo-community/mri/mri"
 	"github.com/sclevine/spec"
 

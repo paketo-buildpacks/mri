@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudfoundry/packit"
-	"github.com/cloudfoundry/packit/pexec"
-	"github.com/cloudfoundry/packit/postal"
+	"github.com/paketo-buildpacks/packit"
+	"github.com/paketo-buildpacks/packit/pexec"
+	"github.com/paketo-buildpacks/packit/postal"
 )
 
 //go:generate faux --interface EntryResolver --output fakes/entry_resolver.go
