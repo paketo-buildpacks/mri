@@ -3,7 +3,7 @@ package mri
 import (
 	"path/filepath"
 
-	"github.com/cloudfoundry/packit"
+	"github.com/paketo-buildpacks/packit"
 )
 
 //go:generate faux --interface VersionParser --output fakes/version_parser.go
@@ -13,7 +13,6 @@ type VersionParser interface {
 
 type BuildPlanMetadata struct {
 	VersionSource string `toml:"version-source"`
-	Launch        bool   `toml:"launch"`
 }
 
 func Detect(buildpackYMLParser VersionParser) packit.DetectFunc {
@@ -30,7 +29,6 @@ func Detect(buildpackYMLParser VersionParser) packit.DetectFunc {
 				Version: version,
 				Metadata: BuildPlanMetadata{
 					VersionSource: BuildpackYMLSource,
-					Launch:        true,
 				},
 			})
 		}

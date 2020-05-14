@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudfoundry/packit"
-	"github.com/cloudfoundry/packit/pexec"
-	"github.com/cloudfoundry/packit/postal"
+	"github.com/paketo-buildpacks/packit"
+	"github.com/paketo-buildpacks/packit/pexec"
+	"github.com/paketo-buildpacks/packit/postal"
 	"github.com/paketo-community/mri/mri"
 	"github.com/paketo-community/mri/mri/fakes"
 	"github.com/sclevine/spec"
