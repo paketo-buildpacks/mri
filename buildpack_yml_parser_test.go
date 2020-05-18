@@ -1,11 +1,11 @@
-package mri_test
+package main_test
 
 import (
 	"io/ioutil"
 	"os"
 	"testing"
 
-	"github.com/paketo-community/mri/mri"
+	main "github.com/paketo-community/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -16,7 +16,7 @@ func testBuildpackYMLParser(t *testing.T, context spec.G, it spec.S) {
 		Expect = NewWithT(t).Expect
 
 		path   string
-		parser mri.BuildpackYMLParser
+		parser main.BuildpackYMLParser
 	)
 
 	it.Before(func() {
@@ -32,7 +32,7 @@ mri:
 
 		path = file.Name()
 
-		parser = mri.NewBuildpackYMLParser()
+		parser = main.NewBuildpackYMLParser()
 	})
 
 	it.After(func() {

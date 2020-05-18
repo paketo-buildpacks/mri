@@ -1,4 +1,4 @@
-package mri
+package main
 
 const (
 	MRI                = "mri"
