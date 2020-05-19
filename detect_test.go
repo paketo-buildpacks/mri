@@ -1,12 +1,12 @@
-package mri_test
+package main_test
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/paketo-buildpacks/packit"
-	"github.com/paketo-community/mri/mri"
-	"github.com/paketo-community/mri/mri/fakes"
+	main "github.com/paketo-community/mri"
+	"github.com/paketo-community/mri/fakes"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -23,7 +23,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		buildpackYMLParser = &fakes.VersionParser{}
 
-		detect = mri.Detect(buildpackYMLParser)
+		detect = main.Detect(buildpackYMLParser)
 	})
 
 	it("returns a plan that provides mri", func() {
@@ -33,7 +33,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(result.Plan).To(Equal(packit.BuildPlan{
 			Provides: []packit.BuildPlanProvision{
-				{Name: mri.MRI},
+				{Name: main.MRI},
 			},
 		}))
 	})
@@ -50,13 +50,13 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Plan).To(Equal(packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
-					{Name: mri.MRI},
+					{Name: main.MRI},
 				},
 				Requires: []packit.BuildPlanRequirement{
 					{
-						Name:    mri.MRI,
+						Name:    main.MRI,
 						Version: "4.5.6",
-						Metadata: mri.BuildPlanMetadata{
+						Metadata: main.BuildPlanMetadata{
 							VersionSource: "buildpack.yml",
 						},
 					},

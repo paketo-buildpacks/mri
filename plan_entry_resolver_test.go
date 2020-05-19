@@ -1,11 +1,11 @@
-package mri_test
+package main_test
 
 import (
 	"bytes"
 	"testing"
 
 	"github.com/paketo-buildpacks/packit"
-	"github.com/paketo-community/mri/mri"
+	main "github.com/paketo-community/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -16,12 +16,12 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 		Expect = NewWithT(t).Expect
 
 		buffer   *bytes.Buffer
-		resolver mri.PlanEntryResolver
+		resolver main.PlanEntryResolver
 	)
 
 	it.Before(func() {
 		buffer = bytes.NewBuffer(nil)
-		resolver = mri.NewPlanEntryResolver(mri.NewLogEmitter(buffer))
+		resolver = main.NewPlanEntryResolver(main.NewLogEmitter(buffer))
 	})
 
 	context("when a buildpack.yml entry is included", func() {

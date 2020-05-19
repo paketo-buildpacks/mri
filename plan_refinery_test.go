@@ -1,10 +1,10 @@
-package mri_test
+package main_test
 
 import (
 	"testing"
 
 	"github.com/paketo-buildpacks/packit/postal"
-	"github.com/paketo-community/mri/mri"
+	main "github.com/paketo-community/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -14,11 +14,11 @@ func testPlanRefinery(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 
-		planRefinery mri.PlanRefinery
+		planRefinery main.PlanRefinery
 	)
 
 	it.Before(func() {
-		planRefinery = mri.NewPlanRefinery()
+		planRefinery = main.NewPlanRefinery()
 	})
 
 	context("BillOfMaterial", func() {

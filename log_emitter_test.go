@@ -1,4 +1,4 @@
-package mri_test
+package main_test
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-buildpacks/packit/postal"
-	"github.com/paketo-community/mri/mri"
+	main "github.com/paketo-community/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -18,12 +18,12 @@ func testLogEmitter(t *testing.T, context spec.G, it spec.S) {
 		Expect = NewWithT(t).Expect
 
 		buffer  *bytes.Buffer
-		emitter mri.LogEmitter
+		emitter main.LogEmitter
 	)
 
 	it.Before(func() {
 		buffer = bytes.NewBuffer(nil)
-		emitter = mri.NewLogEmitter(buffer)
+		emitter = main.NewLogEmitter(buffer)
 	})
 
 	context("SelectedDependency", func() {

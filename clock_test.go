@@ -1,10 +1,10 @@
-package mri_test
+package main_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/paketo-community/mri/mri"
+	main "github.com/paketo-community/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -17,7 +17,7 @@ func testClock(t *testing.T, context spec.G, it spec.S) {
 		it("returns the value from the given Now function", func() {
 			now := time.Now()
 
-			clock := mri.NewClock(func() time.Time {
+			clock := main.NewClock(func() time.Time {
 				return now
 			})
 

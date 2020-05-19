@@ -1,4 +1,4 @@
-package mri_test
+package main_test
 
 import (
 	"testing"
