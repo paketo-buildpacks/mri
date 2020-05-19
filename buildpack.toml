@@ -93,6 +93,16 @@ api = "0.2"
     uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.6.6_linux_x64_cflinuxfs3_7fe47223.tgz"
     version = "2.6.6"
 
+  [[metadata.dependencies]]
+    id = "ruby"
+    name = "Ruby"
+    sha256 = "4749d33a4385cb5cc61dd6e460d474132277fda76cc542e1cdfe45b0df93bdc8"
+    source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.8.tar.gz"
+    source_sha256 = "6c0bdf07876c69811a9e7dc237c43d40b1cb6369f68e0e17953d7279b524ad9a"
+    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
+    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.5.8_linux_x64_cflinuxfs3_4749d33a.tgz"
+    version = "2.5.8"
+
   [[metadata.dependency_deprecation_dates]]
     date = 2023-04-01T00:00:00Z
     link = "https://www.ruby-lang.org/en/news/2020/03/31/ruby-2-7-1-released/"
