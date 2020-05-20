@@ -29,7 +29,7 @@ api = "0.2"
     source_sha256 = "6c0bdf07876c69811a9e7dc237c43d40b1cb6369f68e0e17953d7279b524ad9a"
     stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.5.8_linux_x64_cflinuxfs3_4749d33a.tgz"
-    version = "2.5.8"  
+    version = "2.5.8"
 
   [[metadata.dependencies]]
     id = "mri"
