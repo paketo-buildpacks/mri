@@ -41,10 +41,21 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 
 		entry := entries.Resolve(context.Plan.Entries)
 
+		// NOTE: this is to override that the dependency is called "ruby" in the
+		// buildpack.toml. We can remove this once we update our own dependencies
+		// and can name it however we like.
+		entry.Name = "ruby"
+
 		dependency, err := dependencies.Resolve(filepath.Join(context.CNBPath, "buildpack.toml"), entry.Name, entry.Version, context.Stack)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
+
+		// NOTE: this is to override that the dependency is called "ruby" in the
+		// buildpack.toml. We can remove this once we update our own dependencies
+		// and can name it however we like.
+		dependency.ID = "mri"
+		dependency.Name = "MRI"
 
 		logger.SelectedDependency(entry, dependency, clock.Now())
 
