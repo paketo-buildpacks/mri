@@ -9,7 +9,7 @@ api = "0.2"
   include_files = ["bin/run", "bin/build", "bin/detect", "buildpack.toml"]
   pre_package = "./scripts/build.sh"
   [metadata.default-versions]
-    mri = "2.7.*"
+    ruby = "2.7.*"
 
   [[metadata.dependencies]]
     id = "ruby"
@@ -75,7 +75,7 @@ api = "0.2"
   [[metadata.dependency_deprecation_dates]]
     date = 2023-04-01T00:00:00Z
     link = "https://www.ruby-lang.org/en/news/2020/03/31/ruby-2-7-1-released/"
-    name = "mri"
+    name = "ruby"
     version_line = "2.7.x"
 
 [[stacks]]

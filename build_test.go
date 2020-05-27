@@ -75,7 +75,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		}
 
 		dependencyManager = &fakes.DependencyManager{}
-		dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{Name: "MRI"}
+		dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{ID: "ruby", Name: "Ruby"}
 
 		planRefinery = &fakes.BuildPlanRefinery{}
 
@@ -183,14 +183,14 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		}))
 
 		Expect(dependencyManager.ResolveCall.Receives.Path).To(Equal(filepath.Join(cnbDir, "buildpack.toml")))
-		Expect(dependencyManager.ResolveCall.Receives.Id).To(Equal("mri"))
+		Expect(dependencyManager.ResolveCall.Receives.Id).To(Equal("ruby"))
 		Expect(dependencyManager.ResolveCall.Receives.Version).To(Equal("2.5.x"))
 		Expect(dependencyManager.ResolveCall.Receives.Stack).To(Equal("some-stack"))
 
 		Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
-		Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{Name: "MRI"}))
+		Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
 
-		Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{Name: "MRI"}))
+		Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
 		Expect(dependencyManager.InstallCall.Receives.CnbPath).To(Equal(cnbDir))
 		Expect(dependencyManager.InstallCall.Receives.LayerPath).To(Equal(filepath.Join(layersDir, "mri")))
 
@@ -374,7 +374,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{
-				Name:   "MRI",
+				ID:     "ruby",
+				Name:   "Ruby",
 				SHA256: "some-sha",
 			}
 		})
@@ -405,6 +406,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
 			Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{
+				ID:     "mri",
 				Name:   "MRI",
 				SHA256: "some-sha",
 			}))
