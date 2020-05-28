@@ -14,13 +14,13 @@ api = "0.2"
   [[metadata.dependencies]]
     id = "ruby"
     name = "Ruby"
-    sha256 = "01b7d7a8a3031f15079e0ca1245e002575f47c8943f68508d86ba4f46ac24190"
+    sha256 = "8ee7463635739d48ba823a2cda6bcef9914d04c0f6bd6c5fb00bcff5ed7c408e"
     source = "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.7.tar.gz"
     source_sha256 = "0b2d0d5e3451b6ab454f81b1bfca007407c0548dea403f1eba2e429da4add6d4"
-    stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.5.7-linux-x64-cflinuxfs3-01b7d7a8.tgz"
+    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
+    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.5.7_linux_x64_cflinuxfs3_8ee74636.tgz"
     version = "2.5.7"
-   
+
   [[metadata.dependencies]]
     id = "ruby"
     name = "Ruby"
@@ -40,7 +40,7 @@ api = "0.2"
     stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.6.5-linux-x64-cflinuxfs3-a23c26ec.tgz"
     version = "2.6.5"
-    
+
   [[metadata.dependencies]]
     id = "ruby"
     name = "Ruby"
@@ -79,7 +79,7 @@ api = "0.2"
     version_line = "2.7.x"
 
 [[stacks]]
-  id = "org.cloudfoundry.stacks.cflinuxfs3"
-  
-[[stacks]]
   id = "io.buildpacks.stacks.bionic"
+
+[[stacks]]
+  id = "org.cloudfoundry.stacks.cflinuxfs3"
