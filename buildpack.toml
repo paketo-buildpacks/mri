@@ -36,7 +36,7 @@ api = "0.2"
     sha256 = "a23c26ec93e34ca05328390107ff40034b5103afb91194ebf70f66f0c0866db4"
     source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.5.tar.gz"
     source_sha256 = "66976b716ecc1fd34f9b7c3c2b07bbd37631815377a2e3e85a5b194cfdcbed7d"
-    stacks = ["org.cloudfoundry.stacks.cflinuxfs3"]
+    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.6.5-linux-x64-cflinuxfs3-a23c26ec.tgz"
     version = "2.6.5"
 
