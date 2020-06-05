@@ -3,6 +3,7 @@ package main_test
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"github.com/paketo-buildpacks/packit"
+	"github.com/paketo-buildpacks/packit/chronos"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
 	main "github.com/paketo-community/mri"
@@ -27,7 +29,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		cnbDir            string
 		entryResolver     *fakes.EntryResolver
 		dependencyManager *fakes.DependencyManager
-		clock             main.Clock
+		clock             chronos.Clock
 		timeStamp         time.Time
 		planRefinery      *fakes.BuildPlanRefinery
 		buffer            *bytes.Buffer
@@ -80,7 +82,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		planRefinery = &fakes.BuildPlanRefinery{}
 
 		timeStamp = time.Now()
-		clock = main.NewClock(func() time.Time {
+		clock = chronos.NewClock(func() time.Time {
 			return timeStamp
 		})
 
@@ -101,7 +103,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		logEmitter := main.NewLogEmitter(buffer)
 		gem = &fakes.Executable{}
 		gem.ExecuteCall.Stub = func(execution pexec.Execution) error {
-			execution.Stdout.Write([]byte("/some/mri/gems/path\n"))
+			fmt.Fprintln(execution.Stdout, "/some/mri/gems/path")
 			return nil
 		}
 
