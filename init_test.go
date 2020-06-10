@@ -12,7 +12,6 @@ func TestUnitMRI(t *testing.T) {
 	suite("BuildpackYMLParser", testBuildpackYMLParser)
 	suite("Detect", testDetect)
 	suite("LogEmitter", testLogEmitter)
-	suite("Clock", testClock)
 	suite("PlanEntryResolver", testPlanEntryResolver)
 	suite("PlanRefinery", testPlanRefinery)
 	suite("Build", testBuild)

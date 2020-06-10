@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/paketo-buildpacks/packit"
+	"github.com/paketo-buildpacks/packit/chronos"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
 )
@@ -34,7 +35,7 @@ type Executable interface {
 	Execute(pexec.Execution) error
 }
 
-func Build(entries EntryResolver, dependencies DependencyManager, planRefinery BuildPlanRefinery, logger LogEmitter, clock Clock, gem Executable) packit.BuildFunc {
+func Build(entries EntryResolver, dependencies DependencyManager, planRefinery BuildPlanRefinery, logger LogEmitter, clock chronos.Clock, gem Executable) packit.BuildFunc {
 	return func(context packit.BuildContext) (packit.BuildResult, error) {
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 		logger.Process("Resolving MRI version")
@@ -95,19 +96,21 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 			return packit.BuildResult{}, err
 		}
 
+		logger.Subprocess("Installing MRI %s", dependency.Version)
+		duration, err := clock.Measure(func() error {
+			return dependencies.Install(dependency, context.CNBPath, mriLayer.Path)
+		})
+		if err != nil {
+			return packit.BuildResult{}, err
+		}
+
+		logger.Action("Completed in %s", duration.Round(time.Millisecond))
+		logger.Break()
+
 		mriLayer.Metadata = map[string]interface{}{
 			DepKey:     dependency.SHA256,
 			"built_at": clock.Now().Format(time.RFC3339Nano),
 		}
-
-		logger.Subprocess("Installing MRI %s", dependency.Version)
-		then := clock.Now()
-		err = dependencies.Install(dependency, context.CNBPath, mriLayer.Path)
-		if err != nil {
-			return packit.BuildResult{}, err
-		}
-		logger.Action("Completed in %s", time.Since(then).Round(time.Millisecond))
-		logger.Break()
 
 		os.Setenv("PATH", fmt.Sprintf("%s:%s", filepath.Join(mriLayer.Path, "bin"), os.Getenv("PATH")))
 
