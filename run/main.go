@@ -8,18 +8,26 @@ import (
 	"github.com/paketo-buildpacks/packit/chronos"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
+	"github.com/paketo-community/mri"
 )
 
 func main() {
-	buildpackYMLParser := NewBuildpackYMLParser()
-	logEmitter := NewLogEmitter(os.Stdout)
-	entryResolver := NewPlanEntryResolver(logEmitter)
+	buildpackYMLParser := mri.NewBuildpackYMLParser()
+	logEmitter := mri.NewLogEmitter(os.Stdout)
+	entryResolver := mri.NewPlanEntryResolver(logEmitter)
 	dependencyManager := postal.NewService(cargo.NewTransport())
-	planRefinery := NewPlanRefinery()
+	planRefinery := mri.NewPlanRefinery()
 	gem := pexec.NewExecutable("gem")
 
 	packit.Run(
-		Detect(buildpackYMLParser),
-		Build(entryResolver, dependencyManager, planRefinery, logEmitter, chronos.DefaultClock, gem),
+		mri.Detect(buildpackYMLParser),
+		mri.Build(
+			entryResolver,
+			dependencyManager,
+			planRefinery,
+			logEmitter,
+			chronos.DefaultClock,
+			gem,
+		),
 	)
 }

@@ -1,4 +1,4 @@
-package main
+package mri
 
 import (
 	"github.com/paketo-buildpacks/packit"

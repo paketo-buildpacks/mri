@@ -1,4 +1,4 @@
-package main
+package mri
 
 import (
 	"path/filepath"
