@@ -1,4 +1,4 @@
-package main_test
+package mri_test
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 	"github.com/paketo-buildpacks/packit/chronos"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
-	main "github.com/paketo-community/mri"
+	"github.com/paketo-community/mri"
 	"github.com/paketo-community/mri/fakes"
 	"github.com/sclevine/spec"
 
@@ -100,14 +100,14 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		}
 
 		buffer = bytes.NewBuffer(nil)
-		logEmitter := main.NewLogEmitter(buffer)
+		logEmitter := mri.NewLogEmitter(buffer)
 		gem = &fakes.Executable{}
 		gem.ExecuteCall.Stub = func(execution pexec.Execution) error {
 			fmt.Fprintln(execution.Stdout, "/some/mri/gems/path")
 			return nil
 		}
 
-		build = main.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem)
+		build = mri.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem)
 	})
 
 	it.After(func() {
@@ -164,8 +164,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Launch:    true,
 					Cache:     false,
 					Metadata: map[string]interface{}{
-						main.DepKey: "",
-						"built_at":  timeStamp.Format(time.RFC3339Nano),
+						mri.DepKey: "",
+						"built_at": timeStamp.Format(time.RFC3339Nano),
 					},
 				},
 			},
@@ -291,8 +291,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Launch:    true,
 						Cache:     true,
 						Metadata: map[string]interface{}{
-							main.DepKey: "",
-							"built_at":  timeStamp.Format(time.RFC3339Nano),
+							mri.DepKey: "",
+							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
@@ -361,8 +361,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Launch:    true,
 						Cache:     false,
 						Metadata: map[string]interface{}{
-							main.DepKey: "",
-							"built_at":  timeStamp.Format(time.RFC3339Nano),
+							mri.DepKey: "",
+							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
@@ -506,7 +506,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		context("when the layer directory cannot be removed", func() {
 			var layerDir string
 			it.Before(func() {
-				layerDir = filepath.Join(layersDir, main.MRI)
+				layerDir = filepath.Join(layersDir, mri.MRI)
 				Expect(os.MkdirAll(filepath.Join(layerDir, "baller"), os.ModePerm)).To(Succeed())
 				Expect(os.Chmod(layerDir, 0000)).To(Succeed())
 			})
