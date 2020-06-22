@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/cloudfoundry/dagger"
-	"github.com/paketo-buildpacks/occam"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
@@ -23,7 +22,7 @@ var (
 )
 
 func TestIntegration(t *testing.T) {
-	Expect := NewWithT(t).Expect
+	var Expect = NewWithT(t).Expect
 
 	root, err := dagger.FindBPRoot()
 	Expect(err).ToNot(HaveOccurred())
@@ -41,12 +40,6 @@ func TestIntegration(t *testing.T) {
 	mriBuildpack = fmt.Sprintf("%s.tgz", mriBuildpack)
 	offlineMRIBuildpack = fmt.Sprintf("%s.tgz", offlineMRIBuildpack)
 
-	defer func() {
-		dagger.DeleteBuildpack(mriBuildpack)
-		dagger.DeleteBuildpack(offlineMRIBuildpack)
-		dagger.DeleteBuildpack(buildPlanBuildpack)
-	}()
-
 	SetDefaultEventuallyTimeout(5 * time.Second)
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}), spec.Parallel())
@@ -54,16 +47,17 @@ func TestIntegration(t *testing.T) {
 	suite("Offline", testOffline)
 	suite("ReusingLayerRebuild", testReusingLayerRebuild)
 	suite("SimpleApp", testSimpleApp)
+
+	defer AfterSuite(t)
 	suite.Run(t)
 }
 
-func ContainerLogs(id string) func() string {
-	docker := occam.NewDocker()
+func AfterSuite(t *testing.T) {
+	var Expect = NewWithT(t).Expect
 
-	return func() string {
-		logs, _ := docker.Container.Logs.Execute(id)
-		return logs.String()
-	}
+	Expect(dagger.DeleteBuildpack(mriBuildpack)).To(Succeed())
+	Expect(dagger.DeleteBuildpack(offlineMRIBuildpack)).To(Succeed())
+	Expect(dagger.DeleteBuildpack(buildPlanBuildpack)).To(Succeed())
 }
 
 func GetGitVersion() (string, error) {
