@@ -2,12 +2,15 @@ package integration
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/cloudfoundry/dagger"
+	"github.com/paketo-buildpacks/occam"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
@@ -19,26 +22,45 @@ var (
 	mriBuildpack        string
 	offlineMRIBuildpack string
 	buildPlanBuildpack  string
+	root                string
+	version             string
+
+	config struct {
+		BuildPlan string `json:"buildplan"`
+	}
 )
 
 func TestIntegration(t *testing.T) {
 	var Expect = NewWithT(t).Expect
 
-	root, err := dagger.FindBPRoot()
+	var err error
+	root, err = filepath.Abs("./..")
 	Expect(err).ToNot(HaveOccurred())
 
-	mriBuildpack, err = dagger.PackageBuildpack(root)
+	file, err := os.Open("../integration.json")
+	Expect(err).NotTo(HaveOccurred())
+	defer file.Close()
+
+	Expect(json.NewDecoder(file).Decode(&config)).To(Succeed())
+
+	buildpackStore := occam.NewBuildpackStore()
+
+	version, err = GetGitVersion()
 	Expect(err).NotTo(HaveOccurred())
 
-	offlineMRIBuildpack, _, err = dagger.PackageCachedBuildpack(root)
+	mriBuildpack, err = buildpackStore.Get.
+		WithVersion(version).
+		Execute(root)
 	Expect(err).NotTo(HaveOccurred())
 
-	buildPlanBuildpack, err = dagger.GetLatestCommunityBuildpack("ForestEckhardt", "build-plan")
+	offlineMRIBuildpack, err = buildpackStore.Get.
+		WithOfflineDependencies().
+		WithVersion(version).
+		Execute(root)
 	Expect(err).NotTo(HaveOccurred())
 
-	// HACK: we need to fix dagger and the package.sh scripts so that this isn't required
-	mriBuildpack = fmt.Sprintf("%s.tgz", mriBuildpack)
-	offlineMRIBuildpack = fmt.Sprintf("%s.tgz", offlineMRIBuildpack)
+	buildPlanBuildpack, err = buildpackStore.Get.Execute(config.BuildPlan)
+	Expect(err).ToNot(HaveOccurred())
 
 	SetDefaultEventuallyTimeout(5 * time.Second)
 
