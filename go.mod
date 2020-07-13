@@ -1,15 +1,9 @@
 module github.com/paketo-community/mri
 
 require (
-	cloud.google.com/go v0.55.0 // indirect
-	github.com/BurntSushi/toml v0.3.1
-	github.com/cloudfoundry/dagger v0.0.0-20200213200846-c2a9723f08c4
-	github.com/cloudfoundry/libcfbuildpack v1.91.23 // indirect
-	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/onsi/gomega v1.10.1
 	github.com/paketo-buildpacks/occam v0.0.16
 	github.com/paketo-buildpacks/packit v0.2.1
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sclevine/spec v1.4.0
 	gopkg.in/yaml.v2 v2.3.0
 )

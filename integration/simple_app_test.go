@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -32,7 +33,9 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 		var (
 			image     occam.Image
 			container occam.Container
-			name      string
+
+			name   string
+			source string
 		)
 
 		it.Before(func() {
@@ -45,15 +48,22 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 			Expect(docker.Container.Remove.Execute(container.ID)).To(Succeed())
 			Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
 			Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+			Expect(os.RemoveAll(source)).To(Succeed())
 		})
 
 		it("pack builds and runs the app successfully", func() {
 			var err error
+			source, err = occam.Source(filepath.Join("testdata", "simple_app"))
+			Expect(err).ToNot(HaveOccurred())
+
 			var logs fmt.Stringer
 			image, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
-				Execute(name, filepath.Join("testdata", "simple_app"))
+				WithBuildpacks(
+					settings.Buildpacks.MRI.Online,
+					settings.Buildpacks.BuildPlan.Online,
+				).
+				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
 			container, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(image.ID)

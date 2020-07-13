@@ -2,6 +2,7 @@ package integration
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -27,7 +28,9 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 	context("when the buildpack is run with pack build", func() {
 		var (
 			image occam.Image
-			name  string
+
+			name   string
+			source string
 		)
 
 		it.Before(func() {
@@ -39,22 +42,26 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 		it.After(func() {
 			Expect(docker.Image.Remove.Execute(image.ID)).To(Succeed())
 			Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+			Expect(os.RemoveAll(source)).To(Succeed())
 		})
 
 		it("logs useful information for the user", func() {
 			var err error
+			source, err = occam.Source(filepath.Join("testdata", "simple_app"))
+			Expect(err).NotTo(HaveOccurred())
+
 			var logs fmt.Stringer
 			image, logs, err = pack.WithNoColor().Build.
 				WithNoPull().
-				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
-				Execute(name, filepath.Join("testdata", "simple_app"))
+				WithBuildpacks(
+					settings.Buildpacks.MRI.Online,
+					settings.Buildpacks.BuildPlan.Online,
+				).
+				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
 
-			buildpackVersion, err := GetGitVersion()
-			Expect(err).ToNot(HaveOccurred())
-
 			Expect(logs).To(ContainLines(
-				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"MRI Buildpack 1.2.3",
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
