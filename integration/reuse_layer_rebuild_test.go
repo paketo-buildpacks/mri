@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -24,7 +25,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 		imageIDs     map[string]struct{}
 		containerIDs map[string]struct{}
-		name         string
+
+		name   string
+		source string
 	)
 
 	it.Before(func() {
@@ -33,10 +36,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 
 		docker = occam.NewDocker()
-		pack = occam.NewPack()
+		pack = occam.NewPack().WithNoColor()
 		imageIDs = map[string]struct{}{}
 		containerIDs = map[string]struct{}{}
-
 	})
 
 	it.After(func() {
@@ -49,6 +51,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 		}
 
 		Expect(docker.Volume.Remove.Execute(occam.CacheVolumeNames(name))).To(Succeed())
+		Expect(os.RemoveAll(source)).To(Succeed())
 	})
 
 	context("when an app is rebuilt and does not change", func() {
@@ -63,11 +66,18 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				secondContainer occam.Container
 			)
 
-			firstImage, logs, err = pack.WithNoColor().Build.
-				WithNoPull().
-				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
-				Execute(name, filepath.Join("testdata", "simple_app"))
+			source, err = occam.Source(filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
+
+			build := pack.Build.
+				WithNoPull().
+				WithBuildpacks(
+					settings.Buildpacks.MRI.Online,
+					settings.Buildpacks.BuildPlan.Online,
+				)
+
+			firstImage, logs, err = build.Execute(name, source)
+			Expect(err).NotTo(HaveOccurred(), logs.String)
 
 			imageIDs[firstImage.ID] = struct{}{}
 
@@ -75,11 +85,8 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(firstImage.Buildpacks[0].Key).To(Equal("paketo-community/mri"))
 			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
-			buildpackVersion, err := GetGitVersion()
-			Expect(err).ToNot(HaveOccurred())
-
 			Expect(logs).To(ContainLines(
-				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"MRI Buildpack 1.2.3",
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
@@ -103,10 +110,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Eventually(firstContainer).Should(BeAvailable())
 
 			// Second pack build
-			secondImage, logs, err = pack.WithNoColor().Build.
-				WithNoPull().
-				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
-				Execute(name, filepath.Join("testdata", "simple_app"))
+			secondImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
@@ -116,7 +120,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			Expect(logs).To(ContainLines(
-				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"MRI Buildpack 1.2.3",
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
@@ -158,11 +162,18 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				secondContainer occam.Container
 			)
 
-			firstImage, logs, err = pack.WithNoColor().Build.
-				WithNoPull().
-				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
-				Execute(name, filepath.Join("testdata", "simple_app"))
+			source, err = occam.Source(filepath.Join("testdata", "simple_app"))
 			Expect(err).NotTo(HaveOccurred())
+
+			build := pack.Build.
+				WithNoPull().
+				WithBuildpacks(
+					settings.Buildpacks.MRI.Online,
+					settings.Buildpacks.BuildPlan.Online,
+				)
+
+			firstImage, logs, err = build.Execute(name, source)
+			Expect(err).NotTo(HaveOccurred(), logs.String)
 
 			imageIDs[firstImage.ID] = struct{}{}
 
@@ -170,11 +181,8 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(firstImage.Buildpacks[0].Key).To(Equal("paketo-community/mri"))
 			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
-			buildpackVersion, err := GetGitVersion()
-			Expect(err).ToNot(HaveOccurred())
-
 			Expect(logs).To(ContainLines(
-				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"MRI Buildpack 1.2.3",
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.7.x\"",
@@ -198,10 +206,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Eventually(firstContainer).Should(BeAvailable())
 
 			// Second pack build
-			secondImage, logs, err = pack.WithNoColor().Build.
-				WithNoPull().
-				WithBuildpacks(mriBuildpack, buildPlanBuildpack).
-				Execute(name, filepath.Join("testdata", "different_version_simple_app"))
+			Expect(ioutil.WriteFile(filepath.Join(source, "buildpack.yml"), []byte("---\nmri:\n  version: 2.6.x\n"), 0644)).To(Succeed())
+
+			secondImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
@@ -211,7 +218,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
 			Expect(logs).To(ContainLines(
-				fmt.Sprintf("MRI Buildpack %s", buildpackVersion),
+				"MRI Buildpack 1.2.3",
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      buildpack.yml -> \"2.6.x\"",
