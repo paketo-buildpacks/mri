@@ -1,5 +1,7 @@
 # MRI Cloud Native Buildpack
 
+## `gcr.io/paketo-community/mri`
+
 The MRI CNB provides the Matz's Ruby Interpreter (or MRI).
 The buildpack installs MRI onto the `$PATH` which makes it available
 for subsequent buildpacks and in the final running container. It also sets
