@@ -99,7 +99,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
-				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.7\.\d+"`),
+				MatchRegexp(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.7\.\d+"`),
 			))
 
 			firstContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(firstImage.ID)
@@ -195,7 +195,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
-				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.7\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.7\.\d+"`),
+				MatchRegexp(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.7\.\d+"`),
 			))
 
 			firstContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(firstImage.ID)
@@ -231,7 +231,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(`      Completed in \d+\.\d+`),
 				"",
 				"  Configuring environment",
-				MatchRegexp(`    GEM_PATH -> "/home/vcap/.gem/ruby/2\.6\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.6\.\d+"`),
+				MatchRegexp(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.6\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.6\.\d+"`),
 			))
 
 			secondContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(secondImage.ID)
