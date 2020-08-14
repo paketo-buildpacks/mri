@@ -71,7 +71,7 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 				"",
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.7\.\d+`),
-				MatchRegexp(`      Completed in \d+\.\d+`),
+				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 				"",
 				"  Configuring environment",
 				MatchRegexp(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/paketo-community_mri/mri/lib/ruby/gems/2\.7\.\d+"`),
