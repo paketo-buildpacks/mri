@@ -47,7 +47,7 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 		// and can name it however we like.
 		entry.Name = "ruby"
 
-		dependency, err := dependencies.Resolve(filepath.Join(context.CNBPath, "buildpack.toml"), entry.Name, entry.Version, context.Stack)
+		dependency, err := dependencies.Resolve(filepath.Join(context.CNBPath, "buildpack.toml"), entry.Name, entry.Metadata["version"].(string), context.Stack)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}

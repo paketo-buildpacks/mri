@@ -28,22 +28,24 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 		it("resolves the best plan entry", func() {
 			entry := resolver.Resolve([]packit.BuildpackPlanEntry{
 				{
-					Name:    "mri",
-					Version: "other-version",
+					Name: "mri",
+					Metadata: map[string]interface{}{
+						"version": "other-version",
+					},
 				},
 				{
-					Name:    "mri",
-					Version: "buildpack-yml-version",
+					Name: "mri",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
+						"version":        "buildpack-yml-version",
 					},
 				},
 			})
 			Expect(entry).To(Equal(packit.BuildpackPlanEntry{
-				Name:    "mri",
-				Version: "buildpack-yml-version",
+				Name: "mri",
 				Metadata: map[string]interface{}{
 					"version-source": "buildpack.yml",
+					"version":        "buildpack-yml-version",
 				},
 			}))
 
@@ -58,25 +60,24 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 			it("has all flags", func() {
 				entry := resolver.Resolve([]packit.BuildpackPlanEntry{
 					{
-						Name:    "mri",
-						Version: "buildpack-yml-version",
+						Name: "mri",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
+							"version":        "buildpack-yml-version",
 						},
 					},
 					{
-						Name:    "mri",
-						Version: "",
+						Name: "mri",
 						Metadata: map[string]interface{}{
 							"build": true,
 						},
 					},
 				})
 				Expect(entry).To(Equal(packit.BuildpackPlanEntry{
-					Name:    "mri",
-					Version: "buildpack-yml-version",
+					Name: "mri",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
+						"version":        "buildpack-yml-version",
 						"build":          true,
 					},
 				}))
@@ -88,14 +89,17 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 		it("resolves the best plan entry", func() {
 			entry := resolver.Resolve([]packit.BuildpackPlanEntry{
 				{
-					Name:    "mri",
-					Version: "other-version",
+					Name: "mri",
+					Metadata: map[string]interface{}{
+						"version": "other-version",
+					},
 				},
 			})
 			Expect(entry).To(Equal(packit.BuildpackPlanEntry{
-				Name:     "mri",
-				Version:  "other-version",
-				Metadata: map[string]interface{}{},
+				Name: "mri",
+				Metadata: map[string]interface{}{
+					"version": "other-version",
+				},
 			}))
 		})
 	})
