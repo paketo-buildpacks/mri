@@ -68,10 +68,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		entryResolver = &fakes.EntryResolver{}
 		entryResolver.ResolveCall.Returns.BuildpackPlanEntry = packit.BuildpackPlanEntry{
-			Name:    "mri",
-			Version: "2.5.x",
+			Name: "mri",
 			Metadata: map[string]interface{}{
 				"version-source": "buildpack.yml",
+				"version":        "2.5.x",
 				"launch":         true,
 			},
 		}
@@ -89,10 +89,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
 			Entries: []packit.BuildpackPlanEntry{
 				{
-					Name:    "mri",
-					Version: "2.5.x",
+					Name: "mri",
 					Metadata: map[string]interface{}{
 						"version-source": "buildpack.yml",
+						"version":        "2.5.x",
 						"launch":         true,
 					},
 				},
@@ -126,10 +126,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Plan: packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
 					{
-						Name:    "mri",
-						Version: "2.5.x",
+						Name: "mri",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
+							"version":        "2.5.x",
 							"launch":         true,
 						},
 					},
@@ -142,10 +142,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Plan: packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
 					{
-						Name:    "mri",
-						Version: "2.5.x",
+						Name: "mri",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
+							"version":        "2.5.x",
 							"launch":         true,
 						},
 					},
@@ -175,10 +175,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(entryResolver.ResolveCall.Receives.BuildpackPlanEntrySlice).To(Equal([]packit.BuildpackPlanEntry{
 			{
-				Name:    "mri",
-				Version: "2.5.x",
+				Name: "mri",
 				Metadata: map[string]interface{}{
 					"version-source": "buildpack.yml",
+					"version":        "2.5.x",
 					"launch":         true,
 				},
 			},
@@ -216,9 +216,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			entryResolver.ResolveCall.Returns.BuildpackPlanEntry = packit.BuildpackPlanEntry{
 				Name: "mri",
 
-				Version: "2.5.x",
 				Metadata: map[string]interface{}{
 					"version-source": "buildpack.yml",
+					"version":        "2.5.x",
 					"build":          true,
 					"launch":         true,
 				},
@@ -227,10 +227,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
 					{
-						Name:    "mri",
-						Version: "2.5.x",
+						Name: "mri",
 						Metadata: map[string]interface{}{
 							"version-source": "buildpack.yml",
+							"version":        "2.5.x",
 							"build":          true,
 							"launch":         true,
 						},
@@ -251,10 +251,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "mri",
-							Version: "2.5.x",
+							Name: "mri",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
+								"version":        "2.5.x",
 								"build":          true,
 								"launch":         true,
 							},
@@ -268,10 +268,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "mri",
-							Version: "2.5.x",
+							Name: "mri",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
+								"version":        "2.5.x",
 								"build":          true,
 								"launch":         true,
 							},
@@ -305,10 +305,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
 					{
-						Name:    "new-dep",
-						Version: "some-version",
+						Name: "new-dep",
 						Metadata: map[string]interface{}{
 							"some-extra-field": "an-extra-value",
+							"version":          "some-version",
 							"launch":           true,
 						},
 					},
@@ -322,10 +322,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "mri",
-							Version: "2.5.x",
+							Name: "mri",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
+								"version":        "2.5.x",
 								"launch":         true,
 							},
 						},
@@ -339,9 +339,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "new-dep",
-							Version: "some-version",
+							Name: "new-dep",
 							Metadata: map[string]interface{}{
+								"version":          "some-version",
 								"some-extra-field": "an-extra-value",
 								"launch":           true,
 							},
@@ -393,10 +393,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
 						{
-							Name:    "mri",
-							Version: "2.5.x",
+							Name: "mri",
 							Metadata: map[string]interface{}{
 								"version-source": "buildpack.yml",
+								"version":        "2.5.x",
 								"launch":         true,
 							},
 						},
@@ -435,10 +435,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "mri",
-								Version: "2.5.x",
+								Name: "mri",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
+									"version":        "2.5.x",
 								},
 							},
 						},
@@ -460,10 +460,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "mri",
-								Version: "2.5.x",
+								Name: "mri",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
+									"version":        "2.5.x",
 								},
 							},
 						},
@@ -489,10 +489,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "mri",
-								Version: "2.5.x",
+								Name: "mri",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
+									"version":        "2.5.x",
 								},
 							},
 						},
@@ -522,10 +522,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "mri",
-								Version: "2.5.x",
+								Name: "mri",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
+									"version":        "2.5.x",
 								},
 							},
 						},
@@ -548,10 +548,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
 							{
-								Name:    "mri",
-								Version: "2.5.x",
+								Name: "mri",
 								Metadata: map[string]interface{}{
 									"version-source": "buildpack.yml",
+									"version":        "2.5.x",
 								},
 							},
 						},

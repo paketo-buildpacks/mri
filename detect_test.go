@@ -54,10 +54,10 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 				},
 				Requires: []packit.BuildPlanRequirement{
 					{
-						Name:    mri.MRI,
-						Version: "4.5.6",
+						Name: mri.MRI,
 						Metadata: mri.BuildPlanMetadata{
 							VersionSource: "buildpack.yml",
+							Version:       "4.5.6",
 						},
 					},
 				},
