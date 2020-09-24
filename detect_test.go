@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/paketo-buildpacks/mri"
+	"github.com/paketo-buildpacks/mri/fakes"
 	"github.com/paketo-buildpacks/packit"
-	"github.com/paketo-community/mri"
-	"github.com/paketo-community/mri/fakes"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"

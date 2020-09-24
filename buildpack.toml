@@ -1,8 +1,9 @@
 api = "0.2"
 
 [buildpack]
-  id = "paketo-community/mri"
+  id = "paketo-buildpacks/mri"
   name = "Paketo MRI Buildpack"
+  homepage = "https://github.com/paketo-buildpacks/mri"
 
 [metadata]
   include_files = ["bin/run", "bin/build", "bin/detect", "buildpack.toml"]
