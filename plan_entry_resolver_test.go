@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/paketo-buildpacks/mri"
 	"github.com/paketo-buildpacks/packit"
-	"github.com/paketo-community/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"

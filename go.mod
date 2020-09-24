@@ -1,4 +1,4 @@
-module github.com/paketo-community/mri
+module github.com/paketo-buildpacks/mri
 
 require (
 	github.com/BurntSushi/toml v0.3.1

@@ -10,12 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/paketo-buildpacks/mri"
+	"github.com/paketo-buildpacks/mri/fakes"
 	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-buildpacks/packit/chronos"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
-	"github.com/paketo-community/mri"
-	"github.com/paketo-community/mri/fakes"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"

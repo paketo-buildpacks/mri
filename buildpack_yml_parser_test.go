@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/paketo-community/mri"
+	"github.com/paketo-buildpacks/mri"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
