@@ -63,7 +63,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
     stacks = ["some-stack"]
     uri = "some-uri"
     version = "some-dep-version"
-`), 0644)
+`), 0600)
 		Expect(err).NotTo(HaveOccurred())
 
 		entryResolver = &fakes.EntryResolver{}
@@ -203,6 +203,77 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using buildpack.yml): "))
 		Expect(buffer.String()).To(ContainSubstring("Executing build process"))
 		Expect(buffer.String()).To(ContainSubstring("Configuring environment"))
+	})
+
+	context("when the build plan entry does not include a version", func() {
+		it.Before(func() {
+			entryResolver.ResolveCall.Returns.BuildpackPlanEntry = packit.BuildpackPlanEntry{
+				Name: "mri",
+				Metadata: map[string]interface{}{
+					"launch": true,
+				},
+			}
+
+			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
+				Entries: []packit.BuildpackPlanEntry{
+					{
+						Name: "mri",
+						Metadata: map[string]interface{}{
+							"launch": true,
+						},
+					},
+				},
+			}
+		})
+
+		it("picks the newest version", func() {
+			result, err := build(packit.BuildContext{
+				CNBPath: cnbDir,
+				Stack:   "some-stack",
+				Plan: packit.BuildpackPlan{
+					Entries: []packit.BuildpackPlanEntry{
+						{
+							Name: "mri",
+							Metadata: map[string]interface{}{
+								"launch": true,
+							},
+						},
+					},
+				},
+				Layers: packit.Layers{Path: layersDir},
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result).To(Equal(packit.BuildResult{
+				Plan: packit.BuildpackPlan{
+					Entries: []packit.BuildpackPlanEntry{
+						{
+							Name: "mri",
+							Metadata: map[string]interface{}{
+								"launch": true,
+							},
+						},
+					},
+				},
+				Layers: []packit.Layer{
+					{
+						Name: "mri",
+						Path: filepath.Join(layersDir, "mri"),
+						SharedEnv: packit.Environment{
+							"GEM_PATH.override": "/some/mri/gems/path",
+						},
+						BuildEnv:  packit.Environment{},
+						LaunchEnv: packit.Environment{},
+						Build:     false,
+						Launch:    true,
+						Cache:     false,
+						Metadata: map[string]interface{}{
+							mri.DepKey: "",
+							"built_at": timeStamp.Format(time.RFC3339Nano),
+						},
+					},
+				},
+			}))
+		})
 	})
 
 	context("when the build plan entry includes the build flag", func() {
@@ -372,7 +443,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 	context("when there is a dependency cache match", func() {
 		it.Before(func() {
-			err := ioutil.WriteFile(filepath.Join(layersDir, "mri.toml"), []byte("[metadata]\ndependency-sha = \"some-sha\"\n"), 0644)
+			err := ioutil.WriteFile(filepath.Join(layersDir, "mri.toml"), []byte("[metadata]\ndependency-sha = \"some-sha\"\n"), 0600)
 			Expect(err).NotTo(HaveOccurred())
 
 			dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{

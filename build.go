@@ -46,8 +46,9 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 		// buildpack.toml. We can remove this once we update our own dependencies
 		// and can name it however we like.
 		entry.Name = "ruby"
+		version, _ := entry.Metadata["version"].(string)
 
-		dependency, err := dependencies.Resolve(filepath.Join(context.CNBPath, "buildpack.toml"), entry.Name, entry.Metadata["version"].(string), context.Stack)
+		dependency, err := dependencies.Resolve(filepath.Join(context.CNBPath, "buildpack.toml"), entry.Name, version, context.Stack)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
