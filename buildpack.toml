@@ -55,23 +55,23 @@ api = "0.2"
     deprecation_date = "2023-04-01T00:00:00Z"
     id = "ruby"
     name = "Ruby"
-    sha256 = "68cd2baeb33c1f10a873aab8e492d4547f3b13d1a6302930ac25bcedf45d51ce"
-    source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.0.tar.gz"
-    source_sha256 = "8c99aa93b5e2f1bc8437d1bbbefd27b13e7694025331f77245d0c068ef1f8cbe"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby-2.7.0-linux-x64-cflinuxfs3-68cd2bae.tgz"
-    version = "2.7.0"
-
-  [[metadata.dependencies]]
-    deprecation_date = "2023-04-01T00:00:00Z"
-    id = "ruby"
-    name = "Ruby"
     sha256 = "c892f69b474a9669320b11b324f1a3efb4bc7a8a6409f4274aef0056a82a2161"
     source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz"
     source_sha256 = "d418483bdd0000576c1370571121a6eb24582116db0b7bb2005e90e250eae418"
     stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
     uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.7.1_linux_x64_cflinuxfs3_c892f69b.tgz"
     version = "2.7.1"
+
+  [[metadata.dependencies]]
+    deprecation_date = "2023-04-01T00:00:00Z"
+    id = "ruby"
+    name = "Ruby"
+    sha256 = "f675ceed2dd7c64b8b69a3aff39416aff2dff75a8b9e1c309a01a5760968ad9e"
+    source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz"
+    source_sha256 = "6e5706d0d4ee4e1e2f883db9d768586b4d06567debea353c796ec45e8321c3d4"
+    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
+    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.7.2_linux_x64_cflinuxfs3_f675ceed.tgz"
+    version = "2.7.2"
 
   [[metadata.dependency_deprecation_dates]]
     date = 2023-04-01T00:00:00Z
