@@ -2,6 +2,7 @@ package mri_test
 
 import (
 	"errors"
+	"os"
 	"testing"
 
 	"github.com/paketo-buildpacks/mri"
@@ -38,7 +39,39 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		}))
 	})
 
-	context("when the source code contains a buildpack.yml file", func() {
+	context("when $BP_MRI_VERSION is set and a buildpack.yml is present", func() {
+		it.Before(func() {
+			os.Setenv("BP_MRI_VERSION", "1.2.3")
+			buildpackYMLParser.ParseVersionCall.Returns.Version = "4.5.6"
+		})
+
+		it.After(func() {
+			os.Unsetenv("BP_MRI_VERSION")
+		})
+
+		it("returns a plan that provides and requires the $BP_MRI_VERSION of mri", func() {
+			result, err := detect(packit.DetectContext{
+				WorkingDir: "/working-dir",
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result.Plan).To(Equal(packit.BuildPlan{
+				Provides: []packit.BuildPlanProvision{
+					{Name: mri.MRI},
+				},
+				Requires: []packit.BuildPlanRequirement{
+					{
+						Name: mri.MRI,
+						Metadata: mri.BuildPlanMetadata{
+							VersionSource: "BP_MRI_VERSION",
+							Version:       "1.2.3",
+						},
+					},
+				},
+			}))
+		})
+	})
+
+	context("when the source code contains a buildpack.yml file and $BP_MRI_VERSION is not set", func() {
 		it.Before(func() {
 			buildpackYMLParser.ParseVersionCall.Returns.Version = "4.5.6"
 		})

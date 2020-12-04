@@ -89,11 +89,11 @@ function images::pull() {
 
   local run_image lifecycle_image
   run_image="$(
-    pack inspect-builder "${builder}" --output json \
+    pack inspect-builder index.docker.io/paketobuildpacks/builder:base --output json \
       | jq -r '.remote_info.run_images[0].name'
   )"
   lifecycle_image="index.docker.io/buildpacksio/lifecycle:$(
-    pack inspect-builder "${builder}" --output json \
+    pack inspect-builder index.docker.io/paketobuildpacks/builder:base --output json \
       | jq -r '.remote_info.lifecycle.version'
   )"
 

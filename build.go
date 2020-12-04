@@ -61,6 +61,13 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 
 		logger.SelectedDependency(entry, dependency, clock.Now())
 
+		source, _ := entry.Metadata["version-source"].(string)
+		if source == "buildpack.yml" {
+			logger.Subprocess("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v0.1.0.")
+			logger.Subprocess("Please specify the MRI version through an environment variable configurtion. See README.md for how to do this.")
+			logger.Break()
+		}
+
 		mriLayer, err := context.Layers.Get(MRI)
 		if err != nil {
 			return packit.BuildResult{}, err
