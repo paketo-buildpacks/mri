@@ -40,15 +40,25 @@ file that looks like the following:
 
 To package this buildpack for consumption:
 ```
-$ ./scripts/package.sh
+$ ./scripts/package.sh ``` This builds the buildpack's Go source using
+GOOS=linux by default. You can supply another value as the first argument to
+package.sh.
+
+## MRI Configurations
+
+Specifying the `MRI` version through `buildpack.yml` configuration will be
+deprecated in MRI Buildpack v0.1.0.
+
+To migrate from using `buildpack.yml` please set the `$BP_MRI_VERSION`
+environment variable at build time either directly (ex. `pack build my-app
+--env BP_MRI_VERSION=2.7.*`) or through a [`project.toml`
+file](https://github.com/buildpacks/spec/blob/main/extensions/project-descriptor.md)
+
+```shell
+$BP_MRI_VERSION="2.7.1"
 ```
-This builds the buildpack's Go source using GOOS=linux by default. You can supply another value as the first argument to package.sh.
-
-## `buildpack.yml` Configurations
-
+This will replace the following structure in `buildpack.yml`:
 ```yaml
 mri:
-  # this allows you to specify a version constraint for the MRI dependency
-  # any valid semver constaints (e.g. 2.* and 2.7.*) are also acceptable
-  version: "2.7.1"
+  version: 2.7.1
 ```
