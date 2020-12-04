@@ -201,6 +201,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
 		Expect(buffer.String()).To(ContainSubstring("Resolving MRI version"))
 		Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using buildpack.yml): "))
+		Expect(buffer.String()).To(ContainSubstring("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v0.1.0."))
+		Expect(buffer.String()).To(ContainSubstring("Please specify the MRI version through an environment variable configurtion. See README.md for how to do this."))
 		Expect(buffer.String()).To(ContainSubstring("Executing build process"))
 		Expect(buffer.String()).To(ContainSubstring("Configuring environment"))
 	})
@@ -273,6 +275,124 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					},
 				},
 			}))
+		})
+	})
+
+	context("when the build plan entry version source is from $BP_MRI_VERSION", func() {
+		it.Before(func() {
+			entryResolver.ResolveCall.Returns.BuildpackPlanEntry = packit.BuildpackPlanEntry{
+				Name: "mri",
+				Metadata: map[string]interface{}{
+					"version-source": "BP_MRI_VERSION",
+					"version":        "2.6.x",
+					"launch":         true,
+				},
+			}
+
+			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
+				Entries: []packit.BuildpackPlanEntry{
+					{
+						Name: "mri",
+						Metadata: map[string]interface{}{
+							"version-source": "BP_MRI_VERSION",
+							"version":        "2.6.x",
+							"launch":         true,
+						},
+					},
+				},
+			}
+		})
+
+		it("returns a result that installs mri with BP_MRI_VERSION", func() {
+			result, err := build(packit.BuildContext{
+				CNBPath: cnbDir,
+				Stack:   "some-stack",
+				BuildpackInfo: packit.BuildpackInfo{
+					Name:    "Some Buildpack",
+					Version: "some-version",
+				},
+				Plan: packit.BuildpackPlan{
+					Entries: []packit.BuildpackPlanEntry{
+						{
+							Name: "mri",
+							Metadata: map[string]interface{}{
+								"version-source": "BP_MRI_VERSION",
+								"version":        "2.6.x",
+								"launch":         true,
+							},
+						},
+					},
+				},
+				Layers: packit.Layers{Path: layersDir},
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result).To(Equal(packit.BuildResult{
+				Plan: packit.BuildpackPlan{
+					Entries: []packit.BuildpackPlanEntry{
+						{
+							Name: "mri",
+							Metadata: map[string]interface{}{
+								"version-source": "BP_MRI_VERSION",
+								"version":        "2.6.x",
+								"launch":         true,
+							},
+						},
+					},
+				},
+				Layers: []packit.Layer{
+					{
+						Name: "mri",
+						Path: filepath.Join(layersDir, "mri"),
+						SharedEnv: packit.Environment{
+							"GEM_PATH.override": "/some/mri/gems/path",
+						},
+						BuildEnv:  packit.Environment{},
+						LaunchEnv: packit.Environment{},
+						Build:     false,
+						Launch:    true,
+						Cache:     false,
+						Metadata: map[string]interface{}{
+							mri.DepKey: "",
+							"built_at": timeStamp.Format(time.RFC3339Nano),
+						},
+					},
+				},
+			}))
+
+			Expect(filepath.Join(layersDir, "mri")).To(BeADirectory())
+
+			Expect(entryResolver.ResolveCall.Receives.BuildpackPlanEntrySlice).To(Equal([]packit.BuildpackPlanEntry{
+				{
+					Name: "mri",
+					Metadata: map[string]interface{}{
+						"version-source": "BP_MRI_VERSION",
+						"version":        "2.6.x",
+						"launch":         true,
+					},
+				},
+			}))
+
+			Expect(dependencyManager.ResolveCall.Receives.Path).To(Equal(filepath.Join(cnbDir, "buildpack.toml")))
+			Expect(dependencyManager.ResolveCall.Receives.Id).To(Equal("ruby"))
+			Expect(dependencyManager.ResolveCall.Receives.Version).To(Equal("2.6.x"))
+			Expect(dependencyManager.ResolveCall.Receives.Stack).To(Equal("some-stack"))
+
+			Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
+			Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
+
+			Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
+			Expect(dependencyManager.InstallCall.Receives.CnbPath).To(Equal(cnbDir))
+			Expect(dependencyManager.InstallCall.Receives.LayerPath).To(Equal(filepath.Join(layersDir, "mri")))
+
+			Expect(gem.ExecuteCall.Receives.Execution.Args).To(Equal([]string{"env", "path"}))
+
+			Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
+			Expect(buffer.String()).To(ContainSubstring("Resolving MRI version"))
+			Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using BP_MRI_VERSION): "))
+			Expect(buffer.String()).NotTo(ContainSubstring("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v0.1.0."))
+			Expect(buffer.String()).NotTo(ContainSubstring("Please specify the MRI version through an environment variable configurtion. See README.md for how to do this."))
+			Expect(buffer.String()).To(ContainSubstring("Executing build process"))
+			Expect(buffer.String()).To(ContainSubstring("Configuring environment"))
 		})
 	})
 
@@ -489,6 +609,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
 			Expect(buffer.String()).To(ContainSubstring("Resolving MRI version"))
 			Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using buildpack.yml): "))
+			Expect(buffer.String()).To(ContainSubstring("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v0.1.0."))
+			Expect(buffer.String()).To(ContainSubstring("Please specify the MRI version through an environment variable configurtion. See README.md for how to do this."))
 			Expect(buffer.String()).To(ContainSubstring("Reusing cached layer"))
 			Expect(buffer.String()).ToNot(ContainSubstring("Executing build process"))
 		})
