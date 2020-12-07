@@ -24,7 +24,7 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 		resolver = mri.NewPlanEntryResolver(mri.NewLogEmitter(buffer))
 	})
 
-	context("when a buildpack.yml entry is included", func() {
+	context("when a buildpack.yml entry and BP_MRI_VERSION are included", func() {
 		it("resolves the best plan entry", func() {
 			entry := resolver.Resolve([]packit.BuildpackPlanEntry{
 				{
@@ -40,18 +40,26 @@ func testPlanEntryResolver(t *testing.T, context spec.G, it spec.S) {
 						"version":        "buildpack-yml-version",
 					},
 				},
+				{
+					Name: "mri",
+					Metadata: map[string]interface{}{
+						"version-source": "BP_MRI_VERSION",
+						"version":        "env-var-version",
+					},
+				},
 			})
 			Expect(entry).To(Equal(packit.BuildpackPlanEntry{
 				Name: "mri",
 				Metadata: map[string]interface{}{
-					"version-source": "buildpack.yml",
-					"version":        "buildpack-yml-version",
+					"version-source": "BP_MRI_VERSION",
+					"version":        "env-var-version",
 				},
 			}))
 
 			Expect(buffer.String()).To(ContainSubstring("    Candidate version sources (in priority order):"))
-			Expect(buffer.String()).To(ContainSubstring("      buildpack.yml -> \"buildpack-yml-version\""))
-			Expect(buffer.String()).To(ContainSubstring("      <unknown>     -> \"other-version\""))
+			Expect(buffer.String()).To(ContainSubstring("      BP_MRI_VERSION -> \"env-var-version\""))
+			Expect(buffer.String()).To(ContainSubstring("      buildpack.yml  -> \"buildpack-yml-version\""))
+			Expect(buffer.String()).To(ContainSubstring("      <unknown>      -> \"other-version\""))
 		})
 	})
 

@@ -22,18 +22,31 @@ func Detect(buildpackYMLParser VersionParser) packit.DetectFunc {
 		var requirements []packit.BuildPlanRequirement
 		var err error
 
-		// $BP_MRI_VERSION has the highest priority in setting the MRI version
+		// If versions are provided via BP_MRI_VERSION and/or buildpack.yml:
+		// Detection will pass all versions as build plan requirements.
+		// The build phase is responsible for using a priority mapping to select correct version.
+		// This will allow for greater clarity in log output if the user has set version through multiple configurations.
+
+		// check $BP_MRI_VERSION
 		version := os.Getenv("BP_MRI_VERSION")
 		versionSource := "BP_MRI_VERSION"
 
-		// If $BP_MRI_VERSION is not set, check buildpack.yml for a version
-		if version == "" {
-			version, err = buildpackYMLParser.ParseVersion(filepath.Join(context.WorkingDir, BuildpackYMLSource))
-			if err != nil {
-				return packit.DetectResult{}, err
-			}
-			versionSource = BuildpackYMLSource
+		if version != "" {
+			requirements = append(requirements, packit.BuildPlanRequirement{
+				Name: MRI,
+				Metadata: BuildPlanMetadata{
+					VersionSource: versionSource,
+					Version:       version,
+				},
+			})
 		}
+
+		// check buildpack.yml
+		version, err = buildpackYMLParser.ParseVersion(filepath.Join(context.WorkingDir, BuildpackYMLSource))
+		if err != nil {
+			return packit.DetectResult{}, err
+		}
+		versionSource = BuildpackYMLSource
 
 		if version != "" {
 			requirements = append(requirements, packit.BuildPlanRequirement{

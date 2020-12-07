@@ -88,6 +88,7 @@ func testRunWithEnvVar(t *testing.T, context spec.G, it spec.S) {
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.6.*\"",
+				"      buildpack.yml  -> \"2.7.x\"",
 				"      <unknown>      -> \"*\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.6\.\d+`),
