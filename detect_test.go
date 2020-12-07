@@ -66,6 +66,13 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 							Version:       "1.2.3",
 						},
 					},
+					{
+						Name: mri.MRI,
+						Metadata: mri.BuildPlanMetadata{
+							VersionSource: "buildpack.yml",
+							Version:       "4.5.6",
+						},
+					},
 				},
 			}))
 		})
