@@ -20,7 +20,6 @@ type BuildPlanMetadata struct {
 func Detect(buildpackYMLParser VersionParser) packit.DetectFunc {
 	return func(context packit.DetectContext) (packit.DetectResult, error) {
 		var requirements []packit.BuildPlanRequirement
-		var err error
 
 		// If versions are provided via BP_MRI_VERSION and/or buildpack.yml:
 		// Detection will pass all versions as build plan requirements.
@@ -29,30 +28,28 @@ func Detect(buildpackYMLParser VersionParser) packit.DetectFunc {
 
 		// check $BP_MRI_VERSION
 		version := os.Getenv("BP_MRI_VERSION")
-		versionSource := "BP_MRI_VERSION"
 
 		if version != "" {
 			requirements = append(requirements, packit.BuildPlanRequirement{
 				Name: MRI,
 				Metadata: BuildPlanMetadata{
-					VersionSource: versionSource,
+					VersionSource: "BP_MRI_VERSION",
 					Version:       version,
 				},
 			})
 		}
 
 		// check buildpack.yml
-		version, err = buildpackYMLParser.ParseVersion(filepath.Join(context.WorkingDir, BuildpackYMLSource))
+		version, err := buildpackYMLParser.ParseVersion(filepath.Join(context.WorkingDir, BuildpackYMLSource))
 		if err != nil {
 			return packit.DetectResult{}, err
 		}
-		versionSource = BuildpackYMLSource
 
 		if version != "" {
 			requirements = append(requirements, packit.BuildPlanRequirement{
 				Name: MRI,
 				Metadata: BuildPlanMetadata{
-					VersionSource: versionSource,
+					VersionSource: BuildpackYMLSource,
 					Version:       version,
 				},
 			})
