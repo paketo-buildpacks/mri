@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/paketo-buildpacks/occam"
@@ -81,6 +82,23 @@ func testRunWithEnvVar(t *testing.T, context spec.G, it spec.S) {
 			content, err := ioutil.ReadAll(response.Body)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(content)).To(MatchRegexp(`Hello from Ruby 2\.6\.\d+`))
+
+			Expect(logs).To(ContainLines(
+				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
+				"  Resolving MRI version",
+				"    Candidate version sources (in priority order):",
+				"      BP_MRI_VERSION -> \"2.6.*\"",
+				"      <unknown>      -> \"*\"",
+				"",
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.6\.\d+`),
+				"",
+				"  Executing build process",
+				MatchRegexp(`    Installing MRI 2\.6\.\d+`),
+				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
+				"",
+				"  Configuring environment",
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.6\.\d+:/layers/%s/mri/lib/ruby/gems/2\.6\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+			))
 		})
 	})
 }
