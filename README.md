@@ -40,14 +40,15 @@ file that looks like the following:
 
 To package this buildpack for consumption:
 ```
-$ ./scripts/package.sh ``` This builds the buildpack's Go source using
-GOOS=linux by default. You can supply another value as the first argument to
-package.sh.
+$ ./scripts/package.sh
+```
+This builds the buildpack's Go source using GOOS=linux by default. You can
+supply another value as the first argument to package.sh.
 
 ## MRI Configurations
 
 Specifying the `MRI` version through `buildpack.yml` configuration will be
-deprecated in MRI Buildpack v0.1.0.
+deprecated in MRI Buildpack v1.0.0.
 
 To migrate from using `buildpack.yml` please set the `$BP_MRI_VERSION`
 environment variable at build time either directly (ex. `pack build my-app
