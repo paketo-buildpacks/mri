@@ -106,7 +106,12 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
 
-			firstContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(firstImage.ID)
+			firstContainer, err = docker.Container.Run.
+				WithEnv(map[string]string{"PORT": "8080"}).
+				WithPublish("8080").
+				WithPublishAll().
+				WithCommand("ruby run.rb").
+				Execute(firstImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[firstContainer.ID] = struct{}{}
@@ -138,14 +143,19 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf("  Reusing cached layer /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
 
-			secondContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(secondImage.ID)
+			secondContainer, err = docker.Container.Run.
+				WithEnv(map[string]string{"PORT": "8080"}).
+				WithPublish("8080").
+				WithPublishAll().
+				WithCommand("ruby run.rb").
+				Execute(secondImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[secondContainer.ID] = struct{}{}
 
 			Eventually(secondContainer).Should(BeAvailable())
 
-			response, err := http.Get(fmt.Sprintf("http://localhost:%s", secondContainer.HostPort()))
+			response, err := http.Get(fmt.Sprintf("http://localhost:%s", secondContainer.HostPort("8080")))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(response.StatusCode).To(Equal(http.StatusOK))
 
@@ -208,7 +218,11 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
 
-			firstContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(firstImage.ID)
+			firstContainer, err = docker.Container.Run.
+				WithEnv(map[string]string{"PORT": "8080"}).
+				WithPublish("8080").
+				WithPublishAll().
+				WithCommand("ruby run.rb").Execute(firstImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[firstContainer.ID] = struct{}{}
@@ -247,14 +261,19 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.6\.\d+:/layers/%s/mri/lib/ruby/gems/2\.6\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
 
-			secondContainer, err = docker.Container.Run.WithCommand("ruby run.rb").Execute(secondImage.ID)
+			secondContainer, err = docker.Container.Run.
+				WithCommand("ruby run.rb").
+				WithEnv(map[string]string{"PORT": "8080"}).
+				WithPublish("8080").
+				WithPublishAll().
+				Execute(secondImage.ID)
 			Expect(err).NotTo(HaveOccurred())
 
 			containerIDs[secondContainer.ID] = struct{}{}
 
 			Eventually(secondContainer).Should(BeAvailable())
 
-			response, err := http.Get(fmt.Sprintf("http://localhost:%s", secondContainer.HostPort()))
+			response, err := http.Get(fmt.Sprintf("http://localhost:%s", secondContainer.HostPort("8080")))
 			Expect(err).NotTo(HaveOccurred())
 			defer response.Body.Close()
 			Expect(response.StatusCode).To(Equal(http.StatusOK))
