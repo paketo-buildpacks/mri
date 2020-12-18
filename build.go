@@ -73,10 +73,6 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 			return packit.BuildResult{}, err
 		}
 
-		mriLayer.Launch = entry.Metadata["launch"] == true
-		mriLayer.Build = entry.Metadata["build"] == true
-		mriLayer.Cache = entry.Metadata["build"] == true
-
 		bom := planRefinery.BillOfMaterial(postal.Dependency{
 			ID:      dependency.ID,
 			Name:    dependency.Name,
@@ -99,7 +95,12 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 
 		logger.Process("Executing build process")
 
-		err = mriLayer.Reset()
+		mriLayer, err = mriLayer.Reset()
+
+		mriLayer.Launch = entry.Metadata["launch"] == true
+		mriLayer.Build = entry.Metadata["build"] == true
+		mriLayer.Cache = entry.Metadata["build"] == true
+
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
