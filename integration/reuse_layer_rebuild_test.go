@@ -75,7 +75,8 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				WithBuildpacks(
 					settings.Buildpacks.MRI.Online,
 					settings.Buildpacks.BuildPlan.Online,
-				)
+				).
+				WithEnv(map[string]string{"BP_MRI_VERSION": "2.7.x"})
 
 			firstImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred(), logs.String)
@@ -90,13 +91,10 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      buildpack.yml -> \"2.7.x\"",
-				"      <unknown>     -> \"*\"",
+				"      BP_MRI_VERSION -> \"2.7.x\"",
+				"      <unknown>      -> \"*\"",
 				"",
-				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
-				"",
-				"    WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0.",
-				"    Please specify the version through the $BP_MRI_VERSION environment variable instead. See README.md for more information.",
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
 				"",
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.\d+\.\d+`),
@@ -132,13 +130,10 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      buildpack.yml -> \"2.7.x\"",
-				"      <unknown>     -> \"*\"",
+				"      BP_MRI_VERSION -> \"2.7.x\"",
+				"      <unknown>      -> \"*\"",
 				"",
-				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
-				"",
-				"    WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0.",
-				"    Please specify the version through the $BP_MRI_VERSION environment variable instead. See README.md for more information.",
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
 				"",
 				MatchRegexp(fmt.Sprintf("  Reusing cached layer /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
@@ -189,7 +184,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 					settings.Buildpacks.BuildPlan.Online,
 				)
 
-			firstImage, logs, err = build.Execute(name, source)
+			firstImage, logs, err = build.
+				WithEnv(map[string]string{"BP_MRI_VERSION": "2.7.x"}).
+				Execute(name, source)
 			Expect(err).NotTo(HaveOccurred(), logs.String)
 
 			imageIDs[firstImage.ID] = struct{}{}
@@ -202,13 +199,10 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      buildpack.yml -> \"2.7.x\"",
-				"      <unknown>     -> \"*\"",
+				"      BP_MRI_VERSION -> \"2.7.x\"",
+				"      <unknown>      -> \"*\"",
 				"",
-				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
-				"",
-				"    WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0.",
-				"    Please specify the version through the $BP_MRI_VERSION environment variable instead. See README.md for more information.",
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
 				"",
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.7\.\d+`),
@@ -230,9 +224,9 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Eventually(firstContainer).Should(BeAvailable())
 
 			// Second pack build
-			Expect(ioutil.WriteFile(filepath.Join(source, "buildpack.yml"), []byte("---\nmri:\n  version: 2.6.x\n"), 0644)).To(Succeed())
-
-			secondImage, logs, err = build.Execute(name, source)
+			secondImage, logs, err = build.
+				WithEnv(map[string]string{"BP_MRI_VERSION": "2.6.x"}).
+				Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
 			imageIDs[secondImage.ID] = struct{}{}
@@ -245,13 +239,10 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      buildpack.yml -> \"2.6.x\"",
-				"      <unknown>     -> \"*\"",
+				"      BP_MRI_VERSION -> \"2.6.x\"",
+				"      <unknown>      -> \"*\"",
 				"",
-				MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.6\.\d+`),
-				"",
-				"    WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0.",
-				"    Please specify the version through the $BP_MRI_VERSION environment variable instead. See README.md for more information.",
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.6\.\d+`),
 				"",
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.6\.\d+`),
