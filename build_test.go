@@ -121,7 +121,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Stack:   "some-stack",
 			BuildpackInfo: packit.BuildpackInfo{
 				Name:    "Some Buildpack",
-				Version: "some-version",
+				Version: "0.1.2",
 			},
 			Plan: packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{
@@ -198,7 +198,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(gem.ExecuteCall.Receives.Execution.Args).To(Equal([]string{"env", "path"}))
 
-		Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
+		Expect(buffer.String()).To(ContainSubstring("Some Buildpack 0.1.2"))
 		Expect(buffer.String()).To(ContainSubstring("Resolving MRI version"))
 		Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using buildpack.yml): "))
 		Expect(buffer.String()).To(ContainSubstring("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0."))
@@ -436,6 +436,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		it("marks the mri layer as cached", func() {
 			result, err := build(packit.BuildContext{
+				BuildpackInfo: packit.BuildpackInfo{
+					Name:    "Some Buildpack",
+					Version: "0.1.2",
+				},
 				CNBPath:    cnbDir,
 				Stack:      "some-stack",
 				WorkingDir: workingDir,
@@ -506,8 +510,13 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 			}
 		})
+
 		it("refines the BuildpackPlan", func() {
 			result, err := build(packit.BuildContext{
+				BuildpackInfo: packit.BuildpackInfo{
+					Name:    "Some Buildpack",
+					Version: "0.1.2",
+				},
 				CNBPath: cnbDir,
 				Stack:   "some-stack",
 				Plan: packit.BuildpackPlan{
@@ -579,7 +588,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Stack:   "some-stack",
 				BuildpackInfo: packit.BuildpackInfo{
 					Name:    "Some Buildpack",
-					Version: "some-version",
+					Version: "0.1.2",
 				},
 				Plan: packit.BuildpackPlan{
 					Entries: []packit.BuildpackPlanEntry{
@@ -606,7 +615,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(dependencyManager.InstallCall.CallCount).To(Equal(0))
 
-			Expect(buffer.String()).To(ContainSubstring("Some Buildpack some-version"))
+			Expect(buffer.String()).To(ContainSubstring("Some Buildpack 0.1.2"))
 			Expect(buffer.String()).To(ContainSubstring("Resolving MRI version"))
 			Expect(buffer.String()).To(ContainSubstring("Selected MRI version (using buildpack.yml): "))
 			Expect(buffer.String()).To(ContainSubstring("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0."))
@@ -649,6 +658,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			it("returns an error", func() {
 				_, err := build(packit.BuildContext{
+					BuildpackInfo: packit.BuildpackInfo{
+						Name:    "Some Buildpack",
+						Version: "0.1.2",
+					},
 					CNBPath: cnbDir,
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
@@ -678,6 +691,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			it("returns an error", func() {
 				_, err := build(packit.BuildContext{
+					BuildpackInfo: packit.BuildpackInfo{
+						Name:    "Some Buildpack",
+						Version: "0.1.2",
+					},
 					CNBPath: cnbDir,
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
@@ -711,6 +728,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			it("returns an error", func() {
 				_, err := build(packit.BuildContext{
+					BuildpackInfo: packit.BuildpackInfo{
+						Name:    "Some Buildpack",
+						Version: "0.1.2",
+					},
 					CNBPath: cnbDir,
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
@@ -737,6 +758,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			it("returns an error", func() {
 				_, err := build(packit.BuildContext{
+					BuildpackInfo: packit.BuildpackInfo{
+						Name:    "Some Buildpack",
+						Version: "0.1.2",
+					},
 					CNBPath: cnbDir,
 					Plan: packit.BuildpackPlan{
 						Entries: []packit.BuildpackPlanEntry{
