@@ -17,7 +17,8 @@ import (
 
 //go:generate faux --interface EntryResolver --output fakes/entry_resolver.go
 type EntryResolver interface {
-	Resolve([]packit.BuildpackPlanEntry) packit.BuildpackPlanEntry
+	Resolve(string, []packit.BuildpackPlanEntry, []interface{}) (packit.BuildpackPlanEntry, []packit.BuildpackPlanEntry)
+	MergeLayerTypes(string, []packit.BuildpackPlanEntry) (launch, build bool)
 }
 
 //go:generate faux --interface DependencyManager --output fakes/dependency_manager.go
@@ -41,7 +42,8 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 		logger.Process("Resolving MRI version")
 
-		entry := entries.Resolve(context.Plan.Entries)
+		entry, allEntries := entries.Resolve("mri", context.Plan.Entries, []interface{}{"BP_MRI_VERSION", "buildpack.yml", ""})
+		logger.Candidates(allEntries)
 
 		// NOTE: this is to override that the dependency is called "ruby" in the
 		// buildpack.toml. We can remove this once we update our own dependencies
