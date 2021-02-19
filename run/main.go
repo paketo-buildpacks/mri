@@ -15,7 +15,6 @@ import (
 func main() {
 	buildpackYMLParser := mri.NewBuildpackYMLParser()
 	logEmitter := mri.NewLogEmitter(os.Stdout)
-	// entryResolver := mri.NewPlanEntryResolver(logEmitter)
 	entryResolver := draft.NewPlanner()
 	dependencyManager := postal.NewService(cargo.NewTransport())
 	planRefinery := mri.NewPlanRefinery()
