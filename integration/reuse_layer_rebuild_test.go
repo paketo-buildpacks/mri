@@ -2,8 +2,6 @@ package integration
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -92,7 +90,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.7.x\"",
-				"      <unknown>      -> \"*\"",
+				"      <unknown>      -> \"\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
 				"",
@@ -131,7 +129,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.7.x\"",
-				"      <unknown>      -> \"*\"",
+				"      <unknown>      -> \"\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
 				"",
@@ -149,14 +147,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			containerIDs[secondContainer.ID] = struct{}{}
 
 			Eventually(secondContainer).Should(BeAvailable())
-
-			response, err := http.Get(fmt.Sprintf("http://localhost:%s", secondContainer.HostPort("8080")))
-			Expect(err).NotTo(HaveOccurred())
-			Expect(response.StatusCode).To(Equal(http.StatusOK))
-
-			content, err := ioutil.ReadAll(response.Body)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(content).To(MatchRegexp(`Hello from Ruby 2\.7\.\d+`))
+			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 2\.7\.\d+`)).OnPort(8080))
 
 			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).To(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
 		})
@@ -200,7 +191,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.7.x\"",
-				"      <unknown>      -> \"*\"",
+				"      <unknown>      -> \"\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
 				"",
@@ -240,7 +231,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.6.x\"",
-				"      <unknown>      -> \"*\"",
+				"      <unknown>      -> \"\"",
 				"",
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.6\.\d+`),
 				"",
@@ -263,15 +254,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			containerIDs[secondContainer.ID] = struct{}{}
 
 			Eventually(secondContainer).Should(BeAvailable())
-
-			response, err := http.Get(fmt.Sprintf("http://localhost:%s", secondContainer.HostPort("8080")))
-			Expect(err).NotTo(HaveOccurred())
-			defer response.Body.Close()
-			Expect(response.StatusCode).To(Equal(http.StatusOK))
-
-			content, err := ioutil.ReadAll(response.Body)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(content).To(MatchRegexp(`Hello from Ruby 2\.6\.\d+`))
+			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 2\.6\.\d+`)).OnPort(8080))
 
 			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
 		})
