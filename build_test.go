@@ -76,6 +76,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			},
 		}
 
+		entryResolver.MergeLayerTypesCall.Returns.Launch = true
+		entryResolver.MergeLayerTypesCall.Returns.Build = false
+
 		dependencyManager = &fakes.DependencyManager{}
 		dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{ID: "ruby", Name: "Ruby"}
 
@@ -183,6 +186,18 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 			},
 		}))
+
+		Expect(entryResolver.MergeLayerTypesCall.Receives.BuildpackPlanEntrySlice).To(Equal([]packit.BuildpackPlanEntry{
+			{
+				Name: "mri",
+				Metadata: map[string]interface{}{
+					"version-source": "buildpack.yml",
+					"version":        "2.5.x",
+					"launch":         true,
+				},
+			},
+		}))
+		Expect(entryResolver.MergeLayerTypesCall.Receives.String).To(Equal("mri"))
 
 		Expect(dependencyManager.ResolveCall.Receives.Path).To(Equal(filepath.Join(cnbDir, "buildpack.toml")))
 		Expect(dependencyManager.ResolveCall.Receives.Id).To(Equal("ruby"))
@@ -372,6 +387,18 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 			}))
 
+			Expect(entryResolver.MergeLayerTypesCall.Receives.BuildpackPlanEntrySlice).To(Equal([]packit.BuildpackPlanEntry{
+				{
+					Name: "mri",
+					Metadata: map[string]interface{}{
+						"version-source": "BP_MRI_VERSION",
+						"version":        "2.6.x",
+						"launch":         true,
+					},
+				},
+			}))
+			Expect(entryResolver.MergeLayerTypesCall.Receives.String).To(Equal("mri"))
+
 			Expect(dependencyManager.ResolveCall.Receives.Path).To(Equal(filepath.Join(cnbDir, "buildpack.toml")))
 			Expect(dependencyManager.ResolveCall.Receives.Id).To(Equal("ruby"))
 			Expect(dependencyManager.ResolveCall.Receives.Version).To(Equal("2.6.x"))
@@ -414,6 +441,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					"launch":         true,
 				},
 			}
+
+			entryResolver.MergeLayerTypesCall.Returns.Launch = true
+			entryResolver.MergeLayerTypesCall.Returns.Build = true
 
 			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
 				Entries: []packit.BuildpackPlanEntry{

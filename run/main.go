@@ -7,6 +7,7 @@ import (
 	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-buildpacks/packit/cargo"
 	"github.com/paketo-buildpacks/packit/chronos"
+	"github.com/paketo-buildpacks/packit/draft"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
 )
@@ -14,7 +15,8 @@ import (
 func main() {
 	buildpackYMLParser := mri.NewBuildpackYMLParser()
 	logEmitter := mri.NewLogEmitter(os.Stdout)
-	entryResolver := mri.NewPlanEntryResolver(logEmitter)
+	// entryResolver := mri.NewPlanEntryResolver(logEmitter)
+	entryResolver := draft.NewPlanner()
 	dependencyManager := postal.NewService(cargo.NewTransport())
 	planRefinery := mri.NewPlanRefinery()
 	gem := pexec.NewExecutable("gem")
