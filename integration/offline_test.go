@@ -2,8 +2,6 @@ package integration
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"path/filepath"
 	"testing"
@@ -76,16 +74,7 @@ func testOffline(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(container).Should(BeAvailable(), logs.String())
-
-			response, err := http.Get(fmt.Sprintf("http://localhost:%s", container.HostPort("8080")))
-			Expect(err).NotTo(HaveOccurred())
-
-			defer response.Body.Close()
-			Expect(response.StatusCode).To(Equal(http.StatusOK))
-
-			content, err := ioutil.ReadAll(response.Body)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(string(content)).To(MatchRegexp(`Hello from Ruby 2\.7\.\d+`))
+			Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 2\.7\.\d+`)).OnPort(8080))
 		})
 	})
 }
