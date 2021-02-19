@@ -101,9 +101,8 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 
 		mriLayer, err = mriLayer.Reset()
 
-		mriLayer.Launch = entry.Metadata["launch"] == true
-		mriLayer.Build = entry.Metadata["build"] == true
-		mriLayer.Cache = entry.Metadata["build"] == true
+		mriLayer.Launch, mriLayer.Build = entries.MergeLayerTypes("mri", context.Plan.Entries)
+		mriLayer.Cache = mriLayer.Build
 
 		if err != nil {
 			return packit.BuildResult{}, err
