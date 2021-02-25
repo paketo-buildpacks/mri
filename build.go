@@ -42,7 +42,7 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 		logger.Process("Resolving MRI version")
 
-		entry, allEntries := entries.Resolve("mri", context.Plan.Entries, []interface{}{"BP_MRI_VERSION", "buildpack.yml", ""})
+		entry, allEntries := entries.Resolve("mri", context.Plan.Entries, []interface{}{"BP_MRI_VERSION", "buildpack.yml"})
 		logger.Candidates(allEntries)
 
 		// NOTE: this is to override that the dependency is called "ruby" in the
