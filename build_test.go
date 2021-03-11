@@ -161,11 +161,12 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					SharedEnv: packit.Environment{
 						"GEM_PATH.override": "/some/mri/gems/path",
 					},
-					BuildEnv:  packit.Environment{},
-					LaunchEnv: packit.Environment{},
-					Build:     false,
-					Launch:    true,
-					Cache:     false,
+					BuildEnv:         packit.Environment{},
+					LaunchEnv:        packit.Environment{},
+					ProcessLaunchEnv: map[string]packit.Environment{},
+					Build:            false,
+					Launch:           true,
+					Cache:            false,
 					Metadata: map[string]interface{}{
 						mri.DepKey: "",
 						"built_at": timeStamp.Format(time.RFC3339Nano),
@@ -278,11 +279,12 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						SharedEnv: packit.Environment{
 							"GEM_PATH.override": "/some/mri/gems/path",
 						},
-						BuildEnv:  packit.Environment{},
-						LaunchEnv: packit.Environment{},
-						Build:     false,
-						Launch:    true,
-						Cache:     false,
+						BuildEnv:         packit.Environment{},
+						LaunchEnv:        packit.Environment{},
+						ProcessLaunchEnv: map[string]packit.Environment{},
+						Build:            false,
+						Launch:           true,
+						Cache:            false,
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
 							"built_at": timeStamp.Format(time.RFC3339Nano),
@@ -361,11 +363,12 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						SharedEnv: packit.Environment{
 							"GEM_PATH.override": "/some/mri/gems/path",
 						},
-						BuildEnv:  packit.Environment{},
-						LaunchEnv: packit.Environment{},
-						Build:     false,
-						Launch:    true,
-						Cache:     false,
+						BuildEnv:         packit.Environment{},
+						LaunchEnv:        packit.Environment{},
+						ProcessLaunchEnv: map[string]packit.Environment{},
+						Build:            false,
+						Launch:           true,
+						Cache:            false,
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
 							"built_at": timeStamp.Format(time.RFC3339Nano),
@@ -510,11 +513,12 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						SharedEnv: packit.Environment{
 							"GEM_PATH.override": "/some/mri/gems/path",
 						},
-						BuildEnv:  packit.Environment{},
-						LaunchEnv: packit.Environment{},
-						Build:     true,
-						Launch:    true,
-						Cache:     true,
+						BuildEnv:         packit.Environment{},
+						LaunchEnv:        packit.Environment{},
+						ProcessLaunchEnv: map[string]packit.Environment{},
+						Build:            true,
+						Launch:           true,
+						Cache:            true,
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
 							"built_at": timeStamp.Format(time.RFC3339Nano),
@@ -585,11 +589,12 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						SharedEnv: packit.Environment{
 							"GEM_PATH.override": "/some/mri/gems/path",
 						},
-						BuildEnv:  packit.Environment{},
-						LaunchEnv: packit.Environment{},
-						Build:     false,
-						Launch:    true,
-						Cache:     false,
+						BuildEnv:         packit.Environment{},
+						LaunchEnv:        packit.Environment{},
+						ProcessLaunchEnv: map[string]packit.Environment{},
+						Build:            false,
+						Launch:           true,
+						Cache:            false,
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
 							"built_at": timeStamp.Format(time.RFC3339Nano),
@@ -740,6 +745,40 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Layers: packit.Layers{Path: layersDir},
 				})
 				Expect(err).To(MatchError(ContainSubstring("permission denied")))
+			})
+		})
+
+		context("when the MRI layer cannot be reset", func() {
+			it.Before(func() {
+				Expect(os.MkdirAll(filepath.Join(layersDir, "mri", "something"), os.ModePerm)).To(Succeed())
+				Expect(os.Chmod(filepath.Join(layersDir, "mri"), 0500)).To(Succeed())
+			})
+
+			it.After(func() {
+				Expect(os.Chmod(filepath.Join(layersDir, "mri"), os.ModePerm)).To(Succeed())
+			})
+
+			it("returns an error", func() {
+				_, err := build(packit.BuildContext{
+					BuildpackInfo: packit.BuildpackInfo{
+						Name:    "Some Buildpack",
+						Version: "0.1.2",
+					},
+					CNBPath: cnbDir,
+					Plan: packit.BuildpackPlan{
+						Entries: []packit.BuildpackPlanEntry{
+							{
+								Name: "mri",
+								Metadata: map[string]interface{}{
+									"version-source": "buildpack.yml",
+									"version":        "2.5.x",
+								},
+							},
+						},
+					},
+					Layers: packit.Layers{Path: layersDir},
+				})
+				Expect(err).To(MatchError(ContainSubstring("could not remove file")))
 			})
 		})
 
