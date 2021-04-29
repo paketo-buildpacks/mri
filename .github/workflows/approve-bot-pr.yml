@@ -33,6 +33,9 @@ jobs:
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/event-payload.zip', Buffer.from(download.data));
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       # test-pull-request event-payload will be unzipped into github.workspace
       # See https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads#webhook-payload-example-32
       - run: unzip event-payload.zip
