@@ -1,0 +1,73 @@
+name: Approve Bot PRs
+
+on:
+  workflow_run:
+    workflows: ["Test Pull Request"]
+    types:
+      - completed
+
+jobs:
+  download:
+    name: Download PR Artifact
+    if: >
+      ${{ github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: 'Download artifact'
+        uses: actions/github-script@v3.1.0
+        with:
+          script: |
+            var artifacts = await github.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "event-payload"
+            })[0];
+            var download = await github.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/event-payload.zip', Buffer.from(download.data));
+      # test-pull-request event-payload will be unzipped into github.workspace
+      # See https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads#webhook-payload-example-32
+      - run: unzip event-payload.zip
+
+  approve:
+    name: Approve Bot PRs
+    # TODO: figure out if this is the right path to the payload json
+    if: ${{ $(cat event.json | jq -r '.pull_request.user.login' | sed s/^v//)) == 'paketo-bot' ||
+        $(cat event.json | jq -r '.pull_request.user.login' | sed s/^v//) == 'dependabot[bot]'}}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check Commit Verification
+      id: unverified-commits
+      uses: paketo-buildpacks/github-config/actions/pull-request/check-unverified-commits@main
+      with:
+        token: ${{ secrets.PAKETO_BOT_REVIEWER_GITHUB_TOKEN }}
+        repo: ${{ github.repository }}
+        # TODO: do we have access to the number in another way?
+        number: ${{ cat event.json | jq -r '.pull_request.number' }}
+
+    - name: Check for Human Commits
+      id: human-commits
+      uses: paketo-buildpacks/github-config/actions/pull-request/check-human-commits@main
+      with:
+        token: ${{ secrets.PAKETO_BOT_REVIEWER_GITHUB_TOKEN }}
+        repo: ${{ github.repository }}
+        number: ${{ cat event.json | jq -r '.pull_request.number' }}
+
+    - name: Checkout
+      if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+      uses: actions/checkout@v2
+
+    - name: Approve
+      if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+      uses: paketo-buildpacks/github-config/actions/pull-request/approve@main
+      with:
+        token: ${{ secrets.PAKETO_BOT_REVIEWER_GITHUB_TOKEN }}
+        number: ${{ cat event.json | jq -r '.pull_request.number' }}
