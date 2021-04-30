@@ -43,6 +43,8 @@ jobs:
                run_id: ${{ github.run_id }},
             });
             var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              console.log(artifact)
+              console.log(artifacts.data.artifacts)
               return artifact.name == "event-payload"
             })[0];
             var download = await github.actions.downloadArtifact({
