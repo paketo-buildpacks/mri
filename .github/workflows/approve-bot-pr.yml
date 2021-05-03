@@ -14,13 +14,21 @@ jobs:
       github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: 'Download artifact'
+        uses: paketo-buildpacks/github-config/actions/pull-request/checkout-branch@main
+        with:
+          name: "event-payload"
+          owner: context.repo.owner
+          repo: context.repo.repo
+          runID: ${{ github.event.workflow_run.id }},
+
+      - name: 'Download artifact'
         uses: actions/github-script@v3.1.0
         with:
           script: |
             var artifacts = await github.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
+               run_id: ${{ github.event.workflow_run.id }},
             });
             var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
               return artifact.name == "event-payload"
@@ -33,18 +41,14 @@ jobs:
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/event-payload.zip', Buffer.from(download.data));
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       # test-pull-request event-payload will be unzipped into github.workspace
       # See https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads#webhook-payload-example-32
       - run: unzip event-payload.zip
 
   approve:
     name: Approve Bot PRs
-    # TODO: figure out if this is the right path to the payload json
-    if: ${{ $(cat event.json | jq -r '.pull_request.user.login' | sed s/^v//)) == 'paketo-bot' ||
-        $(cat event.json | jq -r '.pull_request.user.login' | sed s/^v//) == 'dependabot[bot]'}}
+    if: ${{ echo $(cat event.json | jq -r '.pull_request.user.login' | sed s/^v//) == 'paketo-bot' ||
+        echo $(cat event.json | jq -r '.pull_request.user.login' | sed s/^v//) == 'dependabot[bot]'}}
     runs-on: ubuntu-latest
     steps:
     - name: Check Commit Verification
