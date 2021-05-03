@@ -62,6 +62,5 @@ jobs:
         uses: paketo-buildpacks/github-config/actions/pull-request/download-artifact@approve-bot-prs
         with:
           name: "event-payload"
-          owner: github.repository_owner
-          repo: echo ${{ github.repository }} | awk -F '/' '{print $2}'
+          repo: ${{ github.repository }}
           runID: ${{ github.run_id }}
