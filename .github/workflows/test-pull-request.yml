@@ -64,4 +64,4 @@ jobs:
           name: "event-payload"
           owner: context.repo.owner
           repo: context.repo.repo
-          runID: ${{ github.event.workflow_run.id }}
+          runID: ${{ github.run_id }}
