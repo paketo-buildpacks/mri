@@ -31,6 +31,7 @@ jobs:
       - id: get-pr-number
         run: |
           echo "::set-output name=number::$(cat event.json | jq -r '.pull_request.number')"
+
   approve:
     name: Approve Bot PRs
     needs: download
