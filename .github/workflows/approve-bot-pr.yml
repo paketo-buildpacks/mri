@@ -16,7 +16,7 @@ jobs:
       pr-number: ${{ steps.pr-data.outputs.number }}
     steps:
       - name: 'Download artifact'
-        uses: paketo-buildpacks/github-config/actions/pull-request/download-artifact@approve-bot-prs
+        uses: paketo-buildpacks/github-config/actions/pull-request/download-artifact@main
         with:
           name: "event-payload"
           repo: ${{ github.repository }}
