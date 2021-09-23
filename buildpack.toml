@@ -12,64 +12,97 @@ api = "0.2"
     ruby = "2.7.*"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:2.6.7:*:*:*:*:*:*:*"
     id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
     name = "Ruby"
-    sha256 = "db90addb4e177bad7478f345e1c4cc4de4eb8326aad5a566678014a0b54c6403"
+    purl = "pkg:generic/ruby@2.6.7?checksum=e4227e8b7f65485ecb73397a83e0d09dcd39f25efd411c782b69424e55c7a99e&download_url=https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.7.tar.gz"
+    sha256 = "c24b0e2477b033e294b6216b1006beeb8a92bffc3a2f76af3a40200e59322ad6"
     source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.7.tar.gz"
     source_sha256 = "e4227e8b7f65485ecb73397a83e0d09dcd39f25efd411c782b69424e55c7a99e"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.6.7_linux_x64_cflinuxfs3_db90addb.tgz"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_2.6.7_linux_x64_bionic_c24b0e24.tgz"
     version = "2.6.7"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:2.6.8:*:*:*:*:*:*:*"
     id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
     name = "Ruby"
-    sha256 = "74e0625a365c91e6f578f574f6cb0eb09cab95a080df5900437701aae35a522c"
+    purl = "pkg:generic/ruby@2.6.8?checksum=1807b78577bc08596a390e8a41aede37b8512190e05c133b17d0501791a8ca6d&download_url=https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.8.tar.gz"
+    sha256 = "188b0ad5b9e88250e77b0a876d0a24e1879ffcabdaee90a01fd23dc14d162a25"
     source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.8.tar.gz"
     source_sha256 = "1807b78577bc08596a390e8a41aede37b8512190e05c133b17d0501791a8ca6d"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.6.8_linux_x64_cflinuxfs3_74e0625a.tgz"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_2.6.8_linux_x64_bionic_188b0ad5.tgz"
     version = "2.6.8"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:2.7.3:*:*:*:*:*:*:*"
     id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
     name = "Ruby"
-    sha256 = "daf118b9a8fb5b629a10d9618c2dd54cfb6904dd88f73fc75f5c18a6ce9e050e"
+    purl = "pkg:generic/ruby@2.7.3?checksum=8925a95e31d8f2c81749025a52a544ea1d05dad18794e6828709268b92e55338&download_url=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.3.tar.gz"
+    sha256 = "79ea11d512d988b261d4168ee3f2a189bc7cc9c1208f588c8515a360b8b3a96f"
     source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.3.tar.gz"
     source_sha256 = "8925a95e31d8f2c81749025a52a544ea1d05dad18794e6828709268b92e55338"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.7.3_linux_x64_cflinuxfs3_daf118b9.tgz"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_2.7.3_linux_x64_bionic_79ea11d5.tgz"
     version = "2.7.3"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:2.7.4:*:*:*:*:*:*:*"
     id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
     name = "Ruby"
-    sha256 = "21db42bd63fac78ea7017fb5d5ae357d97ef7de2ed6d08f08164476773c3d6ef"
+    purl = "pkg:generic/ruby@2.7.4?checksum=3043099089608859fc8cce7f9fdccaa1f53a462457e3838ec3b25a7d609fbc5b&download_url=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.4.tar.gz"
+    sha256 = "e676146697b82d5c93ebbfb2a3a7991385c940c322065c15730b57161b0311a5"
     source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.4.tar.gz"
     source_sha256 = "3043099089608859fc8cce7f9fdccaa1f53a462457e3838ec3b25a7d609fbc5b"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_2.7.4_linux_x64_cflinuxfs3_21db42bd.tgz"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_2.7.4_linux_x64_bionic_e6761466.tgz"
     version = "2.7.4"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:3.0.1:*:*:*:*:*:*:*"
     id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
     name = "Ruby"
-    sha256 = "c1138d6cea76a7906d0611911b1a0ca68b5d5d00d41eb0a60b1622728b1467ad"
+    purl = "pkg:generic/ruby@3.0.1?checksum=369825db2199f6aeef16b408df6a04ebaddb664fb9af0ec8c686b0ce7ab77727&download_url=https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.1.tar.gz"
+    sha256 = "fb364dc8e745a50043a1675d4930803ae453e8b981db1d6e998e49492dc6bead"
     source = "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.1.tar.gz"
     source_sha256 = "369825db2199f6aeef16b408df6a04ebaddb664fb9af0ec8c686b0ce7ab77727"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_3.0.1_linux_x64_cflinuxfs3_c1138d6c.tgz"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_3.0.1_linux_x64_bionic_fb364dc8.tgz"
     version = "3.0.1"
 
   [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:3.0.2:*:*:*:*:*:*:*"
     id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
     name = "Ruby"
-    sha256 = "347089730766afb42ba2de58e2ce943c435dd3995a4253a43288ead698103e42"
+    purl = "pkg:generic/ruby@3.0.2?checksum=5085dee0ad9f06996a8acec7ebea4a8735e6fac22f22e2d98c3f2bc3bef7e6f1&download_url=https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.2.tar.gz"
+    sha256 = "f083a81e6450998f6ccd20857b932bf7f5afafabb89809604d6361ddb9c73ab6"
     source = "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.2.tar.gz"
     source_sha256 = "5085dee0ad9f06996a8acec7ebea4a8735e6fac22f22e2d98c3f2bc3bef7e6f1"
-    stacks = ["io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3"]
-    uri = "https://buildpacks.cloudfoundry.org/dependencies/ruby/ruby_3.0.2_linux_x64_cflinuxfs3_34708973.tgz"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_3.0.2_linux_x64_bionic_f083a81e.tgz"
     version = "3.0.2"
+
+  [[metadata.dependency-constraints]]
+    constraint = "2.6.*"
+    id = "ruby"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "2.7.*"
+    id = "ruby"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "3.0.*"
+    id = "ruby"
+    patches = 2
 
 [[stacks]]
   id = "io.buildpacks.stacks.bionic"
