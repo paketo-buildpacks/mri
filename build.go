@@ -13,6 +13,7 @@ import (
 	"github.com/paketo-buildpacks/packit/chronos"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
+	"github.com/paketo-buildpacks/packit/scribe"
 )
 
 //go:generate faux --interface EntryResolver --output fakes/entry_resolver.go
@@ -25,11 +26,7 @@ type EntryResolver interface {
 type DependencyManager interface {
 	Resolve(path, id, version, stack string) (postal.Dependency, error)
 	Install(dependency postal.Dependency, cnbPath, layerPath string) error
-}
-
-//go:generate faux --interface BuildPlanRefinery --output fakes/build_plan_refinery.go
-type BuildPlanRefinery interface {
-	BillOfMaterial(dependency postal.Dependency) packit.BuildpackPlan
+	GenerateBillOfMaterials(dependencies ...postal.Dependency) []packit.BOMEntry
 }
 
 //go:generate faux --interface Executable --output fakes/executable.go
@@ -37,7 +34,7 @@ type Executable interface {
 	Execute(pexec.Execution) error
 }
 
-func Build(entries EntryResolver, dependencies DependencyManager, planRefinery BuildPlanRefinery, logger LogEmitter, clock chronos.Clock, gem Executable) packit.BuildFunc {
+func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.Emitter, clock chronos.Clock, gem Executable) packit.BuildFunc {
 	return func(context packit.BuildContext) (packit.BuildResult, error) {
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 		logger.Process("Resolving MRI version")
@@ -77,14 +74,18 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 			return packit.BuildResult{}, err
 		}
 
-		bom := planRefinery.BillOfMaterial(postal.Dependency{
-			ID:      dependency.ID,
-			Name:    dependency.Name,
-			SHA256:  dependency.SHA256,
-			Stacks:  dependency.Stacks,
-			URI:     dependency.URI,
-			Version: dependency.Version,
-		})
+		bom := dependencies.GenerateBillOfMaterials(dependency)
+		launch, build := entries.MergeLayerTypes("mri", context.Plan.Entries)
+
+		var buildMetadata packit.BuildMetadata
+		if build {
+			buildMetadata.BOM = bom
+		}
+
+		var launchMetadata packit.LaunchMetadata
+		if launch {
+			launchMetadata.BOM = bom
+		}
 
 		cachedSHA, ok := mriLayer.Metadata[DepKey].(string)
 		if ok && cachedSHA == dependency.SHA256 {
@@ -92,21 +93,20 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 			logger.Break()
 
 			return packit.BuildResult{
-				Plan:   bom,
 				Layers: []packit.Layer{mriLayer},
+				Build:  buildMetadata,
+				Launch: launchMetadata,
 			}, nil
 		}
 
 		logger.Process("Executing build process")
 
 		mriLayer, err = mriLayer.Reset()
-
-		mriLayer.Launch, mriLayer.Build = entries.MergeLayerTypes("mri", context.Plan.Entries)
-		mriLayer.Cache = mriLayer.Build
-
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
+
+		mriLayer.Launch, mriLayer.Build, mriLayer.Cache = launch, build, build
 
 		logger.Subprocess("Installing MRI %s", dependency.Version)
 		duration, err := clock.Measure(func() error {
@@ -137,11 +137,12 @@ func Build(entries EntryResolver, dependencies DependencyManager, planRefinery B
 
 		mriLayer.SharedEnv.Override("GEM_PATH", strings.TrimSpace(buffer.String()))
 
-		logger.Environment(mriLayer.SharedEnv)
+		logger.EnvironmentVariables(mriLayer)
 
 		return packit.BuildResult{
-			Plan:   bom,
 			Layers: []packit.Layer{mriLayer},
+			Build:  buildMetadata,
+			Launch: launchMetadata,
 		}, nil
 	}
 }
