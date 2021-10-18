@@ -16,6 +16,7 @@ import (
 	"github.com/paketo-buildpacks/packit/chronos"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
+	"github.com/paketo-buildpacks/packit/scribe"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -25,14 +26,14 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 
-		layersDir         string
-		cnbDir            string
+		layersDir string
+		cnbDir    string
+		clock     chronos.Clock
+		timeStamp time.Time
+		buffer    *bytes.Buffer
+
 		entryResolver     *fakes.EntryResolver
 		dependencyManager *fakes.DependencyManager
-		clock             chronos.Clock
-		timeStamp         time.Time
-		planRefinery      *fakes.BuildPlanRefinery
-		buffer            *bytes.Buffer
 		gem               *fakes.Executable
 
 		build packit.BuildFunc
@@ -81,36 +82,34 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		dependencyManager = &fakes.DependencyManager{}
 		dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{ID: "ruby", Name: "Ruby"}
-
-		planRefinery = &fakes.BuildPlanRefinery{}
+		dependencyManager.GenerateBillOfMaterialsCall.Returns.BOMEntrySlice = []packit.BOMEntry{
+			{
+				Name: "mri",
+				Metadata: packit.BOMMetadata{
+					Version: "mri-dependency-version",
+					Checksum: packit.BOMChecksum{
+						Algorithm: packit.SHA256,
+						Hash:      "mri-dependency-sha",
+					},
+					URI: "mri-dependency-uri",
+				},
+			},
+		}
 
 		timeStamp = time.Now()
 		clock = chronos.NewClock(func() time.Time {
 			return timeStamp
 		})
 
-		planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
-			Entries: []packit.BuildpackPlanEntry{
-				{
-					Name: "mri",
-					Metadata: map[string]interface{}{
-						"version-source": "buildpack.yml",
-						"version":        "2.5.x",
-						"launch":         true,
-					},
-				},
-			},
-		}
-
 		buffer = bytes.NewBuffer(nil)
-		logEmitter := mri.NewLogEmitter(buffer)
+		logEmitter := scribe.NewEmitter(buffer)
 		gem = &fakes.Executable{}
 		gem.ExecuteCall.Stub = func(execution pexec.Execution) error {
 			fmt.Fprintln(execution.Stdout, "/some/mri/gems/path")
 			return nil
 		}
 
-		build = mri.Build(entryResolver, dependencyManager, planRefinery, logEmitter, clock, gem)
+		build = mri.Build(entryResolver, dependencyManager, logEmitter, clock, gem)
 	})
 
 	it.After(func() {
@@ -142,18 +141,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 		Expect(err).NotTo(HaveOccurred())
 		Expect(result).To(Equal(packit.BuildResult{
-			Plan: packit.BuildpackPlan{
-				Entries: []packit.BuildpackPlanEntry{
-					{
-						Name: "mri",
-						Metadata: map[string]interface{}{
-							"version-source": "buildpack.yml",
-							"version":        "2.5.x",
-							"launch":         true,
-						},
-					},
-				},
-			},
 			Layers: []packit.Layer{
 				{
 					Name: "mri",
@@ -170,6 +157,21 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Metadata: map[string]interface{}{
 						mri.DepKey: "",
 						"built_at": timeStamp.Format(time.RFC3339Nano),
+					},
+				},
+			},
+			Launch: packit.LaunchMetadata{
+				BOM: []packit.BOMEntry{
+					{
+						Name: "mri",
+						Metadata: packit.BOMMetadata{
+							Version: "mri-dependency-version",
+							Checksum: packit.BOMChecksum{
+								Algorithm: packit.SHA256,
+								Hash:      "mri-dependency-sha",
+							},
+							URI: "mri-dependency-uri",
+						},
 					},
 				},
 			},
@@ -205,8 +207,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(dependencyManager.ResolveCall.Receives.Version).To(Equal("2.5.x"))
 		Expect(dependencyManager.ResolveCall.Receives.Stack).To(Equal("some-stack"))
 
-		Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
-		Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
+		Expect(dependencyManager.GenerateBillOfMaterialsCall.Receives.Dependencies).To(Equal([]postal.Dependency{{ID: "mri", Name: "MRI"}}))
 
 		Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
 		Expect(dependencyManager.InstallCall.Receives.CnbPath).To(Equal(cnbDir))
@@ -220,7 +221,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(buffer.String()).To(ContainSubstring("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0."))
 		Expect(buffer.String()).To(ContainSubstring("Please specify the version through the $BP_MRI_VERSION environment variable instead. See README.md for more information."))
 		Expect(buffer.String()).To(ContainSubstring("Executing build process"))
-		Expect(buffer.String()).To(ContainSubstring("Configuring environment"))
+		Expect(buffer.String()).To(ContainSubstring("Configuring build environment"))
+		Expect(buffer.String()).To(ContainSubstring("Configuring launch environment"))
 	})
 
 	context("when the build plan entry does not include a version", func() {
@@ -229,17 +231,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Name: "mri",
 				Metadata: map[string]interface{}{
 					"launch": true,
-				},
-			}
-
-			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
-				Entries: []packit.BuildpackPlanEntry{
-					{
-						Name: "mri",
-						Metadata: map[string]interface{}{
-							"launch": true,
-						},
-					},
 				},
 			}
 		})
@@ -262,16 +253,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(Equal(packit.BuildResult{
-				Plan: packit.BuildpackPlan{
-					Entries: []packit.BuildpackPlanEntry{
-						{
-							Name: "mri",
-							Metadata: map[string]interface{}{
-								"launch": true,
-							},
-						},
-					},
-				},
 				Layers: []packit.Layer{
 					{
 						Name: "mri",
@@ -291,6 +272,21 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						},
 					},
 				},
+				Launch: packit.LaunchMetadata{
+					BOM: []packit.BOMEntry{
+						{
+							Name: "mri",
+							Metadata: packit.BOMMetadata{
+								Version: "mri-dependency-version",
+								Checksum: packit.BOMChecksum{
+									Algorithm: packit.SHA256,
+									Hash:      "mri-dependency-sha",
+								},
+								URI: "mri-dependency-uri",
+							},
+						},
+					},
+				},
 			}))
 		})
 	})
@@ -303,19 +299,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					"version-source": "BP_MRI_VERSION",
 					"version":        "2.6.x",
 					"launch":         true,
-				},
-			}
-
-			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
-				Entries: []packit.BuildpackPlanEntry{
-					{
-						Name: "mri",
-						Metadata: map[string]interface{}{
-							"version-source": "BP_MRI_VERSION",
-							"version":        "2.6.x",
-							"launch":         true,
-						},
-					},
 				},
 			}
 		})
@@ -344,18 +327,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(Equal(packit.BuildResult{
-				Plan: packit.BuildpackPlan{
-					Entries: []packit.BuildpackPlanEntry{
-						{
-							Name: "mri",
-							Metadata: map[string]interface{}{
-								"version-source": "BP_MRI_VERSION",
-								"version":        "2.6.x",
-								"launch":         true,
-							},
-						},
-					},
-				},
 				Layers: []packit.Layer{
 					{
 						Name: "mri",
@@ -372,6 +343,21 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
 							"built_at": timeStamp.Format(time.RFC3339Nano),
+						},
+					},
+				},
+				Launch: packit.LaunchMetadata{
+					BOM: []packit.BOMEntry{
+						{
+							Name: "mri",
+							Metadata: packit.BOMMetadata{
+								Version: "mri-dependency-version",
+								Checksum: packit.BOMChecksum{
+									Algorithm: packit.SHA256,
+									Hash:      "mri-dependency-sha",
+								},
+								URI: "mri-dependency-uri",
+							},
 						},
 					},
 				},
@@ -407,8 +393,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(dependencyManager.ResolveCall.Receives.Version).To(Equal("2.6.x"))
 			Expect(dependencyManager.ResolveCall.Receives.Stack).To(Equal("some-stack"))
 
-			Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
-			Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
+			Expect(dependencyManager.GenerateBillOfMaterialsCall.Receives.Dependencies).To(Equal([]postal.Dependency{{ID: "mri", Name: "MRI"}}))
 
 			Expect(dependencyManager.InstallCall.Receives.Dependency).To(Equal(postal.Dependency{ID: "mri", Name: "MRI"}))
 			Expect(dependencyManager.InstallCall.Receives.CnbPath).To(Equal(cnbDir))
@@ -422,7 +407,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			Expect(buffer.String()).NotTo(ContainSubstring("WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v1.0.0."))
 			Expect(buffer.String()).NotTo(ContainSubstring("Please specify the version through the $BP_MRI_VERSION environment variable instead. See README.md for more information."))
 			Expect(buffer.String()).To(ContainSubstring("Executing build process"))
-			Expect(buffer.String()).To(ContainSubstring("Configuring environment"))
+			Expect(buffer.String()).To(ContainSubstring("Configuring build environment"))
+			Expect(buffer.String()).To(ContainSubstring("Configuring launch environment"))
 		})
 	})
 
@@ -447,20 +433,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 			entryResolver.MergeLayerTypesCall.Returns.Launch = true
 			entryResolver.MergeLayerTypesCall.Returns.Build = true
-
-			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
-				Entries: []packit.BuildpackPlanEntry{
-					{
-						Name: "mri",
-						Metadata: map[string]interface{}{
-							"version-source": "buildpack.yml",
-							"version":        "2.5.x",
-							"build":          true,
-							"launch":         true,
-						},
-					},
-				},
-			}
 		})
 
 		it.After(func() {
@@ -493,19 +465,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).To(Equal(packit.BuildResult{
-				Plan: packit.BuildpackPlan{
-					Entries: []packit.BuildpackPlanEntry{
-						{
-							Name: "mri",
-							Metadata: map[string]interface{}{
-								"version-source": "buildpack.yml",
-								"version":        "2.5.x",
-								"build":          true,
-								"launch":         true,
-							},
-						},
-					},
-				},
 				Layers: []packit.Layer{
 					{
 						Name: "mri",
@@ -525,79 +484,33 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						},
 					},
 				},
-			}))
-		})
-	})
-
-	context("when we refine the buildpack plan", func() {
-		it.Before(func() {
-			planRefinery.BillOfMaterialCall.Returns.BuildpackPlan = packit.BuildpackPlan{
-				Entries: []packit.BuildpackPlanEntry{
-					{
-						Name: "new-dep",
-						Metadata: map[string]interface{}{
-							"some-extra-field": "an-extra-value",
-							"version":          "some-version",
-							"launch":           true,
-						},
-					},
-				},
-			}
-		})
-
-		it("refines the BuildpackPlan", func() {
-			result, err := build(packit.BuildContext{
-				BuildpackInfo: packit.BuildpackInfo{
-					Name:    "Some Buildpack",
-					Version: "0.1.2",
-				},
-				CNBPath: cnbDir,
-				Stack:   "some-stack",
-				Plan: packit.BuildpackPlan{
-					Entries: []packit.BuildpackPlanEntry{
+				Build: packit.BuildMetadata{
+					BOM: []packit.BOMEntry{
 						{
 							Name: "mri",
-							Metadata: map[string]interface{}{
-								"version-source": "buildpack.yml",
-								"version":        "2.5.x",
-								"launch":         true,
+							Metadata: packit.BOMMetadata{
+								Version: "mri-dependency-version",
+								Checksum: packit.BOMChecksum{
+									Algorithm: packit.SHA256,
+									Hash:      "mri-dependency-sha",
+								},
+								URI: "mri-dependency-uri",
 							},
 						},
 					},
 				},
-				Layers: packit.Layers{Path: layersDir},
-			})
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(result).To(Equal(packit.BuildResult{
-				Plan: packit.BuildpackPlan{
-					Entries: []packit.BuildpackPlanEntry{
+				Launch: packit.LaunchMetadata{
+					BOM: []packit.BOMEntry{
 						{
-							Name: "new-dep",
-							Metadata: map[string]interface{}{
-								"version":          "some-version",
-								"some-extra-field": "an-extra-value",
-								"launch":           true,
+							Name: "mri",
+							Metadata: packit.BOMMetadata{
+								Version: "mri-dependency-version",
+								Checksum: packit.BOMChecksum{
+									Algorithm: packit.SHA256,
+									Hash:      "mri-dependency-sha",
+								},
+								URI: "mri-dependency-uri",
 							},
-						},
-					},
-				},
-				Layers: []packit.Layer{
-					{
-						Name: "mri",
-						Path: filepath.Join(layersDir, "mri"),
-						SharedEnv: packit.Environment{
-							"GEM_PATH.override": "/some/mri/gems/path",
-						},
-						BuildEnv:         packit.Environment{},
-						LaunchEnv:        packit.Environment{},
-						ProcessLaunchEnv: map[string]packit.Environment{},
-						Build:            false,
-						Launch:           true,
-						Cache:            false,
-						Metadata: map[string]interface{}{
-							mri.DepKey: "",
-							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
@@ -641,12 +554,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			})
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(planRefinery.BillOfMaterialCall.CallCount).To(Equal(1))
-			Expect(planRefinery.BillOfMaterialCall.Receives.Dependency).To(Equal(postal.Dependency{
+			Expect(dependencyManager.GenerateBillOfMaterialsCall.Receives.Dependencies).To(Equal([]postal.Dependency{{
 				ID:     "mri",
 				Name:   "MRI",
 				SHA256: "some-sha",
-			}))
+			}}))
 
 			Expect(dependencyManager.InstallCall.CallCount).To(Equal(0))
 

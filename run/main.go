@@ -10,25 +10,18 @@ import (
 	"github.com/paketo-buildpacks/packit/draft"
 	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/paketo-buildpacks/packit/postal"
+	"github.com/paketo-buildpacks/packit/scribe"
 )
 
 func main() {
-	buildpackYMLParser := mri.NewBuildpackYMLParser()
-	logEmitter := mri.NewLogEmitter(os.Stdout)
-	entryResolver := draft.NewPlanner()
-	dependencyManager := postal.NewService(cargo.NewTransport())
-	planRefinery := mri.NewPlanRefinery()
-	gem := pexec.NewExecutable("gem")
-
 	packit.Run(
-		mri.Detect(buildpackYMLParser),
+		mri.Detect(mri.NewBuildpackYMLParser()),
 		mri.Build(
-			entryResolver,
-			dependencyManager,
-			planRefinery,
-			logEmitter,
+			draft.NewPlanner(),
+			postal.NewService(cargo.NewTransport()),
+			scribe.NewEmitter(os.Stdout),
 			chronos.DefaultClock,
-			gem,
+			pexec.NewExecutable("gem"),
 		),
 	)
 }

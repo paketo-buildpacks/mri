@@ -1,4 +1,4 @@
-api = "0.2"
+api = "0.5"
 
 [buildpack]
   homepage = "https://github.com/paketo-buildpacks/mri"
@@ -106,6 +106,3 @@ api = "0.2"
 
 [[stacks]]
   id = "io.buildpacks.stacks.bionic"
-
-[[stacks]]
-  id = "org.cloudfoundry.stacks.cflinuxfs3"
