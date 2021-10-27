@@ -1,8 +1,8 @@
 api = "0.5"
 
 [buildpack]
-  homepage = "https://github.com/paketo-buildpacks/mri"
   id = "paketo-buildpacks/mri"
+  homepage = "https://github.com/paketo-buildpacks/mri"
   name = "Paketo MRI Buildpack"
 
 [metadata]
@@ -22,7 +22,7 @@ api = "0.5"
     source_sha256 = "e4227e8b7f65485ecb73397a83e0d09dcd39f25efd411c782b69424e55c7a99e"
     stacks = ["io.buildpacks.stacks.bionic"]
     uri = "https://deps.paketo.io/ruby/ruby_2.6.7_linux_x64_bionic_c24b0e24.tgz"
-    version = "2.4.7"
+    version = "2.6.7"
 
   [[metadata.dependencies]]
     cpe = "cpe:2.3:a:ruby-lang:ruby:2.6.8:*:*:*:*:*:*:*"
@@ -35,7 +35,33 @@ api = "0.5"
     source_sha256 = "1807b78577bc08596a390e8a41aede37b8512190e05c133b17d0501791a8ca6d"
     stacks = ["io.buildpacks.stacks.bionic"]
     uri = "https://deps.paketo.io/ruby/ruby_2.6.8_linux_x64_bionic_188b0ad5.tgz"
-    version = "2.5.8"
+    version = "2.6.8"
+
+  [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:2.7.3:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
+    name = "Ruby"
+    purl = "pkg:generic/ruby@2.7.3?checksum=8925a95e31d8f2c81749025a52a544ea1d05dad18794e6828709268b92e55338&download_url=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.3.tar.gz"
+    sha256 = "79ea11d512d988b261d4168ee3f2a189bc7cc9c1208f588c8515a360b8b3a96f"
+    source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.3.tar.gz"
+    source_sha256 = "8925a95e31d8f2c81749025a52a544ea1d05dad18794e6828709268b92e55338"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_2.7.3_linux_x64_bionic_79ea11d5.tgz"
+    version = "2.7.3"
+
+  [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:2.7.4:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
+    name = "Ruby"
+    purl = "pkg:generic/ruby@2.7.4?checksum=3043099089608859fc8cce7f9fdccaa1f53a462457e3838ec3b25a7d609fbc5b&download_url=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.4.tar.gz"
+    sha256 = "e676146697b82d5c93ebbfb2a3a7991385c940c322065c15730b57161b0311a5"
+    source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.4.tar.gz"
+    source_sha256 = "3043099089608859fc8cce7f9fdccaa1f53a462457e3838ec3b25a7d609fbc5b"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_2.7.4_linux_x64_bionic_e6761466.tgz"
+    version = "2.7.4"
 
   [[metadata.dependencies]]
     cpe = "cpe:2.3:a:ruby-lang:ruby:3.0.1:*:*:*:*:*:*:*"
