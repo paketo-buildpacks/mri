@@ -1,8 +1,8 @@
 api = "0.5"
 
 [buildpack]
-  homepage = "https://github.com/paketo-buildpacks/mri"
   id = "paketo-buildpacks/mri"
+  homepage = "https://github.com/paketo-buildpacks/mri"
   name = "Paketo MRI Buildpack"
 
 [metadata]
