@@ -92,6 +92,8 @@ func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.
 			logger.Process("Reusing cached layer %s", mriLayer.Path)
 			logger.Break()
 
+			mriLayer.Launch, mriLayer.Build, mriLayer.Cache = launch, build, build
+
 			return packit.BuildResult{
 				Layers: []packit.Layer{mriLayer},
 				Build:  buildMetadata,
