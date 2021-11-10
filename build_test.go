@@ -523,6 +523,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			err := ioutil.WriteFile(filepath.Join(layersDir, "mri.toml"), []byte("[metadata]\ndependency-sha = \"some-sha\"\n"), 0600)
 			Expect(err).NotTo(HaveOccurred())
 
+			entryResolver.MergeLayerTypesCall.Returns.Launch = false
+			entryResolver.MergeLayerTypesCall.Returns.Build = true
+
 			dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{
 				ID:     "ruby",
 				Name:   "Ruby",
@@ -531,7 +534,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("exits build process early", func() {
-			_, err := build(packit.BuildContext{
+			result, err := build(packit.BuildContext{
 				CNBPath: cnbDir,
 				Stack:   "some-stack",
 				BuildpackInfo: packit.BuildpackInfo{
@@ -553,6 +556,39 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Layers: packit.Layers{Path: layersDir},
 			})
 			Expect(err).NotTo(HaveOccurred())
+			Expect(result).To(Equal(packit.BuildResult{
+				Layers: []packit.Layer{
+					{
+						Name:             "mri",
+						Path:             filepath.Join(layersDir, "mri"),
+						SharedEnv:        packit.Environment{},
+						BuildEnv:         packit.Environment{},
+						LaunchEnv:        packit.Environment{},
+						ProcessLaunchEnv: map[string]packit.Environment{},
+						Build:            true,
+						Launch:           false,
+						Cache:            true,
+						Metadata: map[string]interface{}{
+							mri.DepKey: "some-sha",
+						},
+					},
+				},
+				Build: packit.BuildMetadata{
+					BOM: []packit.BOMEntry{
+						{
+							Name: "mri",
+							Metadata: packit.BOMMetadata{
+								Version: "mri-dependency-version",
+								Checksum: packit.BOMChecksum{
+									Algorithm: packit.SHA256,
+									Hash:      "mri-dependency-sha",
+								},
+								URI: "mri-dependency-uri",
+							},
+						},
+					},
+				},
+			}))
 
 			Expect(dependencyManager.GenerateBillOfMaterialsCall.Receives.Dependencies).To(Equal([]postal.Dependency{{
 				ID:     "mri",
