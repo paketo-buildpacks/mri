@@ -95,6 +95,19 @@ api = "0.6"
     uri = "https://deps.paketo.io/ruby/ruby_3.0.3_linux_x64_bionic_ce7ad438.tgz"
     version = "3.0.3"
 
+  [[metadata.dependencies]]
+    cpe = "cpe:2.3:a:ruby-lang:ruby:3.1.0:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
+    name = "Ruby"
+    purl = "pkg:generic/ruby@3.1.0?checksum=50a0504c6edcb4d61ce6b8cfdbddaa95707195fab0ecd7b5e92654b2a9412854&download_url=https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.0.tar.gz"
+    sha256 = "29aae47de07dc65f98e77c59465cc3b89f1bfc4ab8c9f288d039957b452bf333"
+    source = "https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.0.tar.gz"
+    source_sha256 = "50a0504c6edcb4d61ce6b8cfdbddaa95707195fab0ecd7b5e92654b2a9412854"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://deps.paketo.io/ruby/ruby_3.1.0_linux_x64_bionic_29aae47d.tgz"
+    version = "3.1.0"
+
   [[metadata.dependency-constraints]]
     constraint = "2.6.*"
     id = "ruby"
@@ -107,6 +120,11 @@ api = "0.6"
 
   [[metadata.dependency-constraints]]
     constraint = "3.0.*"
+    id = "ruby"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "3.1.*"
     id = "ruby"
     patches = 2
 
