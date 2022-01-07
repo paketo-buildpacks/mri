@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver"
-	"github.com/paketo-buildpacks/packit"
-	"github.com/paketo-buildpacks/packit/chronos"
-	"github.com/paketo-buildpacks/packit/pexec"
-	"github.com/paketo-buildpacks/packit/postal"
-	"github.com/paketo-buildpacks/packit/scribe"
+	"github.com/paketo-buildpacks/packit/v2"
+	"github.com/paketo-buildpacks/packit/v2/chronos"
+	"github.com/paketo-buildpacks/packit/v2/pexec"
+	"github.com/paketo-buildpacks/packit/v2/postal"
+	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
 
 //go:generate faux --interface EntryResolver --output fakes/entry_resolver.go
@@ -25,7 +25,7 @@ type EntryResolver interface {
 //go:generate faux --interface DependencyManager --output fakes/dependency_manager.go
 type DependencyManager interface {
 	Resolve(path, id, version, stack string) (postal.Dependency, error)
-	Install(dependency postal.Dependency, cnbPath, layerPath string) error
+	Deliver(dependency postal.Dependency, cnbPath, layerPath, platformPath string) error
 	GenerateBillOfMaterials(dependencies ...postal.Dependency) []packit.BOMEntry
 }
 
@@ -69,11 +69,16 @@ func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.
 			logger.Break()
 		}
 
+		logger.Debug.Process("Getting the layer associated with MRI:")
 		mriLayer, err := context.Layers.Get(MRI)
 		if err != nil {
 			return packit.BuildResult{}, err
 		}
+		logger.Debug.Subprocess(mriLayer.Path)
+		logger.Debug.Break()
 
+		logger.Debug.Process("Generating the SBOM")
+		logger.Debug.Break()
 		bom := dependencies.GenerateBillOfMaterials(dependency)
 		launch, build := entries.MergeLayerTypes("mri", context.Plan.Entries)
 
@@ -112,7 +117,9 @@ func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.
 
 		logger.Subprocess("Installing MRI %s", dependency.Version)
 		duration, err := clock.Measure(func() error {
-			return dependencies.Install(dependency, context.CNBPath, mriLayer.Path)
+			logger.Debug.Subprocess("Installation path: %s", mriLayer.Path)
+			logger.Debug.Subprocess("Source URI: %s", dependency.URI)
+			return dependencies.Deliver(dependency, context.CNBPath, mriLayer.Path, context.Platform.Path)
 		})
 		if err != nil {
 			return packit.BuildResult{}, err
@@ -126,6 +133,8 @@ func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.
 			"built_at": clock.Now().Format(time.RFC3339Nano),
 		}
 
+		logger.Debug.Process("Adding %s to the $PATH", filepath.Join(mriLayer.Path, "bin"))
+		logger.Debug.Break()
 		os.Setenv("PATH", fmt.Sprintf("%s:%s", filepath.Join(mriLayer.Path, "bin"), os.Getenv("PATH")))
 
 		buffer := bytes.NewBuffer(nil)

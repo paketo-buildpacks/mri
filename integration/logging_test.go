@@ -86,6 +86,57 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 			))
 		})
 
+		context("when the BP_LOG_LEVEL env var is set to DEBUG", func() {
+			it("logs denote the logger is set to DEBUG level", func() {
+				var err error
+				source, err = occam.Source(filepath.Join("testdata", "simple_app"))
+				Expect(err).NotTo(HaveOccurred())
+
+				var logs fmt.Stringer
+				image, logs, err = pack.WithNoColor().Build.
+					WithPullPolicy("never").
+					WithBuildpacks(
+						settings.Buildpacks.MRI.Online,
+						settings.Buildpacks.BuildPlan.Online,
+					).
+					WithEnv(map[string]string{
+						"BP_MRI_VERSION": "2.7.x",
+						"BP_LOG_LEVEL":   "DEBUG",
+					}).
+					Execute(name, source)
+				Expect(err).ToNot(HaveOccurred(), logs.String)
+
+				Expect(logs).To(ContainLines(
+					MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
+					"  Resolving MRI version",
+					"    Candidate version sources (in priority order):",
+					"      BP_MRI_VERSION -> \"2.7.x\"",
+					"      <unknown>      -> \"\"",
+					"",
+					MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
+					"",
+					"  Getting the layer associated with MRI:",
+					"    /layers/paketo-buildpacks_mri/mri",
+					"",
+					"  Generating the SBOM",
+					"",
+					"  Executing build process",
+					MatchRegexp(`    Installing MRI 2\.7\.\d+`),
+					"    Installation path: /layers/paketo-buildpacks_mri/mri",
+					MatchRegexp(`    Source URI\: https\:\/\/deps\.paketo\.io\/ruby\/ruby_2\.7\.\d+_linux_x64_bionic_.*\.tgz`),
+					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
+					"",
+					"  Adding /layers/paketo-buildpacks_mri/mri/bin to the $PATH",
+					"",
+					"  Configuring build environment",
+					MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+					"",
+					"  Configuring launch environment",
+					MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				))
+			})
+		})
+
 		context("when the app contains a buildpack.yml", func() {
 			it("logs that the buildpack.yml is deprecated", func() {
 				var err error
