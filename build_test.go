@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/paketo-buildpacks/mri"
 	"github.com/paketo-buildpacks/mri/fakes"
@@ -32,7 +31,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		layersDir string
 		cnbDir    string
 		clock     chronos.Clock
-		timeStamp time.Time
 		buffer    *bytes.Buffer
 
 		entryResolver     *fakes.EntryResolver
@@ -99,10 +97,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			},
 		}
 
-		timeStamp = time.Now()
-		clock = chronos.NewClock(func() time.Time {
-			return timeStamp
-		})
+		clock = chronos.DefaultClock
 
 		buffer = bytes.NewBuffer(nil)
 		logEmitter := scribe.NewEmitter(buffer)
@@ -160,7 +155,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					Cache:            false,
 					Metadata: map[string]interface{}{
 						mri.DepKey: "",
-						"built_at": timeStamp.Format(time.RFC3339Nano),
 					},
 				},
 			},
@@ -273,7 +267,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Cache:            false,
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
-							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
@@ -348,7 +341,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Cache:            false,
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
-							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
@@ -487,7 +479,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 						Cache:            true,
 						Metadata: map[string]interface{}{
 							mri.DepKey: "",
-							"built_at": timeStamp.Format(time.RFC3339Nano),
 						},
 					},
 				},
