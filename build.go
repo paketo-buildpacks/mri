@@ -129,8 +129,7 @@ func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.
 		logger.Break()
 
 		mriLayer.Metadata = map[string]interface{}{
-			DepKey:     dependency.SHA256,
-			"built_at": clock.Now().Format(time.RFC3339Nano),
+			DepKey: dependency.SHA256,
 		}
 
 		logger.Debug.Process("Adding %s to the $PATH", filepath.Join(mriLayer.Path, "bin"))
