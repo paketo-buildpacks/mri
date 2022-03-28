@@ -1,13 +1,14 @@
 name: Auto-Merge
 
 on:
-  check_suite:
-    types: [completed]
+  pull_request_review:
+    types:
+    - submitted
 
 jobs:
   automerge:
     name: Merge or Rebase
-    if: ${{ github.event.review.user.login == 'paketo-bot-reviewer' }}
+    # if: ${{ github.event.review.user.login == 'paketo-bot-reviewer' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

@@ -2,7 +2,7 @@ name: Approve Bot PRs
 
 on:
   workflow_run:
-    workflows: ["Test Pull Request"]
+    workflows: ["Test Pull Request","Set / Validate PR Labels"]
     types:
     - completed
 
