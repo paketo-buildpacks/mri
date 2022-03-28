@@ -7,7 +7,7 @@ import (
 
 	"github.com/paketo-buildpacks/mri"
 	"github.com/paketo-buildpacks/mri/fakes"
-	"github.com/paketo-buildpacks/packit"
+	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"

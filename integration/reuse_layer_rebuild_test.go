@@ -91,16 +91,24 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.7.x\"",
 				"      <unknown>      -> \"\"",
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.\d+\.\d+`),
 				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
@@ -133,9 +141,13 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.7.x\"",
 				"      <unknown>      -> \"\"",
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				MatchRegexp(fmt.Sprintf("  Reusing cached layer /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
 
@@ -152,7 +164,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Eventually(secondContainer).Should(BeAvailable())
 			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 2\.7\.\d+`)).OnPort(8080))
 
-			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).To(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
+			Expect(secondImage.Buildpacks[0].Layers["mri"].SHA).To(Equal(firstImage.Buildpacks[0].Layers["mri"].SHA))
 		})
 	})
 
@@ -195,16 +207,24 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.7.x\"",
 				"      <unknown>      -> \"\"",
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.7\.\d+`),
 				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
@@ -238,16 +258,24 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.6.x\"",
 				"      <unknown>      -> \"\"",
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.6\.\d+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.6\.\d+`),
 				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.6\.\d+:/layers/%s/mri/lib/ruby/gems/2\.6\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.6\.\d+:/layers/%s/mri/lib/ruby/gems/2\.6\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
@@ -265,7 +293,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			Eventually(secondContainer).Should(BeAvailable())
 			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 2\.6\.\d+`)).OnPort(8080))
 
-			Expect(secondImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].Metadata["built_at"]))
+			Expect(secondImage.Buildpacks[0].Layers["mri"].SHA).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].SHA))
 		})
 	})
 }
