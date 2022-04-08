@@ -242,7 +242,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			// Second pack build
 			secondImage, logs, err = build.
-				WithEnv(map[string]string{"BP_MRI_VERSION": "2.6.x"}).
+				WithEnv(map[string]string{"BP_MRI_VERSION": "3.0.x"}).
 				Execute(name, source)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -256,28 +256,28 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      BP_MRI_VERSION -> \"2.6.x\"",
+				"      BP_MRI_VERSION -> \"3.0.x\"",
 				"      <unknown>      -> \"\"",
 			))
 
 			Expect(logs).To(ContainLines(
-				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.6\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.0\.\d+`),
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Executing build process",
-				MatchRegexp(`    Installing MRI 2\.6\.\d+`),
+				MatchRegexp(`    Installing MRI 3\.0\.\d+`),
 				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.6\.\d+:/layers/%s/mri/lib/ruby/gems/2\.6\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.6\.\d+:/layers/%s/mri/lib/ruby/gems/2\.6\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
 
 			secondContainer, err = docker.Container.Run.
@@ -291,7 +291,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			containerIDs[secondContainer.ID] = struct{}{}
 
 			Eventually(secondContainer).Should(BeAvailable())
-			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 2\.6\.\d+`)).OnPort(8080))
+			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 3\.0\.\d+`)).OnPort(8080))
 
 			Expect(secondImage.Buildpacks[0].Layers["mri"].SHA).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].SHA))
 		})

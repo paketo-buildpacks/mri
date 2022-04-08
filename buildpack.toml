@@ -18,32 +18,6 @@ api = "0.6"
     ruby = "2.7.*"
 
   [[metadata.dependencies]]
-    cpe = "cpe:2.3:a:ruby-lang:ruby:2.6.8:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
-    name = "Ruby"
-    purl = "pkg:generic/ruby@2.6.8?checksum=1807b78577bc08596a390e8a41aede37b8512190e05c133b17d0501791a8ca6d&download_url=https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.8.tar.gz"
-    sha256 = "188b0ad5b9e88250e77b0a876d0a24e1879ffcabdaee90a01fd23dc14d162a25"
-    source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.8.tar.gz"
-    source_sha256 = "1807b78577bc08596a390e8a41aede37b8512190e05c133b17d0501791a8ca6d"
-    stacks = ["io.buildpacks.stacks.bionic"]
-    uri = "https://deps.paketo.io/ruby/ruby_2.6.8_linux_x64_bionic_188b0ad5.tgz"
-    version = "2.6.8"
-
-  [[metadata.dependencies]]
-    cpe = "cpe:2.3:a:ruby-lang:ruby:2.6.9:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
-    name = "Ruby"
-    purl = "pkg:generic/ruby@2.6.9?checksum=eb7bae7aac64bf9eb2153710a4cafae450ccbb62ae6f63d573e1786178b0efbb&download_url=https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.9.tar.gz"
-    sha256 = "2b731279e0601c312c37293df877f4d9deb6c51391ba0ef3920bea9722e617bf"
-    source = "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.9.tar.gz"
-    source_sha256 = "eb7bae7aac64bf9eb2153710a4cafae450ccbb62ae6f63d573e1786178b0efbb"
-    stacks = ["io.buildpacks.stacks.bionic"]
-    uri = "https://deps.paketo.io/ruby/ruby_2.6.9_linux_x64_bionic_2b731279.tgz"
-    version = "2.6.9"
-
-  [[metadata.dependencies]]
     cpe = "cpe:2.3:a:ruby-lang:ruby:2.7.4:*:*:*:*:*:*:*"
     id = "ruby"
     licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
@@ -120,11 +94,6 @@ api = "0.6"
     stacks = ["io.buildpacks.stacks.bionic"]
     uri = "https://deps.paketo.io/ruby/ruby_3.1.1_linux_x64_bionic_2b27e266.tgz"
     version = "3.1.1"
-
-  [[metadata.dependency-constraints]]
-    constraint = "2.6.*"
-    id = "ruby"
-    patches = 2
 
   [[metadata.dependency-constraints]]
     constraint = "2.7.*"
