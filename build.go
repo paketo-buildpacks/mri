@@ -13,28 +13,42 @@ import (
 	"github.com/paketo-buildpacks/packit/v2/chronos"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
 	"github.com/paketo-buildpacks/packit/v2/postal"
+	"github.com/paketo-buildpacks/packit/v2/sbom"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
 
 //go:generate faux --interface EntryResolver --output fakes/entry_resolver.go
+//go:generate faux --interface DependencyManager --output fakes/dependency_manager.go
+//go:generate faux --interface Executable --output fakes/executable.go
+//go:generate faux --interface SBOMGenerator --output fakes/sbom_generator.go
+
 type EntryResolver interface {
 	Resolve(string, []packit.BuildpackPlanEntry, []interface{}) (packit.BuildpackPlanEntry, []packit.BuildpackPlanEntry)
 	MergeLayerTypes(string, []packit.BuildpackPlanEntry) (launch, build bool)
 }
 
-//go:generate faux --interface DependencyManager --output fakes/dependency_manager.go
 type DependencyManager interface {
 	Resolve(path, id, version, stack string) (postal.Dependency, error)
 	Deliver(dependency postal.Dependency, cnbPath, layerPath, platformPath string) error
 	GenerateBillOfMaterials(dependencies ...postal.Dependency) []packit.BOMEntry
 }
 
-//go:generate faux --interface Executable --output fakes/executable.go
 type Executable interface {
 	Execute(pexec.Execution) error
 }
 
-func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.Emitter, clock chronos.Clock, gem Executable) packit.BuildFunc {
+type SBOMGenerator interface {
+	GenerateFromDependency(dependency postal.Dependency, dir string) (sbom.SBOM, error)
+}
+
+func Build(
+	entries EntryResolver,
+	dependencies DependencyManager,
+	gem Executable,
+	sbomGenerator SBOMGenerator,
+	logger scribe.Emitter,
+	clock chronos.Clock,
+) packit.BuildFunc {
 	return func(context packit.BuildContext) (packit.BuildResult, error) {
 		logger.Title("%s %s", context.BuildpackInfo.Name, context.BuildpackInfo.Version)
 		logger.Process("Resolving MRI version")
@@ -77,19 +91,17 @@ func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.
 		logger.Debug.Subprocess(mriLayer.Path)
 		logger.Debug.Break()
 
-		logger.Debug.Process("Generating the SBOM")
-		logger.Debug.Break()
-		bom := dependencies.GenerateBillOfMaterials(dependency)
+		legacySBOM := dependencies.GenerateBillOfMaterials(dependency)
 		launch, build := entries.MergeLayerTypes("mri", context.Plan.Entries)
 
 		var buildMetadata packit.BuildMetadata
 		if build {
-			buildMetadata.BOM = bom
+			buildMetadata.BOM = legacySBOM
 		}
 
 		var launchMetadata packit.LaunchMetadata
 		if launch {
-			launchMetadata.BOM = bom
+			launchMetadata.BOM = legacySBOM
 		}
 
 		cachedSHA, ok := mriLayer.Metadata[DepKey].(string)
@@ -127,6 +139,25 @@ func Build(entries EntryResolver, dependencies DependencyManager, logger scribe.
 
 		logger.Action("Completed in %s", duration.Round(time.Millisecond))
 		logger.Break()
+
+		logger.GeneratingSBOM(mriLayer.Path)
+		var sbomContent sbom.SBOM
+		duration, err = clock.Measure(func() error {
+			sbomContent, err = sbomGenerator.GenerateFromDependency(dependency, mriLayer.Path)
+			return err
+		})
+		if err != nil {
+			return packit.BuildResult{}, err
+		}
+
+		logger.Action("Completed in %s", duration.Round(time.Millisecond))
+		logger.Break()
+
+		logger.FormattingSBOM(context.BuildpackInfo.SBOMFormats...)
+		mriLayer.SBOM, err = sbomContent.InFormats(context.BuildpackInfo.SBOMFormats...)
+		if err != nil {
+			return packit.BuildResult{}, err
+		}
 
 		mriLayer.Metadata = map[string]interface{}{
 			DepKey: dependency.SHA256,
