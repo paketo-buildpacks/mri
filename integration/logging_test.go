@@ -71,16 +71,24 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 				"    Candidate version sources (in priority order):",
 				"      BP_MRI_VERSION -> \"2.7.x\"",
 				"      <unknown>      -> \"\"",
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Executing build process",
 				MatchRegexp(`    Installing MRI 2\.7\.\d+`),
 				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-				"",
+			))
+
+			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
 				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 			))
@@ -112,25 +120,35 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 					"    Candidate version sources (in priority order):",
 					"      BP_MRI_VERSION -> \"2.7.x\"",
 					"      <unknown>      -> \"\"",
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Getting the layer associated with MRI:",
 					"    /layers/paketo-buildpacks_mri/mri",
-					"",
-					"  Generating the SBOM",
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Executing build process",
 					MatchRegexp(`    Installing MRI 2\.7\.\d+`),
 					"    Installation path: /layers/paketo-buildpacks_mri/mri",
 					MatchRegexp(`    Source URI\: https\:\/\/deps\.paketo\.io\/ruby\/ruby_2\.7\.\d+_linux_x64_bionic_.*\.tgz`),
 					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Adding /layers/paketo-buildpacks_mri/mri/bin to the $PATH",
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Configuring build environment",
 					MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Configuring launch environment",
 					MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				))
@@ -162,19 +180,29 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 					"    Candidate version sources (in priority order):",
 					"      buildpack.yml -> \"2.7.x\"",
 					"      <unknown>     -> \"\"",
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"    WARNING: Setting the MRI version through buildpack.yml will be deprecated soon in MRI Buildpack v2.0.0.",
 					"    Please specify the version through the $BP_MRI_VERSION environment variable instead. See README.md for more information.",
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Executing build process",
 					MatchRegexp(`    Installing MRI 2\.7\.\d+`),
 					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Configuring build environment",
 					MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-					"",
+				))
+
+				Expect(logs).To(ContainLines(
 					"  Configuring launch environment",
 					MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				))
