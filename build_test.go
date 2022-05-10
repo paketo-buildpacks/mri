@@ -572,5 +572,29 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				Expect(err).To(MatchError(ContainSubstring("gem executable failed")))
 			})
 		})
+
+		context("when generating the SBOM returns an error", func() {
+			it.Before(func() {
+				buildContext.BuildpackInfo.SBOMFormats = []string{"random-format"}
+			})
+
+			it("returns an error", func() {
+				_, err := build(buildContext)
+
+				Expect(err).To(MatchError(`unsupported SBOM format: 'random-format'`))
+			})
+		})
+
+		context("when formatting the SBOM returns an error", func() {
+			it.Before(func() {
+				sbomGenerator.GenerateFromDependencyCall.Returns.Error = errors.New("failed to generate SBOM")
+			})
+
+			it("returns an error", func() {
+				_, err := build(buildContext)
+
+				Expect(err).To(MatchError(ContainSubstring("failed to generate SBOM")))
+			})
+		})
 	})
 }
