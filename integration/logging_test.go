@@ -2,7 +2,6 @@ package integration_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -161,7 +160,7 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 				source, err = occam.Source(filepath.Join("testdata", "simple_app"))
 				Expect(err).NotTo(HaveOccurred())
 
-				err = ioutil.WriteFile(filepath.Join(source, "buildpack.yml"), []byte(`{ "mri": { "version": "2.7.x" } }`), 0600)
+				err = os.WriteFile(filepath.Join(source, "buildpack.yml"), []byte(`{ "mri": { "version": "2.7.x" } }`), 0600)
 				Expect(err).NotTo(HaveOccurred())
 
 				var logs fmt.Stringer
