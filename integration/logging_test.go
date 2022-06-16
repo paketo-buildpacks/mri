@@ -127,19 +127,19 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 
 				Expect(logs).To(ContainLines(
 					"  Getting the layer associated with MRI:",
-					"    /layers/paketo-buildpacks_mri/mri",
+					fmt.Sprintf("    /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_")),
 				))
 
 				Expect(logs).To(ContainLines(
 					"  Executing build process",
 					MatchRegexp(`    Installing MRI 2\.7\.\d+`),
-					"    Installation path: /layers/paketo-buildpacks_mri/mri",
+					fmt.Sprintf("    Installation path: /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_")),
 					MatchRegexp(`    Source URI\: https\:\/\/deps\.paketo\.io\/ruby\/ruby_2\.7\.\d+_linux_x64_bionic_.*\.tgz`),
 					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 				))
 
 				Expect(logs).To(ContainLines(
-					"  Adding /layers/paketo-buildpacks_mri/mri/bin to the $PATH",
+					fmt.Sprintf("  Adding /layers/%s/mri/bin to the $PATH", strings.ReplaceAll(settings.Buildpack.ID, "/", "_")),
 				))
 
 				Expect(logs).To(ContainLines(
