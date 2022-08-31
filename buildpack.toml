@@ -5,7 +5,7 @@ api = "0.7"
   homepage = "https://github.com/paketo-buildpacks/mri"
   id = "paketo-buildpacks/mri"
   keywords = ["ruby", "mri"]
-  name = "Paketo MRI Buildpack"
+  name = "Paketo Buildpack for MRI"
   sbom-formats = ["application/vnd.cyclonedx+json", "application/spdx+json", "application/vnd.syft+json"]
 
   [[buildpack.licenses]]
