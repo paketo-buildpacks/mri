@@ -1,4 +1,4 @@
-# MRI Cloud Native Buildpack
+# Paketo Buildpack for MRI
 
 ## `gcr.io/paketo-buildpacks/mri`
 
