@@ -105,7 +105,7 @@ func Build(
 		}
 
 		cachedSHA, ok := mriLayer.Metadata[DepKey].(string)
-		if ok && cachedSHA == dependency.SHA256 {
+		if ok && cachedSHA == dependency.SHA256 { //nolint:staticcheck
 			logger.Process("Reusing cached layer %s", mriLayer.Path)
 			logger.Break()
 
@@ -160,7 +160,7 @@ func Build(
 		}
 
 		mriLayer.Metadata = map[string]interface{}{
-			DepKey: dependency.SHA256,
+			DepKey: dependency.SHA256, //nolint:staticcheck
 		}
 
 		logger.Debug.Process("Adding %s to the $PATH", filepath.Join(mriLayer.Path, "bin"))
