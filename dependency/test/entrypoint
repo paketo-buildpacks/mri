@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+readonly TESTDIR="/test"
+readonly PARENTDIR="$(cd "$(dirname "$0")" && pwd)"
+
+function main() {
+  local tarball expected_version
+
+  while [ "${#}" != 0 ]; do
+    case "${1}" in
+      --tarballPath)
+        tarball="${2}"
+        shift 2
+        ;;
+
+      --version)
+        expected_version="${2}"
+        shift 2
+        ;;
+
+      "")
+        shift
+        ;;
+
+      *)
+        echo "unknown argument \"${1}\""
+        exit 1
+    esac
+  done
+
+  if [[ -z "${tarball:-}" ]]; then
+    echo "--tarballPath is required"
+    exit 1
+  fi
+
+  if [[ -z "${expected_version:-}" ]]; then
+    echo "--version is required"
+    exit 1
+  fi
+
+  echo "Unpacking tarball..."
+  tar zxf "${tarball}"
+
+  echo "Checking tarball structure..."
+
+  if ! [ -f "${TESTDIR}/bin/ruby" ];
+  then
+    echo "missing ruby executable"
+    ls -al "${TESTDIR}"
+    exit 1
+  fi
+
+  echo "Checking ruby version..."
+
+  actual_version=$(${TESTDIR}/bin/ruby --version | cut -d' ' -f2 | sed 's/p.*//')
+  if [[ "${actual_version}" != "${expected_version}" ]]; then
+    echo "version ${actual_version} does not match expected version ${expected_version}"
+    exit 1
+  fi
+
+  # test installing a gem
+  echo "Testing  running a simple Ruby server"
+  ./bin/ruby  run.rb & server_pid=$!
+
+  succeeded=0
+  for _ in {1..5}; do
+    sleep 1
+    response="$(curl -s http://localhost:8080)"
+    if [[ $response == *"Hello from Ruby"* ]]; then
+      succeeded=1
+      break
+    fi
+    sleep 1
+  done
+
+  kill "${server_pid}"
+
+  if [[ ${succeeded} -eq 0 ]]; then
+    echo "Failed to curl server"
+    exit 1
+  fi
+  local green
+  green="\033[0;32m"
+
+  os=$(grep '^VERSION=' /etc/os-release)
+  echo -e "${green}Tests succeeded for ${tarball} on ${os}!" >&2
+  exit 0
+}
+ 
+main "${@:-}"

@@ -303,9 +303,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			entryResolver.MergeLayerTypesCall.Returns.Build = true
 
 			dependencyManager.ResolveCall.Returns.Dependency = postal.Dependency{
-				ID:     "ruby",
-				Name:   "Ruby",
-				SHA256: "some-sha",
+				ID:       "ruby",
+				Name:     "Ruby",
+				Checksum: "sha256:some-sha",
 			}
 		})
 
@@ -367,9 +367,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			}))
 
 			Expect(dependencyManager.GenerateBillOfMaterialsCall.Receives.Dependencies).To(Equal([]postal.Dependency{{
-				ID:     "mri",
-				Name:   "MRI",
-				SHA256: "some-sha",
+				ID:       "mri",
+				Name:     "MRI",
+				Checksum: "sha256:some-sha",
 			}}))
 
 			Expect(dependencyManager.DeliverCall.CallCount).To(Equal(0))
