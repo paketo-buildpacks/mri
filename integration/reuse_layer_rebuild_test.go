@@ -105,12 +105,14 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			firstContainer, err = docker.Container.Run.
@@ -221,12 +223,14 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			firstContainer, err = docker.Container.Run.
@@ -272,12 +276,14 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			secondContainer, err = docker.Container.Run.
