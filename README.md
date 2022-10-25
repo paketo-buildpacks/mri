@@ -77,3 +77,8 @@ The options for this setting are:
 ```shell
 $BP_LOG_LEVEL="DEBUG"
 ```
+
+## Development
+
+Paketo buildpacks are going through an uniformization of the dev experience across buildpacks,
+for now just check the [`scripts/`](scripts/) folder.
