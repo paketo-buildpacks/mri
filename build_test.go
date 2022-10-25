@@ -142,7 +142,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(layer.Path).To(Equal(filepath.Join(layersDir, "mri")))
 
 		Expect(layer.SharedEnv).To(Equal(packit.Environment{
-			"GEM_PATH.override": "/some/mri/gems/path",
+			"MALLOC_ARENA_MAX.default": "2",
+			"GEM_PATH.override":        "/some/mri/gems/path",
 		}))
 		Expect(layer.BuildEnv).To(BeEmpty())
 		Expect(layer.LaunchEnv).To(BeEmpty())
