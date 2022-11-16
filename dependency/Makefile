@@ -1,6 +1,8 @@
-.PHONY: retrieve test
+.PHONY: test
+
 retrieve:
-	@go run ./retrieval \
+	@cd retrieval; \
+	go run main.go \
 		--buildpackTomlPath "${buildpackTomlPath}" \
 		--output "${output}"
 

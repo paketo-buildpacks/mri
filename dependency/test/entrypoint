@@ -2,6 +2,7 @@
 
 set -eu
 set -o pipefail
+shopt -s inherit_errexit
 
 readonly TESTDIR="/test"
 readonly PARENTDIR="$(cd "$(dirname "$0")" && pwd)"
@@ -61,8 +62,7 @@ function main() {
     exit 1
   fi
 
-  # test installing a gem
-  echo "Testing  running a simple Ruby server"
+  echo "Testing running a simple Ruby server"
   ./bin/ruby  run.rb & server_pid=$!
 
   succeeded=0

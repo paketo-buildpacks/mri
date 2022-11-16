@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-
-parent_dir="$(cd "$(dirname "$0")" && pwd)"
+shopt -s inherit_errexit
 
 main() {
   local tarball_path version

@@ -2,6 +2,7 @@
 
 set -eu
 set -o pipefail
+shopt -s inherit_errexit
 
 DEST_DIR=$(mktemp -d)
 
@@ -59,7 +60,7 @@ function main() {
   major=$(echo "${version%.*}" | cut -d '.' -f1)
   minor=$(echo "${version%.*}" | cut -d '.' -f2)
   if [[ "${target}" == "jammy" ]] && [[ ${major} -lt 3 || (${major} -eq 3 && ${minor} -lt 1) ]]; then
-    echo "version ${version} cannot be compiled on jammy, only 3.0.0 and above"
+    echo "version ${version} cannot be compiled on jammy, only 3.1.0 and above"
     exit 1
   fi
 
