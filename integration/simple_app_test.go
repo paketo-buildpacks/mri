@@ -81,7 +81,7 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 		// This test is not currently applicable on jammy because currently Jammy support
 		// only applies to one version of Ruby (version 3.1 and above)
 		// This condition can be removed when multiple versions of Ruby are supported on Jammy (e.g. 3.0 or 3.2)
-		if builder.BuilderName != "paketobuildpacks/builder-jammy-buildpackless-base" {
+		if builder.LocalInfo.Stack != "io.buildpacks.stacks.jammy" {
 			context("using an older version of Ruby", func() {
 				it("pack builds and runs the app successfully", func() {
 					var err error
