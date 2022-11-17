@@ -10,6 +10,7 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/paketo-buildpacks/packit/v2"
+	"github.com/paketo-buildpacks/packit/v2/cargo"
 	"github.com/paketo-buildpacks/packit/v2/chronos"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
 	"github.com/paketo-buildpacks/packit/v2/postal"
@@ -105,8 +106,14 @@ func Build(
 			launchMetadata.BOM = legacySBOM
 		}
 
-		cachedSHA, ok := mriLayer.Metadata[DepKey].(string)
-		if ok && cachedSHA == dependency.SHA256 { //nolint:staticcheck
+		cachedChecksum, ok := mriLayer.Metadata[DepKey].(string)
+
+		dependencyChecksum := dependency.Checksum
+		if dependency.SHA256 != "" {
+			dependencyChecksum = dependency.SHA256
+		}
+
+		if ok && cargo.Checksum(dependencyChecksum).MatchString(cachedChecksum) {
 			logger.Process("Reusing cached layer %s", mriLayer.Path)
 			logger.Break()
 
@@ -161,7 +168,7 @@ func Build(
 		}
 
 		mriLayer.Metadata = map[string]interface{}{
-			DepKey: dependency.SHA256, //nolint:staticcheck
+			DepKey: dependency.Checksum,
 		}
 
 		logger.Debug.Process("Adding %s to the $PATH", filepath.Join(mriLayer.Path, "bin"))

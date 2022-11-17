@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+shopt -s inherit_errexit
+
+DEST_DIR=$(mktemp -d)
+
+function main() {
+  local version output_dir target upstream_tarball working_dir
+  version=""
+  output_dir=""
+  target=""
+  upstream_tarball=""
+  working_dir=$(mktemp -d)
+
+  while [ "${#}" != 0 ]; do
+    case "${1}" in
+      --version)
+        version="${2}"
+        shift 2
+        ;;
+
+      --outputDir)
+        output_dir="${2}"
+        shift 2
+        ;;
+
+      --target)
+        target="${2}"
+        shift 2
+        ;;
+
+      "")
+        shift
+        ;;
+
+      *)
+        echo "unknown argument \"${1}\""
+        exit 1
+    esac
+  done
+
+  if [[ "${version}" == "" ]]; then
+    echo "--version is required"
+    exit 1
+  fi
+
+  if [[ "${output_dir}" == "" ]]; then
+    echo "--outputDir is required"
+    exit 1
+  fi
+
+  if [[ "${target}" == "" ]]; then
+    echo "--target is required"
+    exit 1
+  fi
+
+  # Only Ruby versions >= 3.1.0 work on Jammy
+  major=$(echo "${version%.*}" | cut -d '.' -f1)
+  minor=$(echo "${version%.*}" | cut -d '.' -f2)
+  if [[ "${target}" == "jammy" ]] && [[ ${major} -lt 3 || (${major} -eq 3 && ${minor} -lt 1) ]]; then
+    echo "version ${version} cannot be compiled on jammy, only 3.1.0 and above"
+    exit 1
+  fi
+
+  echo "version=${version}"
+  echo "output_dir=${output_dir}"
+  echo "target=${target}"
+  pushd "${working_dir}" > /dev/null
+    major_minor_version=$(cut -d '.' -f 1,2 <<< "${version}")
+    upstream_tarball="https://cache.ruby-lang.org/pub/ruby/${major_minor_version}/ruby-${version}.tar.gz"
+
+    echo "Downloading upstream tarball from ${upstream_tarball}"
+
+    curl "${upstream_tarball}" \
+      --silent \
+      --fail \
+      --output upstream.tgz
+
+    tar --extract \
+      --file upstream.tgz
+
+    pushd "ruby-${version}" > /dev/null
+      echo "Running Ruby's ./configure script"
+
+      ./configure \
+      --enable-load-relative \
+      --disable-install-doc \
+      --prefix="${DEST_DIR}"
+
+      echo "Running make install"
+      make install
+    popd > /dev/null
+  popd > /dev/null
+
+  echo "Tarring outputdir"
+  pushd "${DEST_DIR}" > /dev/null
+    tar --create \
+      --gzip \
+      --verbose \
+      --hard-dereference \
+      --file "${output_dir}/temp.tgz" \
+      .
+  popd > /dev/null
+
+  pushd "${output_dir}" > /dev/null
+    local sha256
+    sha256=$(sha256sum temp.tgz)
+    sha256="${sha256:0:64}"
+
+    output_tarball_name="ruby_${version}_linux_x64_${target}_${sha256:0:8}.tgz"
+
+    echo "Building tarball ${output_tarball_name}"
+
+    mv temp.tgz "${output_tarball_name}"
+    echo "sha256:${sha256}" > "${output_tarball_name}.checksum"
+  popd > /dev/null
+}
+
+main "${@:-}"
