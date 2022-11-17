@@ -74,7 +74,7 @@ func testOffline(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(container).Should(BeAvailable(), logs.String())
-			Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 2\.7\.\d+`)).OnPort(8080))
+			Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.1\.\d+`)).OnPort(8080))
 		})
 	})
 }

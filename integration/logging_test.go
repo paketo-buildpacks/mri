@@ -59,7 +59,7 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 					settings.Buildpacks.BuildPlan.Online,
 				).
 				WithEnv(map[string]string{
-					"BP_MRI_VERSION": "2.7.x",
+					"BP_MRI_VERSION": "3.1.x",
 				}).
 				Execute(name, source)
 			Expect(err).ToNot(HaveOccurred(), logs.String)
@@ -68,29 +68,29 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      BP_MRI_VERSION -> \"2.7.x\"",
+				"      BP_MRI_VERSION -> \"3.1.x\"",
 				"      <unknown>      -> \"\"",
 			))
 
 			Expect(logs).To(ContainLines(
-				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.1\.\d+`),
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Executing build process",
-				MatchRegexp(`    Installing MRI 2\.7\.\d+`),
+				MatchRegexp(`    Installing MRI 3\.1\.\d+`),
 				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 		})
@@ -109,7 +109,7 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 						settings.Buildpacks.BuildPlan.Online,
 					).
 					WithEnv(map[string]string{
-						"BP_MRI_VERSION": "2.7.x",
+						"BP_MRI_VERSION": "3.1.x",
 						"BP_LOG_LEVEL":   "DEBUG",
 					}).
 					Execute(name, source)
@@ -119,12 +119,12 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 					MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 					"  Resolving MRI version",
 					"    Candidate version sources (in priority order):",
-					"      BP_MRI_VERSION -> \"2.7.x\"",
+					"      BP_MRI_VERSION -> \"3.1.x\"",
 					"      <unknown>      -> \"\"",
 				))
 
 				Expect(logs).To(ContainLines(
-					MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 2\.7\.\d+`),
+					MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.1\.\d+`),
 				))
 
 				Expect(logs).To(ContainLines(
@@ -134,9 +134,9 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 
 				Expect(logs).To(ContainLines(
 					"  Executing build process",
-					MatchRegexp(`    Installing MRI 2\.7\.\d+`),
+					MatchRegexp(`    Installing MRI 3\.1\.\d+`),
 					fmt.Sprintf("    Installation path: /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_")),
-					MatchRegexp(`    Source URI\: https\:\/\/deps\.paketo\.io\/ruby\/ruby_2\.7\.\d+_linux_x64_bionic_.*\.tgz`),
+					MatchRegexp(`    Source URI\: https\:\/\/deps\.paketo\.io\/ruby\/ruby_3\.1\.\d+_linux_x64_bionic_.*\.tgz`),
 					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 				))
 
@@ -146,13 +146,13 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 
 				Expect(logs).To(ContainLines(
 					"  Configuring build environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 					`    MALLOC_ARENA_MAX -> "2"`,
 				))
 
 				Expect(logs).To(ContainLines(
 					"  Configuring launch environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 					`    MALLOC_ARENA_MAX -> "2"`,
 				))
 			})
@@ -164,7 +164,7 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 				source, err = occam.Source(filepath.Join("testdata", "simple_app"))
 				Expect(err).NotTo(HaveOccurred())
 
-				err = os.WriteFile(filepath.Join(source, "buildpack.yml"), []byte(`{ "mri": { "version": "2.7.x" } }`), 0600)
+				err = os.WriteFile(filepath.Join(source, "buildpack.yml"), []byte(`{ "mri": { "version": "3.1.x" } }`), 0600)
 				Expect(err).NotTo(HaveOccurred())
 
 				var logs fmt.Stringer
@@ -181,12 +181,12 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 					MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 					"  Resolving MRI version",
 					"    Candidate version sources (in priority order):",
-					"      buildpack.yml -> \"2.7.x\"",
+					"      buildpack.yml -> \"3.1.x\"",
 					"      <unknown>     -> \"\"",
 				))
 
 				Expect(logs).To(ContainLines(
-					MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 2\.7\.\d+`),
+					MatchRegexp(`    Selected MRI version \(using buildpack\.yml\): 3\.1\.\d+`),
 				))
 
 				Expect(logs).To(ContainLines(
@@ -196,19 +196,19 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 
 				Expect(logs).To(ContainLines(
 					"  Executing build process",
-					MatchRegexp(`    Installing MRI 2\.7\.\d+`),
+					MatchRegexp(`    Installing MRI 3\.1\.\d+`),
 					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 				))
 
 				Expect(logs).To(ContainLines(
 					"  Configuring build environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 					`    MALLOC_ARENA_MAX -> "2"`,
 				))
 
 				Expect(logs).To(ContainLines(
 					"  Configuring launch environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/2\.7\.\d+:/layers/%s/mri/lib/ruby/gems/2\.7\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 					`    MALLOC_ARENA_MAX -> "2"`,
 				))
 			})
