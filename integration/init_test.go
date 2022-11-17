@@ -37,12 +37,15 @@ var settings struct {
 	}
 }
 
+var builder occam.Builder
+
 func TestIntegration(t *testing.T) {
 	// Do not truncate Gomega matcher output
 	// The buildpack output text can be large and we often want to see all of it.
 	format.MaxLength = 0
 
 	Expect := NewWithT(t).Expect
+	pack := occam.NewPack()
 
 	root, err := filepath.Abs("./..")
 	Expect(err).ToNot(HaveOccurred())
@@ -78,6 +81,9 @@ func TestIntegration(t *testing.T) {
 	Expect(err).ToNot(HaveOccurred())
 
 	SetDefaultEventuallyTimeout(5 * time.Second)
+
+	builder, err = pack.Builder.Inspect.Execute()
+	Expect(err).NotTo(HaveOccurred())
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}), spec.Parallel())
 	suite("Logging", testLogging)
