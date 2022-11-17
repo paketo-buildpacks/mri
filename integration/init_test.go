@@ -1,7 +1,6 @@
 package integration_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -10,7 +9,6 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/paketo-buildpacks/occam"
-	"github.com/paketo-buildpacks/packit/v2/pexec"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
 
@@ -39,13 +37,7 @@ var settings struct {
 	}
 }
 
-var builder struct {
-	Local struct {
-		Stack struct {
-			ID string `json:"id"`
-		} `json:"stack"`
-	} `json:"local_info"`
-}
+var builder occam.Builder
 
 func TestIntegration(t *testing.T) {
 	// Do not truncate Gomega matcher output
@@ -53,6 +45,7 @@ func TestIntegration(t *testing.T) {
 	format.MaxLength = 0
 
 	Expect := NewWithT(t).Expect
+	pack := occam.NewPack()
 
 	root, err := filepath.Abs("./..")
 	Expect(err).ToNot(HaveOccurred())
@@ -89,14 +82,8 @@ func TestIntegration(t *testing.T) {
 
 	SetDefaultEventuallyTimeout(5 * time.Second)
 
-	buf := bytes.NewBuffer(nil)
-	cmd := pexec.NewExecutable("pack")
-	Expect(cmd.Execute(pexec.Execution{
-		Args:   []string{"builder", "inspect", "--output", "json"},
-		Stdout: buf,
-		Stderr: buf,
-	})).To(Succeed(), buf.String())
-	Expect(json.Unmarshal(buf.Bytes(), &builder)).To(Succeed(), buf.String())
+	builder, err = pack.Builder.Inspect.Execute()
+	Expect(err).NotTo(HaveOccurred())
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}), spec.Parallel())
 	suite("Logging", testLogging)

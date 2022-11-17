@@ -78,9 +78,10 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 			Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.1\.\d+`)).OnPort(8080))
 		})
 
-		// this test is not currently applicable because currently Jammy support
-		// only applies to Ruby version 3.1 and above.
-		if !strings.Contains(builder.Local.Stack.ID, "jammy") {
+		// This test is not currently applicable on jammy because currently Jammy support
+		// only applies to one version of Ruby (version 3.1 and above)
+		// This condition can be removed when multiple versions of Ruby are supported on Jammy (e.g. 3.0 or 3.2)
+		if builder.BuilderName != "paketobuildpacks/builder-jammy-buildpackless-base" {
 			context("using an older version of Ruby", func() {
 				it("pack builds and runs the app successfully", func() {
 					var err error
