@@ -1,9 +1,6 @@
-FROM ubuntu:jammy
+FROM paketobuildpacks/build-jammy-full
 
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get -y update && \
-  apt-get -y install openssl libffi-dev libssl-dev autoconf bison gperf ruby zlib1g-dev libyaml-dev curl build-essential
 
 COPY entrypoint /entrypoint
 
