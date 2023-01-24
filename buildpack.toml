@@ -122,6 +122,32 @@ api = "0.7"
     uri = "https://artifacts.paketo.io/ruby/ruby_3.1.3_linux_x64_bionic_04ebd8eb.tgz"
     version = "3.1.3"
 
+  [[metadata.dependencies]]
+    checksum = "sha256:d099bdb0b4c5c5e238afc0f58dfb783b907831e1ec5d3ac0ac84c009b4258de5"
+    cpe = "cpe:2.3:a:ruby-lang:ruby:3.2.0:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
+    name = "Ruby"
+    purl = "pkg:generic/ruby@3.2.0?checksum=daaa78e1360b2783f98deeceb677ad900f3a36c0ffa6e2b6b19090be77abc272&download_url=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.0.tar.gz"
+    source = "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.0.tar.gz"
+    source-checksum = "sha256:daaa78e1360b2783f98deeceb677ad900f3a36c0ffa6e2b6b19090be77abc272"
+    stacks = ["io.buildpacks.stacks.jammy"]
+    uri = "https://artifacts.paketo.io/ruby/ruby_3.2.0_linux_x64_jammy_d099bdb0.tgz"
+    version = "3.2.0"
+
+  [[metadata.dependencies]]
+    checksum = "sha256:768170c870ab67ccbbe96d4192bf3d57362875e978727ea778a9bd9ce155f9e2"
+    cpe = "cpe:2.3:a:ruby-lang:ruby:3.2.0:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
+    name = "Ruby"
+    purl = "pkg:generic/ruby@3.2.0?checksum=daaa78e1360b2783f98deeceb677ad900f3a36c0ffa6e2b6b19090be77abc272&download_url=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.0.tar.gz"
+    source = "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.0.tar.gz"
+    source-checksum = "sha256:daaa78e1360b2783f98deeceb677ad900f3a36c0ffa6e2b6b19090be77abc272"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://artifacts.paketo.io/ruby/ruby_3.2.0_linux_x64_bionic_768170c8.tgz"
+    version = "3.2.0"
+
   [[metadata.dependency-constraints]]
     constraint = "2.7.*"
     id = "ruby"
