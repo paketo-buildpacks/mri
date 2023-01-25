@@ -170,141 +170,136 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 		})
 	})
 
-	// This test is not currently applicable on jammy because currently Jammy support
-	// only applies to one version of Ruby (version 3.1 and above)
-	// This condition can be removed when multiple versions of Ruby are supported on Jammy (e.g. 3.0 or 3.2)
-	if builder.LocalInfo.Stack.ID != "io.buildpacks.stacks.jammy" {
-		context("when an app is rebuilt and there is a change", func() {
-			it("rebuilds the layer", func() {
-				var (
-					err         error
-					logs        fmt.Stringer
-					firstImage  occam.Image
-					secondImage occam.Image
+	context("when an app is rebuilt and there is a change", func() {
+		it("rebuilds the layer", func() {
+			var (
+				err         error
+				logs        fmt.Stringer
+				firstImage  occam.Image
+				secondImage occam.Image
 
-					firstContainer  occam.Container
-					secondContainer occam.Container
+				firstContainer  occam.Container
+				secondContainer occam.Container
+			)
+
+			source, err = occam.Source(filepath.Join("testdata", "simple_app"))
+			Expect(err).NotTo(HaveOccurred())
+
+			build := pack.Build.
+				WithPullPolicy("never").
+				WithBuildpacks(
+					settings.Buildpacks.MRI.Online,
+					settings.Buildpacks.BuildPlan.Online,
 				)
 
-				source, err = occam.Source(filepath.Join("testdata", "simple_app"))
-				Expect(err).NotTo(HaveOccurred())
+			firstImage, logs, err = build.
+				WithEnv(map[string]string{"BP_MRI_VERSION": "3.1.x"}).
+				Execute(name, source)
+			Expect(err).NotTo(HaveOccurred(), logs.String)
 
-				build := pack.Build.
-					WithPullPolicy("never").
-					WithBuildpacks(
-						settings.Buildpacks.MRI.Online,
-						settings.Buildpacks.BuildPlan.Online,
-					)
+			imageIDs[firstImage.ID] = struct{}{}
 
-				firstImage, logs, err = build.
-					WithEnv(map[string]string{"BP_MRI_VERSION": "3.0.x"}).
-					Execute(name, source)
-				Expect(err).NotTo(HaveOccurred(), logs.String)
+			Expect(firstImage.Buildpacks).To(HaveLen(2))
+			Expect(firstImage.Buildpacks[0].Key).To(Equal(settings.Buildpack.ID))
+			Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
-				imageIDs[firstImage.ID] = struct{}{}
+			Expect(logs).To(ContainLines(
+				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
+				"  Resolving MRI version",
+				"    Candidate version sources (in priority order):",
+				"      BP_MRI_VERSION -> \"3.1.x\"",
+				"      <unknown>      -> \"\"",
+			))
 
-				Expect(firstImage.Buildpacks).To(HaveLen(2))
-				Expect(firstImage.Buildpacks[0].Key).To(Equal(settings.Buildpack.ID))
-				Expect(firstImage.Buildpacks[0].Layers).To(HaveKey("mri"))
+			Expect(logs).To(ContainLines(
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.1\.\d+`),
+			))
 
-				Expect(logs).To(ContainLines(
-					MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
-					"  Resolving MRI version",
-					"    Candidate version sources (in priority order):",
-					"      BP_MRI_VERSION -> \"3.0.x\"",
-					"      <unknown>      -> \"\"",
-				))
+			Expect(logs).To(ContainLines(
+				"  Executing build process",
+				MatchRegexp(`    Installing MRI 3\.1\.\d+`),
+				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
+			))
 
-				Expect(logs).To(ContainLines(
-					MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.0\.\d+`),
-				))
+			Expect(logs).To(ContainLines(
+				"  Configuring build environment",
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
+			))
 
-				Expect(logs).To(ContainLines(
-					"  Executing build process",
-					MatchRegexp(`    Installing MRI 3\.0\.\d+`),
-					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-				))
+			Expect(logs).To(ContainLines(
+				"  Configuring launch environment",
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
+			))
 
-				Expect(logs).To(ContainLines(
-					"  Configuring build environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-					`    MALLOC_ARENA_MAX -> "2"`,
-				))
+			firstContainer, err = docker.Container.Run.
+				WithEnv(map[string]string{"PORT": "8080"}).
+				WithPublish("8080").
+				WithPublishAll().
+				WithCommand("ruby run.rb").Execute(firstImage.ID)
+			Expect(err).NotTo(HaveOccurred())
 
-				Expect(logs).To(ContainLines(
-					"  Configuring launch environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.0\.\d+:/layers/%s/mri/lib/ruby/gems/3\.0\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-					`    MALLOC_ARENA_MAX -> "2"`,
-				))
+			containerIDs[firstContainer.ID] = struct{}{}
 
-				firstContainer, err = docker.Container.Run.
-					WithEnv(map[string]string{"PORT": "8080"}).
-					WithPublish("8080").
-					WithPublishAll().
-					WithCommand("ruby run.rb").Execute(firstImage.ID)
-				Expect(err).NotTo(HaveOccurred())
+			Eventually(firstContainer).Should(BeAvailable())
 
-				containerIDs[firstContainer.ID] = struct{}{}
+			// Second pack build
+			secondImage, logs, err = build.
+				WithEnv(map[string]string{"BP_MRI_VERSION": "3.2.x"}).
+				Execute(name, source)
+			Expect(err).NotTo(HaveOccurred())
 
-				Eventually(firstContainer).Should(BeAvailable())
+			imageIDs[secondImage.ID] = struct{}{}
 
-				// Second pack build
-				secondImage, logs, err = build.
-					WithEnv(map[string]string{"BP_MRI_VERSION": "3.1.x"}).
-					Execute(name, source)
-				Expect(err).NotTo(HaveOccurred())
+			Expect(secondImage.Buildpacks).To(HaveLen(2))
+			Expect(secondImage.Buildpacks[0].Key).To(Equal(settings.Buildpack.ID))
+			Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
 
-				imageIDs[secondImage.ID] = struct{}{}
+			Expect(logs).To(ContainLines(
+				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
+				"  Resolving MRI version",
+				"    Candidate version sources (in priority order):",
+				"      BP_MRI_VERSION -> \"3.2.x\"",
+				"      <unknown>      -> \"\"",
+			))
 
-				Expect(secondImage.Buildpacks).To(HaveLen(2))
-				Expect(secondImage.Buildpacks[0].Key).To(Equal(settings.Buildpack.ID))
-				Expect(secondImage.Buildpacks[0].Layers).To(HaveKey("mri"))
+			Expect(logs).To(ContainLines(
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.2\.\d+`),
+			))
 
-				Expect(logs).To(ContainLines(
-					MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
-					"  Resolving MRI version",
-					"    Candidate version sources (in priority order):",
-					"      BP_MRI_VERSION -> \"3.1.x\"",
-					"      <unknown>      -> \"\"",
-				))
+			Expect(logs).To(ContainLines(
+				"  Executing build process",
+				MatchRegexp(`    Installing MRI 3\.2\.\d+`),
+				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
+			))
 
-				Expect(logs).To(ContainLines(
-					MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.1\.\d+`),
-				))
+			Expect(logs).To(ContainLines(
+				"  Configuring build environment",
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.2\.\d+:/layers/%s/mri/lib/ruby/gems/3\.2\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
+			))
 
-				Expect(logs).To(ContainLines(
-					"  Executing build process",
-					MatchRegexp(`    Installing MRI 3\.1\.\d+`),
-					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
-				))
+			Expect(logs).To(ContainLines(
+				"  Configuring launch environment",
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.2\.\d+:/layers/%s/mri/lib/ruby/gems/3\.2\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				`    MALLOC_ARENA_MAX -> "2"`,
+			))
 
-				Expect(logs).To(ContainLines(
-					"  Configuring build environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-					`    MALLOC_ARENA_MAX -> "2"`,
-				))
+			secondContainer, err = docker.Container.Run.
+				WithCommand("ruby run.rb").
+				WithEnv(map[string]string{"PORT": "8080"}).
+				WithPublish("8080").
+				WithPublishAll().
+				Execute(secondImage.ID)
+			Expect(err).NotTo(HaveOccurred())
 
-				Expect(logs).To(ContainLines(
-					"  Configuring launch environment",
-					MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
-					`    MALLOC_ARENA_MAX -> "2"`,
-				))
+			containerIDs[secondContainer.ID] = struct{}{}
 
-				secondContainer, err = docker.Container.Run.
-					WithCommand("ruby run.rb").
-					WithEnv(map[string]string{"PORT": "8080"}).
-					WithPublish("8080").
-					WithPublishAll().
-					Execute(secondImage.ID)
-				Expect(err).NotTo(HaveOccurred())
+			Eventually(secondContainer).Should(BeAvailable())
+			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 3\.2\.\d+`)).OnPort(8080))
 
-				containerIDs[secondContainer.ID] = struct{}{}
-
-				Eventually(secondContainer).Should(BeAvailable())
-				Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 3\.1\.\d+`)).OnPort(8080))
-
-				Expect(secondImage.Buildpacks[0].Layers["mri"].SHA).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].SHA))
-			})
+			Expect(secondImage.Buildpacks[0].Layers["mri"].SHA).NotTo(Equal(firstImage.Buildpacks[0].Layers["mri"].SHA))
 		})
-	}
+	})
 }
