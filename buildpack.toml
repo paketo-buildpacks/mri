@@ -19,32 +19,6 @@ api = "0.7"
     ruby = "3.1.*"
 
   [[metadata.dependencies]]
-    checksum = "sha256:1e003b9b9753d81a076a8034bc70efbed6be6c2d25e5c62c9f50bacf5c166f25"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:2.7.7:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
-    name = "Ruby"
-    purl = "pkg:generic/ruby@2.7.7?checksum=e10127db691d7ff36402cfe88f418c8d025a3f1eea92044b162dd72f0b8c7b90&download_url=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.7.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.7.tar.gz"
-    source-checksum = "sha256:e10127db691d7ff36402cfe88f418c8d025a3f1eea92044b162dd72f0b8c7b90"
-    stacks = ["io.buildpacks.stacks.bionic"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_2.7.7_linux_x64_bionic_1e003b9b.tgz"
-    version = "2.7.7"
-
-  [[metadata.dependencies]]
-    checksum = "sha256:f0757bb4651a1804328b267c26dbe1a2e8ffcf0e1f04e20f7219ea267634d858"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:2.7.8:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["BSD-2-Clause", "BSD-2-Clause-NetBSD", "BSD-3-Clause", "BSD-3-Clause-No-Nuclear-License-2014", "Bison-exception-2.2", "GPL-2.0-only", "GPL-2.0-or-later", "MIT", "MIT-0", "Ruby", "deprecated_GPL-2.0", "deprecated_GPL-2.0+"]
-    name = "Ruby"
-    purl = "pkg:generic/ruby@2.7.8?checksum=c2dab63cbc8f2a05526108ad419efa63a67ed4074dbbcf9fc2b1ca664cb45ba0&download_url=https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.8.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.8.tar.gz"
-    source-checksum = "sha256:c2dab63cbc8f2a05526108ad419efa63a67ed4074dbbcf9fc2b1ca664cb45ba0"
-    stacks = ["io.buildpacks.stacks.bionic"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_2.7.8_linux_x64_bionic_f0757bb4.tgz"
-    version = "2.7.8"
-
-  [[metadata.dependencies]]
     checksum = "sha256:0de6dcaca9e8dd1efdcf07e400eab8a7a8f19b5b5bdf206cd8da16b59f93752c"
     cpe = "cpe:2.3:a:ruby-lang:ruby:3.0.5:*:*:*:*:*:*:*"
     id = "ruby"
@@ -173,11 +147,6 @@ api = "0.7"
     stacks = ["io.buildpacks.stacks.bionic"]
     uri = "https://artifacts.paketo.io/ruby/ruby_3.2.2_linux_x64_bionic_135d83aa.tgz"
     version = "3.2.2"
-
-  [[metadata.dependency-constraints]]
-    constraint = "2.7.*"
-    id = "ruby"
-    patches = 2
 
   [[metadata.dependency-constraints]]
     constraint = "3.0.*"
