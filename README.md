@@ -24,9 +24,9 @@ file that looks like the following:
   # is not specified, the buildpack will provide the default version, which can
   # be seen in the buildpack.toml file.
   # If you wish to request a specific version, the buildpack supports
-  # specifying a semver constraint in the form of "2.*", "2.7.*", or even
-  # "2.7.1".
-  version = "2.7.1"
+  # specifying a semver constraint in the form of "3.*", "3.2.*", or even
+  # "3.2.1".
+  version = "3.2.1"
   # The MRI buildpack supports some non-required metadata options.
   [requires.metadata]
     # Setting the build flag to true will ensure that the MRI
@@ -50,16 +50,16 @@ deprecated in MRI Buildpack v1.0.0.
 
 To migrate from using `buildpack.yml` please set the `$BP_MRI_VERSION`
 environment variable at build time either directly (ex. `pack build my-app
---env BP_MRI_VERSION=2.7.*`) or through a [`project.toml`
+--env BP_MRI_VERSION=3.2.*`) or through a [`project.toml`
 file](https://github.com/buildpacks/spec/blob/main/extensions/project-descriptor.md)
 
 ```shell
-$BP_MRI_VERSION="2.7.1"
+$BP_MRI_VERSION="3.2.1"
 ```
 This will replace the following structure in `buildpack.yml`:
 ```yaml
 mri:
-  version: 2.7.1
+  version: 3.2.1
 ```
 
 ## Logging Configurations

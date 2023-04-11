@@ -160,14 +160,14 @@ func testReleaseFetcher(t *testing.T, context spec.G, it spec.S) {
 					releases, err := releaseFetcher.GetUpstreamReleases()
 					Expect(err).To(Not(HaveOccurred()))
 					Expect(releases).To(Not(BeEmpty()))
-					Expect(releases["2.7.3"]).To(Equal(
+					Expect(releases["3.2.1"]).To(Equal(
 						components.RubyRelease{
-							Version: "2.7.3",
+							Version: "3.2.1",
 							URL: components.URL{
-								Gz: "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.3.tar.gz",
+								Gz: "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.1.tar.gz",
 							},
 							SHA256: components.SHA256{
-								Gz: "8925a95e31d8f2c81749025a52a544ea1d05dad18794e6828709268b92e55338",
+								Gz: "13d67901660ee3217dbd9dd56059346bd4212ce64a69c306ef52df64935f8dbd",
 							},
 						}))
 				})

@@ -93,7 +93,7 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 							settings.Buildpacks.BuildPlan.Online,
 						).
 						WithEnv(map[string]string{
-							"BP_MRI_VERSION": "2.7.*",
+							"BP_MRI_VERSION": "3.0.*",
 							"BP_LOG_LEVEL":   "DEBUG",
 						}).
 						Execute(name, source)
@@ -108,7 +108,7 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 					Expect(err).NotTo(HaveOccurred())
 
 					Eventually(container).Should(BeAvailable(), logs.String())
-					Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 2\.7\.\d+`)).OnPort(8080))
+					Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.0\.\d+`)).OnPort(8080))
 				})
 			})
 		}
