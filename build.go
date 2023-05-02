@@ -186,7 +186,7 @@ func Build(
 			return packit.BuildResult{}, err
 		}
 
-		mriLayer.SharedEnv.Override("GEM_PATH", strings.TrimSpace(buffer.String()))
+		mriLayer.SharedEnv.Default("GEM_PATH", strings.TrimSpace(buffer.String()))
 		mriLayer.SharedEnv.Default("MALLOC_ARENA_MAX", "2")
 
 		logger.EnvironmentVariables(mriLayer)
