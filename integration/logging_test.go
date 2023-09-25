@@ -136,7 +136,7 @@ func testLogging(t *testing.T, context spec.G, it spec.S) {
 					"  Executing build process",
 					MatchRegexp(`    Installing MRI 3\.1\.\d+`),
 					fmt.Sprintf("    Installation path: /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_")),
-					MatchRegexp(`    Source URI\: https\:\/\/artifacts\.paketo\.io\/ruby\/ruby_3\.1\.\d+_linux_x64_*_.*\.tgz`),
+					MatchRegexp(`    Source URI\: https\:\/\/\S+\/ruby\/ruby_3\.1\.\d+_linux_x64_*_.*\.tgz`),
 					MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 				))
 
