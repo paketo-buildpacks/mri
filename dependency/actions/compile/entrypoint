@@ -7,12 +7,13 @@ shopt -s inherit_errexit
 DEST_DIR=$(mktemp -d)
 
 function main() {
-  local version output_dir target upstream_tarball working_dir
+  local version output_dir target upstream_tarball working_dir configure_opts
   version=""
   output_dir=""
   target=""
   upstream_tarball=""
   working_dir=$(mktemp -d)
+  configure_opts=()
 
   while [ "${#}" != 0 ]; do
     case "${1}" in
@@ -64,6 +65,10 @@ function main() {
     exit 1
   fi
 
+  if [[ "${major}" -ge 3 ]] && [[ "${minor}" -ge 2 ]]; then
+    configure_opts+=("--enable-yjit")
+  fi
+
   echo "version=${version}"
   echo "output_dir=${output_dir}"
   echo "target=${target}"
@@ -87,7 +92,8 @@ function main() {
       ./configure \
       --enable-load-relative \
       --disable-install-doc \
-      --prefix="${DEST_DIR}"
+      --prefix="${DEST_DIR}" \
+      "${configure_opts[@]}"
 
       echo "Running make install"
       make install
