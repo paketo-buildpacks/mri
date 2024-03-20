@@ -163,6 +163,11 @@ api = "0.7"
     id = "ruby"
     patches = 2
 
+  [[metadata.dependency-constraints]]
+    constraint = "3.3.*"
+    id = "ruby"
+    patches = 2
+
 [[stacks]]
   id = "io.buildpacks.stacks.bionic"
 
