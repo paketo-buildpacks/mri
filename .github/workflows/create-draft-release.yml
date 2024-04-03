@@ -13,12 +13,11 @@ jobs:
     - name: Install crane
       run: |
         mkdir -p "${HOME}"/bin
-        echo "${HOME}/bin" >> "${GITHUB_PATH}"
-
+    echo "${HOME}/bin" >> "${GITHUB_PATH}"
         VERSION=$(curl -s "https://api.github.com/repos/google/go-containerregistry/releases/latest" | jq -r '.tag_name')
         OS=Linux
         ARCH=x86_64
-        curl -sL "https://github.com/google/go-containerregistry/releases/download/${VERSION}/go-containerregistry_${OS}_${ARCH}.tar.gz" | tar -C "${HOME}/bin/crane" -xz
+        curl "https://github.com/google/go-containerregistry/releases/download/${VERSION}/go-containerregistry_${OS}_${ARCH}.tar.gz" | tar -C "${HOME}/bin/crane" -xz
         chmod +x "${HOME}/bin/crane"
         
     - name: crane check
