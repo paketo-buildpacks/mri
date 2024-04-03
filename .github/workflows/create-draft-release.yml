@@ -13,4 +13,6 @@ jobs:
     - name: skopeo check
       run: |
         skopeo --version
-        skopeo copy --help
+        sudo apt-get update
+        sudo apt-get -y upgrade skopeo
+        skopeo --version
