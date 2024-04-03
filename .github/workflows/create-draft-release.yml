@@ -1,144 +1,16 @@
-name: Create or Update Draft Release
+name: Skopeo check
 
 on:
-  push:
-    branches:
-    - main
-  repository_dispatch:
-    types: [ version-bump ]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version of the release to cut (e.g. 1.2.3)'
-        required: false
-
-concurrency: release
+  workflow_dispatch: {}
 
 jobs:
   unit:
     name: Unit Tests
     runs-on: ubuntu-22.04
-    outputs:
-      builders: ${{ steps.builders.outputs.builders }}
     steps:
-    - name: Setup Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 'stable'
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Run Unit Tests
-      run: ./scripts/unit.sh
-    - name: Get builders from integration.json
-      id: builders
+    - name: skopeo check
       run: |
-        source "${{ github.workspace }}/scripts/.util/builders.sh"
-        builders="$(util::builders::list "${{ github.workspace }}/integration.json")"
-        printf "Output: %s\n" "${builders}"
-        printf "builders=%s\n" "${builders}" >> "$GITHUB_OUTPUT"
-
-  integration:
-    name: Integration Tests
-    runs-on: ubuntu-22.04
-    needs: unit
-    strategy:
-      matrix:
-        builder: ${{ fromJSON(needs.unit.outputs.builders) }}
-      fail-fast: false  # don't cancel all test jobs when one fails
-    steps:
-    - name: Setup Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 'stable'
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Run Integration Tests
-      run: ./scripts/integration.sh --builder ${{ matrix.builder }} --token ${{ github.token }}
-      env:
-        TMPDIR: "${{ runner.temp }}"
-
-  release:
-    name: Release
-    runs-on: ubuntu-22.04
-    needs: integration
-    steps:
-    - name: Setup Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 'stable'
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-tags: true
-    - name: Reset Draft Release
-      id: reset
-      uses: paketo-buildpacks/github-config/actions/release/reset-draft@main
-      with:
-        repo: ${{ github.repository }}
-        token: ${{ github.token }}
-    - name: Calculate Semver Tag
-      if: github.event.inputs.version == ''
-      id: semver
-      uses: paketo-buildpacks/github-config/actions/tag/calculate-semver@main
-      with:
-        repo: ${{ github.repository }}
-        token: ${{ github.token }}
-        ref-name: ${{ github.ref_name }}
-    - name: Set Release Tag
-      id: tag
-      run: |
-        tag="${{ github.event.inputs.version }}"
-        if [ -z "${tag}" ]; then
-          tag="${{ steps.semver.outputs.tag }}"
-        fi
-        echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-    - name: Package
-      run: ./scripts/package.sh --version "${{ steps.tag.outputs.tag }}"
-    - name: Create Release Notes
-      id: create-release-notes
-      uses: paketo-buildpacks/github-config/actions/release/notes@main
-      with:
-        repo: ${{ github.repository }}
-        token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
-    - name: Create Release
-      uses: paketo-buildpacks/github-config/actions/release/create@main
-      with:
-        repo: ${{ github.repository }}
-        token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
-        tag_name: v${{ steps.tag.outputs.tag }}
-        target_commitish: ${{ github.sha }}
-        name: v${{ steps.tag.outputs.tag }}
-        body: ${{ steps.create-release-notes.outputs.release_body }}
-        draft: true
-        assets: |
-          [
-            {
-              "path": "build/buildpack.tgz",
-              "name": "${{ github.event.repository.name }}-${{ steps.tag.outputs.tag }}.tgz",
-              "content_type": "application/gzip"
-            },
-            {
-              "path": "build/buildpackage.cnb",
-              "name": "${{ github.event.repository.name }}-${{ steps.tag.outputs.tag }}.cnb",
-              "content_type": "application/gzip"
-            }
-          ]
-
-  failure:
-    name: Alert on Failure
-    runs-on: ubuntu-22.04
-    needs: [ unit, integration, release ]
-    if: ${{ always() && needs.unit.result == 'failure' || needs.integration.result == 'failure' || needs.release.result == 'failure' }}
-    steps:
-    - name: File Failure Alert Issue
-      uses: paketo-buildpacks/github-config/actions/issue/file@main
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        repo: ${{ github.repository }}
-        label: "failure:release"
-        comment_if_exists: true
-        issue_title: "Failure: Create Draft Release workflow"
-        issue_body: |
-          Create Draft Release workflow [failed](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}).
-        comment_body: |
-           Another failure occurred: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
+        skopeo --version
+        skopeo copy --help
