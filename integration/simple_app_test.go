@@ -78,41 +78,6 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 			Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.1\.\d+`)).OnPort(8080))
 		})
 
-		// This test is not currently applicable on jammy because currently Jammy support
-		// only applies to one version of Ruby (version 3.1 and above)
-		if builder.LocalInfo.Stack.ID != "io.buildpacks.stacks.jammy" {
-			context("using an older version of Ruby", func() {
-				it("pack builds and runs the app successfully", func() {
-					var err error
-					var logs fmt.Stringer
-
-					image, logs, err = pack.WithNoColor().Build.
-						WithPullPolicy("never").
-						WithBuildpacks(
-							settings.Buildpacks.MRI.Online,
-							settings.Buildpacks.BuildPlan.Online,
-						).
-						WithEnv(map[string]string{
-							"BP_MRI_VERSION": "3.0.*",
-							"BP_LOG_LEVEL":   "DEBUG",
-						}).
-						Execute(name, source)
-					Expect(err).ToNot(HaveOccurred(), logs.String)
-
-					container, err = docker.Container.Run.
-						WithCommand("ruby run.rb").
-						WithEnv(map[string]string{"PORT": "8080"}).
-						WithPublish("8080").
-						WithPublishAll().
-						Execute(image.ID)
-					Expect(err).NotTo(HaveOccurred())
-
-					Eventually(container).Should(BeAvailable(), logs.String())
-					Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.0\.\d+`)).OnPort(8080))
-				})
-			})
-		}
-
 		context("validating SBOM", func() {
 			var (
 				container2 occam.Container
