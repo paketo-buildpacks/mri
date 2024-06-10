@@ -8,7 +8,7 @@ require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/Masterminds/semver v1.5.0
 	github.com/onsi/gomega v1.33.1
-	github.com/paketo-buildpacks/occam v0.18.6
+	github.com/paketo-buildpacks/occam v0.18.7
 	github.com/paketo-buildpacks/packit/v2 v2.14.0
 	github.com/sclevine/spec v1.4.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -141,13 +141,13 @@ require (
 	go.opentelemetry.io/otel v1.27.0 // indirect
 	go.opentelemetry.io/otel/metric v1.27.0 // indirect
 	go.opentelemetry.io/otel/trace v1.27.0 // indirect
-	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/mod v0.18.0 // indirect
-	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237 // indirect
 	google.golang.org/grpc v1.64.0 // indirect
