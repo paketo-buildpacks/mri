@@ -174,6 +174,32 @@ api = "0.7"
     uri = "https://artifacts.paketo.io/ruby/ruby_3.3.5_linux_x64_bionic_c8c61543.tgz"
     version = "3.3.5"
 
+  [[metadata.dependencies]]
+    checksum = "sha256:55a4cd1dcbe5ca27cf65e89a935a482c2bb2284832939266551c0ec68b437f46"
+    cpe = "cpe:2.3:a:ruby-lang:ruby:3.4.3:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["0BSD", "Ruby"]
+    name = "Ruby"
+    purl = "pkg:generic/ruby@3.4.3?checksum=55a4cd1dcbe5ca27cf65e89a935a482c2bb2284832939266551c0ec68b437f46&download_url=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.3.tar.gz"
+    source = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.3.tar.gz"
+    source-checksum = "sha256:55a4cd1dcbe5ca27cf65e89a935a482c2bb2284832939266551c0ec68b437f46"
+    stacks = ["io.buildpacks.stacks.jammy"]
+    uri = "https://artifacts.paketo.io/ruby/ruby_3.4.3_linux_x64_jammy_55a4cd1d.tgz"
+    version = "3.4.3"
+
+  [[metadata.dependencies]]
+    checksum = "sha256:55a4cd1dcbe5ca27cf65e89a935a482c2bb2284832939266551c0ec68b437f46"
+    cpe = "cpe:2.3:a:ruby-lang:ruby:3.4.3:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["0BSD", "Ruby"]
+    name = "Ruby"
+    purl = "pkg:generic/ruby@3.4.3?checksum=55a4cd1dcbe5ca27cf65e89a935a482c2bb2284832939266551c0ec68b437f46&download_url=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.3.tar.gz"
+    source = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.3.tar.gz"
+    source-checksum = "sha256:55a4cd1dcbe5ca27cf65e89a935a482c2bb2284832939266551c0ec68b437f46"
+    stacks = ["io.buildpacks.stacks.bionic"]
+    uri = "https://artifacts.paketo.io/ruby/ruby_3.4.3_linux_x64_bionic_55a4cd1d.tgz"
+    version = "3.4.3"
+
   [[metadata.dependency-constraints]]
     constraint = "3.1.*"
     id = "ruby"
@@ -188,6 +214,11 @@ api = "0.7"
     constraint = "3.3.*"
     id = "ruby"
     patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "3.4.*"
+    id = "ruby"
+    patches = 1
 
 [[stacks]]
   id = "io.buildpacks.stacks.bionic"
