@@ -41,24 +41,9 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 
 		it("retrieves all upstream releases", func() {
 			time := time.Date(2022, time.Month(11), 01, 00, 00, 00, 00, time.UTC)
-			dependencies, err := components.GenerateMetadata(release, []string{"bionic", "jammy"}, licenseRetriever, deprecationDateRetriever)
+			dependencies, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
 			Expect(err).To(Not(HaveOccurred()))
 			Expect(dependencies).To(Equal([]components.Dependency{
-				components.Dependency{
-					cargo.ConfigMetadataDependency{
-						CPE:             "cpe:2.3:a:ruby-lang:ruby:3.4.5:*:*:*:*:*:*:*",
-						DeprecationDate: &time,
-						PURL:            "pkg:generic/ruby@3.4.5?checksum=some-ruby-sha&download_url=ruby-3.4.5-release.tar.gz",
-						ID:              "ruby",
-						Name:            "Ruby",
-						Licenses:        []interface{}{"license-1"},
-						Source:          "ruby-3.4.5-release.tar.gz",
-						SourceChecksum:  "sha256:some-ruby-sha",
-						Stacks:          []string{"io.buildpacks.stacks.bionic"},
-						Version:         "3.4.5",
-					},
-					"bionic",
-				},
 				components.Dependency{
 					cargo.ConfigMetadataDependency{
 						CPE:             "cpe:2.3:a:ruby-lang:ruby:3.4.5:*:*:*:*:*:*:*",
@@ -88,7 +73,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 
 			it("excludes a jammy target entry", func() {
 				time := time.Date(2022, time.Month(11), 01, 00, 00, 00, 00, time.UTC)
-				dependencies, err := components.GenerateMetadata(release, []string{"bionic", "jammy"}, licenseRetriever, deprecationDateRetriever)
+				dependencies, err := components.GenerateMetadata(release, []string{"other", "jammy"}, licenseRetriever, deprecationDateRetriever)
 				Expect(err).To(Not(HaveOccurred()))
 				Expect(dependencies).To(Equal([]components.Dependency{
 					components.Dependency{
@@ -101,10 +86,10 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 							Licenses:        []interface{}{"license-1"},
 							Source:          "ruby-1.2.3-release.tar.gz",
 							SourceChecksum:  "sha256:some-ruby-sha",
-							Stacks:          []string{"io.buildpacks.stacks.bionic"},
+							Stacks:          []string{"io.buildpacks.stacks.other"},
 							Version:         "1.2.3",
 						},
-						"bionic",
+						"other",
 					},
 				}))
 			})
@@ -116,7 +101,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					licenseRetriever.LookupLicensesCall.Returns.Error = errors.New("failed to lookup licenses")
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"bionic", "jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("failed to lookup licenses")))
 				})
 			})
@@ -126,7 +111,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					deprecationDateRetriever.GetDateCall.Returns.Error = errors.New("failed to get deprecationDate")
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"bionic", "jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("failed to get deprecationDate")))
 				})
 			})
@@ -136,7 +121,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					deprecationDateRetriever.GetDateCall.Returns.String = "bad-time"
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"bionic", "jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("invalid EOL date")))
 				})
 			})
@@ -150,7 +135,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					}
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"bionic", "jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("Invalid Semantic Version")))
 				})
 			})
