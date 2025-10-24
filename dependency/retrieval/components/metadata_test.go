@@ -62,39 +62,6 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 			}))
 		})
 
-		context("the version is less than 3.1.*", func() {
-			it.Before(func() {
-				release = components.RubyRelease{
-					Version: "1.2.3",
-					URL:     components.URL{Gz: "ruby-1.2.3-release.tar.gz"},
-					SHA256:  components.SHA256{Gz: "some-ruby-sha"},
-				}
-			})
-
-			it("excludes a jammy target entry", func() {
-				time := time.Date(2022, time.Month(11), 01, 00, 00, 00, 00, time.UTC)
-				dependencies, err := components.GenerateMetadata(release, []string{"other", "jammy"}, licenseRetriever, deprecationDateRetriever)
-				Expect(err).To(Not(HaveOccurred()))
-				Expect(dependencies).To(Equal([]components.Dependency{
-					components.Dependency{
-						cargo.ConfigMetadataDependency{
-							CPE:             "cpe:2.3:a:ruby-lang:ruby:1.2.3:*:*:*:*:*:*:*",
-							DeprecationDate: &time,
-							PURL:            "pkg:generic/ruby@1.2.3?checksum=some-ruby-sha&download_url=ruby-1.2.3-release.tar.gz",
-							ID:              "ruby",
-							Name:            "Ruby",
-							Licenses:        []interface{}{"license-1"},
-							Source:          "ruby-1.2.3-release.tar.gz",
-							SourceChecksum:  "sha256:some-ruby-sha",
-							Stacks:          []string{"io.buildpacks.stacks.other"},
-							Version:         "1.2.3",
-						},
-						"other",
-					},
-				}))
-			})
-		})
-
 		context("failure cases", func() {
 			context("the license retriever returns an error", func() {
 				it.Before(func() {

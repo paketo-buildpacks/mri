@@ -84,8 +84,6 @@ This buildpack is currently only supported on the Paketo Jammy stack
 distributions. Pre-compiled distributions of Ruby are provided for the Paketo stacks (i.e.
 `io.buildpacks.stack.jammy`).
 
-Jammy stack support only applies to Ruby version 3.1 and above at this time.
-
 ## Development
 
 Paketo buildpacks are going through an uniformization of the dev experience across buildpacks,
