@@ -74,7 +74,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 					settings.Buildpacks.MRI.Online,
 					settings.Buildpacks.BuildPlan.Online,
 				).
-				WithEnv(map[string]string{"BP_MRI_VERSION": "3.1.x"})
+				WithEnv(map[string]string{"BP_MRI_VERSION": "3.4.x"})
 
 			firstImage, logs, err = build.Execute(name, source)
 			Expect(err).NotTo(HaveOccurred(), logs.String)
@@ -89,12 +89,12 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      BP_MRI_VERSION -> \"3.1.x\"",
+				"      BP_MRI_VERSION -> \"3.4.x\"",
 				"      <unknown>      -> \"\"",
 			))
 
 			Expect(logs).To(ContainLines(
-				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.1\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.4\.\d+`),
 			))
 
 			Expect(logs).To(ContainLines(
@@ -105,13 +105,13 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 
 			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.4\.\d+:/layers/%s/mri/lib/ruby/gems/3\.4\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.4\.\d+:/layers/%s/mri/lib/ruby/gems/3\.4\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
@@ -141,12 +141,12 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      BP_MRI_VERSION -> \"3.1.x\"",
+				"      BP_MRI_VERSION -> \"3.4.x\"",
 				"      <unknown>      -> \"\"",
 			))
 
 			Expect(logs).To(ContainLines(
-				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.1\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.4\.\d+`),
 			))
 
 			Expect(logs).To(ContainLines(
@@ -164,7 +164,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 			containerIDs[secondContainer.ID] = struct{}{}
 
 			Eventually(secondContainer).Should(BeAvailable())
-			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 3\.1\.\d+`)).OnPort(8080))
+			Eventually(secondContainer).Should(Serve(MatchRegexp(`Hello from Ruby 3\.4\.\d+`)).OnPort(8080))
 
 			Expect(secondImage.Buildpacks[0].Layers["mri"].SHA).To(Equal(firstImage.Buildpacks[0].Layers["mri"].SHA))
 		})
@@ -193,7 +193,7 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				)
 
 			firstImage, logs, err = build.
-				WithEnv(map[string]string{"BP_MRI_VERSION": "3.1.x"}).
+				WithEnv(map[string]string{"BP_MRI_VERSION": "3.4.x"}).
 				Execute(name, source)
 			Expect(err).NotTo(HaveOccurred(), logs.String)
 
@@ -207,29 +207,29 @@ func testReusingLayerRebuild(t *testing.T, context spec.G, it spec.S) {
 				MatchRegexp(fmt.Sprintf(`%s \d+\.\d+\.\d+`, settings.Buildpack.Name)),
 				"  Resolving MRI version",
 				"    Candidate version sources (in priority order):",
-				"      BP_MRI_VERSION -> \"3.1.x\"",
+				"      BP_MRI_VERSION -> \"3.4.x\"",
 				"      <unknown>      -> \"\"",
 			))
 
 			Expect(logs).To(ContainLines(
-				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.1\.\d+`),
+				MatchRegexp(`    Selected MRI version \(using BP_MRI_VERSION\): 3\.4\.\d+`),
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Executing build process",
-				MatchRegexp(`    Installing MRI 3\.1\.\d+`),
+				MatchRegexp(`    Installing MRI 3\.4\.\d+`),
 				MatchRegexp(`      Completed in ([0-9]*(\.[0-9]*)?[a-z]+)+`),
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring build environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.4\.\d+:/layers/%s/mri/lib/ruby/gems/3\.4\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 
 			Expect(logs).To(ContainLines(
 				"  Configuring launch environment",
-				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.1\.\d+:/layers/%s/mri/lib/ruby/gems/3\.1\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
+				MatchRegexp(fmt.Sprintf(`    GEM_PATH         -> "/home/cnb/.local/share/gem/ruby/3\.4\.\d+:/layers/%s/mri/lib/ruby/gems/3\.4\.\d+"`, strings.ReplaceAll(settings.Buildpack.ID, "/", "_"))),
 				`    MALLOC_ARENA_MAX -> "2"`,
 			))
 

@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Masterminds/semver"
 	"github.com/paketo-buildpacks/packit/v2/cargo"
 )
 
@@ -27,9 +26,6 @@ type DeprecationDate interface {
 }
 
 // GenerateMetadata will generate Ruby dependency-specific metadata for each given target
-// Note that `jammy` stack-related entries will only be generated when the
-// version is 3.1 or greater, due to OpenSSL v3 incompatibilites with Ruby 3.0
-// and below.
 func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever License, deprecationDate DeprecationDate) ([]Dependency, error) {
 	dependencies := []Dependency{}
 	licenses, err := licenseRetriever.LookupLicenses("ruby", release.URL.Gz)
@@ -56,22 +52,7 @@ func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever Li
 
 		stacks := []string{}
 		switch target {
-		case "bionic":
-			stacks = []string{"io.buildpacks.stacks.bionic"}
 		case "jammy":
-			// If target==jammy and version <= 3.0.x, don't include it
-			version, err := semver.NewVersion(release.Version)
-			if err != nil {
-				return dependencies, err
-			}
-			constraint, err := semver.NewConstraint("< 3.1")
-			if err != nil {
-				//untested
-				return dependencies, err
-			}
-			if constraint.Check(version) {
-				continue
-			}
 			stacks = []string{"io.buildpacks.stacks.jammy"}
 		}
 

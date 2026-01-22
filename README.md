@@ -80,11 +80,9 @@ $BP_LOG_LEVEL="DEBUG"
 
 ## Compatibility
 
-This buildpack is currently only supported on the Paketo Bionic and Jammy stack
+This buildpack is currently only supported on the Paketo Jammy stack
 distributions. Pre-compiled distributions of Ruby are provided for the Paketo stacks (i.e.
-`io.buildpacks.stack.jammy` and `io.buildpacks.stacks.bionic`).
-
-Jammy stack support only applies to Ruby version 3.1 and above at this time.
+`io.buildpacks.stack.jammy`).
 
 ## Development
 
