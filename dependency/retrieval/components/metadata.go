@@ -16,6 +16,13 @@ type Dependency struct {
 	Target string `json:"target,omitempty"`
 }
 
+type PlatformTarget struct {
+	Stacks []string
+	Target string
+	OS     string
+	Arch   string
+}
+
 //go:generate faux --interface License --output fakes/license.go
 type License interface {
 	LookupLicenses(dependencyName, sourceURL string) ([]interface{}, error)
@@ -30,7 +37,7 @@ type DeprecationDate interface {
 // Note that `jammy` stack-related entries will only be generated when the
 // version is 3.1 or greater, due to OpenSSL v3 incompatibilites with Ruby 3.0
 // and below.
-func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever License, deprecationDate DeprecationDate) ([]Dependency, error) {
+func GenerateMetadata(release RubyRelease, platformTargets []PlatformTarget, licenseRetriever License, deprecationDate DeprecationDate) ([]Dependency, error) {
 	dependencies := []Dependency{}
 	licenses, err := licenseRetriever.LookupLicenses("ruby", release.URL.Gz)
 	if err != nil {
@@ -49,16 +56,16 @@ func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever Li
 		return dependencies, err
 	}
 
-	for _, target := range targets {
+	for _, platformTarget := range platformTargets {
 		dependency := Dependency{
-			Target: target,
+			Target: platformTarget.Target,
 		}
 
 		stacks := []string{}
-		switch target {
+		switch platformTarget.Target {
 		case "bionic":
-			stacks = []string{"io.buildpacks.stacks.bionic"}
-		case "jammy":
+			stacks = platformTarget.Stacks
+		case "jammy", "noble":
 			// If target==jammy and version <= 3.0.x, don't include it
 			version, err := semver.NewVersion(release.Version)
 			if err != nil {
@@ -72,7 +79,7 @@ func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever Li
 			if constraint.Check(version) {
 				continue
 			}
-			stacks = []string{"io.buildpacks.stacks.jammy"}
+			stacks = platformTarget.Stacks
 		}
 
 		dependency.ConfigMetadataDependency = cargo.ConfigMetadataDependency{
@@ -84,6 +91,8 @@ func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever Li
 			CPE:            cpe,
 			PURL:           purl,
 			Stacks:         stacks,
+			OS:             platformTarget.OS,
+			Arch:           platformTarget.Arch,
 			Licenses:       licenses,
 		}
 

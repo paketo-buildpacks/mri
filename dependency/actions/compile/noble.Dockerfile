@@ -1,4 +1,4 @@
-FROM paketobuildpacks/build-bionic-full
+FROM paketobuildpacks/build-noble-full
 
 ENV DEBIAN_FRONTEND=noninteractive
 

@@ -4,7 +4,8 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 main() {
-  local tarball_path version
+  local tarball_path version platform_args
+  platform_args=""
 
   while [ "${#}" != 0 ]; do
     case "${1}" in
@@ -38,17 +39,28 @@ main() {
     exit 1
   fi
 
+  if [[ $(basename "${tarball_path}") == *"_arm64_"* ]]; then
+    platform_args="--platform linux/arm64"
+  elif [[ $(basename "${tarball_path}") == *"_x64_"* ]]; then
+    platform_args="--platform linux/amd64"
+  fi
+
   if [[ $(basename "${tarball_path}") == *"bionic"* ]]; then
     echo "Running bionic test..."
-    docker build --tag test --file bionic.Dockerfile .
-    docker run --rm --volume "$(dirname -- "${tarball_path}"):/tarball_path" test --tarballPath "/tarball_path/$(basename "${tarball_path}")" --version "${version}"
+    docker build ${platform_args} --tag test --file bionic.Dockerfile .
+    docker run ${platform_args} --rm --volume "$(dirname -- "${tarball_path}"):/tarball_path" test --tarballPath "/tarball_path/$(basename "${tarball_path}")" --version "${version}"
 
   elif [[ $(basename -- "${tarball_path}") == *"jammy"* ]]; then
     echo "Running jammy test..."
-    docker build --tag test --file jammy.Dockerfile .
-    docker run --rm --volume "$(dirname -- "${tarball_path}"):/tarball_path" test --tarballPath "/tarball_path/$(basename "${tarball_path}")" --version "${version}"
+    docker build ${platform_args} --tag test --file jammy.Dockerfile .
+    docker run ${platform_args} --rm --volume "$(dirname -- "${tarball_path}"):/tarball_path" test --tarballPath "/tarball_path/$(basename "${tarball_path}")" --version "${version}"
+
+  elif [[ $(basename -- "${tarball_path}") == *"noble"* ]]; then
+    echo "Running noble test..."
+    docker build ${platform_args} --tag test --file noble.Dockerfile .
+    docker run ${platform_args} --rm --volume "$(dirname -- "${tarball_path}"):/tarball_path" test --tarballPath "/tarball_path/$(basename "${tarball_path}")" --version "${version}"
   else
-    echo "bionic or jammy not found - skipping tests"
+    echo "bionic, jammy, or noble not found - skipping tests"
   fi
 }
 
