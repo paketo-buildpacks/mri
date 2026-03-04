@@ -7,11 +7,13 @@ shopt -s inherit_errexit
 DEST_DIR=$(mktemp -d)
 
 function main() {
-  local version output_dir target upstream_tarball working_dir configure_opts
+  local version output_dir target upstream_tarball working_dir configure_opts os arch arch_suffix
   version=""
   output_dir=""
   target=""
   upstream_tarball=""
+  os="linux"
+  arch="amd64"
   working_dir=$(mktemp -d)
   configure_opts=()
 
@@ -29,6 +31,16 @@ function main() {
 
       --target)
         target="${2}"
+        shift 2
+        ;;
+
+      --os)
+        os="${2}"
+        shift 2
+        ;;
+
+      --arch)
+        arch="${2}"
         shift 2
         ;;
 
@@ -57,15 +69,34 @@ function main() {
     exit 1
   fi
 
+  # Map arch to suffix for naming
+  if [[ "${arch}" == "amd64" ]]; then
+    arch_suffix="x64"
+  elif [[ "${arch}" == "arm64" ]]; then
+    arch_suffix="arm64"
+  else
+    echo "Unsupported architecture: ${arch}"
+    exit 1
+  fi
+
   major=$(echo "${version%.*}" | cut -d '.' -f1)
   minor=$(echo "${version%.*}" | cut -d '.' -f2)
   if [[ "${major}" -ge 3 ]] && [[ "${minor}" -ge 2 ]]; then
     configure_opts+=("--enable-yjit")
   fi
 
+  if [[ "${target}" == "noble" ]]; then
+    if [[ "${major}" -lt 3 ]] || ([[ "${major}" -eq 3 ]] && [[ "${minor}" -lt 2 ]]); then
+      echo "Ruby version ${version} is not supported on noble (requires Ruby >= 3.2)"
+      exit 1
+    fi
+  fi
+
   echo "version=${version}"
   echo "output_dir=${output_dir}"
   echo "target=${target}"
+  echo "os=${os}"
+  echo "arch=${arch}"
   pushd "${working_dir}" > /dev/null
     major_minor_version=$(cut -d '.' -f 1,2 <<< "${version}")
     upstream_tarball="https://cache.ruby-lang.org/pub/ruby/${major_minor_version}/ruby-${version}.tar.gz"
@@ -109,7 +140,7 @@ function main() {
     sha256=$(sha256sum temp.tgz)
     sha256="${sha256:0:64}"
 
-    output_tarball_name="ruby_${version}_linux_x64_${target}_${sha256:0:8}.tgz"
+    output_tarball_name="ruby_${version}_${os}_${arch_suffix}_${target}_${sha256:0:8}.tgz"
 
     echo "Building tarball ${output_tarball_name}"
 
