@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Masterminds/semver"
 	"github.com/paketo-buildpacks/packit/v2/cargo"
 )
 
@@ -52,6 +53,23 @@ func GenerateMetadata(release RubyRelease, platformTargets []PlatformTarget, lic
 	}
 
 	for _, platformTarget := range platformTargets {
+		// Validate Ruby version compatibility with target
+		// Ruby 4.x requires GLIBC 2.38+, which is not available in jammy (GLIBC 2.35)
+		if platformTarget.Target == "jammy" {
+			version, err := semver.NewVersion(release.Version)
+			if err != nil {
+				return dependencies, err
+			}
+			constraint, err := semver.NewConstraint(">= 4.0")
+			if err != nil {
+				return dependencies, err
+			}
+			if constraint.Check(version) {
+				// Skip Ruby 4.x for jammy
+				continue
+			}
+		}
+
 		dependency := Dependency{
 			Target: platformTarget.Target,
 		}
