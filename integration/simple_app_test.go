@@ -75,7 +75,7 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(container).Should(BeAvailable(), logs.String())
-			Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.1\.\d+`)).OnPort(8080))
+			Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.4\.\d+`)).OnPort(8080))
 		})
 
 		context("validating SBOM", func() {
@@ -122,7 +122,7 @@ func testSimpleApp(t *testing.T, context spec.G, it spec.S) {
 				Expect(err).NotTo(HaveOccurred())
 
 				Eventually(container).Should(BeAvailable(), logs.String())
-				Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.1\.\d+`)).OnPort(8080))
+				Eventually(container).Should(Serve(MatchRegexp(`Hello from Ruby 3\.4\.\d+`)).OnPort(8080))
 
 				Expect(logs).To(ContainLines(
 					fmt.Sprintf("  Generating SBOM for /layers/%s/mri", strings.ReplaceAll(settings.Buildpack.ID, "/", "_")),

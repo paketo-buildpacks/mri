@@ -57,14 +57,8 @@ function main() {
     exit 1
   fi
 
-  # Only Ruby versions >= 3.1.0 work on Jammy
   major=$(echo "${version%.*}" | cut -d '.' -f1)
   minor=$(echo "${version%.*}" | cut -d '.' -f2)
-  if [[ "${target}" == "jammy" ]] && [[ ${major} -lt 3 || (${major} -eq 3 && ${minor} -lt 1) ]]; then
-    echo "version ${version} cannot be compiled on jammy, only 3.1.0 and above"
-    exit 1
-  fi
-
   if [[ "${major}" -ge 3 ]] && [[ "${minor}" -ge 2 ]]; then
     configure_opts+=("--enable-yjit")
   fi
