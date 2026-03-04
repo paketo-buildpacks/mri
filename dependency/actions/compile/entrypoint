@@ -70,26 +70,22 @@ function main() {
   fi
 
   # Map arch to suffix for naming
-  if [[ "${arch}" == "amd64" ]]; then
-    arch_suffix="x64"
-  elif [[ "${arch}" == "arm64" ]]; then
-    arch_suffix="arm64"
-  else
-    echo "Unsupported architecture: ${arch}"
-    exit 1
-  fi
+  case "${arch}" in
+    amd64|x64)
+      arch_suffix="x64"
+      ;;
+    arm64|aarch64)
+      arch_suffix="arm64"
+      ;;
+    *)
+      arch_suffix="${arch}"
+      ;;
+  esac
 
   major=$(echo "${version%.*}" | cut -d '.' -f1)
   minor=$(echo "${version%.*}" | cut -d '.' -f2)
   if [[ "${major}" -ge 3 ]] && [[ "${minor}" -ge 2 ]]; then
     configure_opts+=("--enable-yjit")
-  fi
-
-  if [[ "${target}" == "noble" ]]; then
-    if [[ "${major}" -lt 3 ]] || ([[ "${major}" -eq 3 ]] && [[ "${minor}" -lt 2 ]]); then
-      echo "Ruby version ${version} is not supported on noble (requires Ruby >= 3.2)"
-      exit 1
-    fi
   fi
 
   echo "version=${version}"

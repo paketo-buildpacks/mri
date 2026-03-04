@@ -1,6 +1,6 @@
 FROM paketobuildpacks/build-jammy-full
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 ARG cnb_uid=0
 ARG cnb_gid=0

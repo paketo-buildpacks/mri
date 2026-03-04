@@ -80,9 +80,9 @@ $BP_LOG_LEVEL="DEBUG"
 
 ## Compatibility
 
-This buildpack is currently only supported on the Paketo Jammy stack
-distributions. Pre-compiled distributions of Ruby are provided for the Paketo stacks (i.e.
-`io.buildpacks.stack.jammy`).
+This buildpack is supported on the Paketo Jammy and Noble stack distributions.
+Pre-compiled distributions of Ruby are provided for the Paketo stacks (i.e.
+`io.buildpacks.stacks.jammy` and `io.buildpacks.stacks.noble`).
 
 ## Development
 
