@@ -63,10 +63,10 @@ func main() {
 			fail(err)
 		}
 		if !valid {
-			fail(errors.New(fmt.Sprintf("failed to validate dependency checksum for version %s", version)))
+			fail(fmt.Errorf("failed to validate dependency checksum for version %s", version))
 		}
 
-		entries, err := components.GenerateMetadata(upstreamVersionMap[version], []string{"jammy", "bionic"}, components.NewLicenseRetriever(), components.NewDeprecationDateRetriever())
+		entries, err := components.GenerateMetadata(upstreamVersionMap[version], []string{"jammy"}, components.NewLicenseRetriever(), components.NewDeprecationDateRetriever())
 		if err != nil {
 			fail(err)
 		}
