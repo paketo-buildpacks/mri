@@ -27,7 +27,10 @@ func testBuildpackYMLParser(t *testing.T, context spec.G, it spec.S) {
 			}
 		}()
 
-		_, err = file.WriteString(`---\nmri:\n  version: 1.2.3\n`)
+		_, err = file.WriteString(`---
+mri:
+  version: 1.2.3
+`)
 		Expect(err).NotTo(HaveOccurred())
 
 		path = file.Name()
