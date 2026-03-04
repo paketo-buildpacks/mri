@@ -4,7 +4,6 @@ go 1.24.6
 
 require (
 	github.com/Masterminds/semver v1.5.0
-	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/go-enry/go-license-detector/v4 v4.3.1
 	github.com/onsi/gomega v1.38.2
 	github.com/package-url/packageurl-go v0.1.1
