@@ -84,6 +84,14 @@ This buildpack is supported on the Paketo Jammy and Noble stack distributions.
 Pre-compiled distributions of Ruby are provided for the Paketo stacks (i.e.
 `io.buildpacks.stacks.jammy` and `io.buildpacks.stacks.noble`).
 
+### Stack-Specific Version Constraints
+
+**Ruby 4.x requires Noble or later**
+
+Ruby 4.x versions require GLIBC 2.38 or later, which is not available in the Jammy stack (GLIBC 2.35).
+Ruby 4.x binaries will only be provided for the Noble stack. If you need to use Ruby on Jammy, please use
+Ruby 3.x versions (3.2 and later are supported on Jammy).
+
 ## Development
 
 Paketo buildpacks are going through an uniformization of the dev experience across buildpacks,

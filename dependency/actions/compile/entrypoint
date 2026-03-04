@@ -69,6 +69,14 @@ function main() {
     exit 1
   fi
 
+  # Validate Ruby version compatibility with target
+  major=$(echo "${version}" | cut -d '.' -f1)
+  if [[ "${major}" -ge 4 ]] && [[ "${target}" == "jammy" ]]; then
+    echo "ERROR: Ruby ${major}.x cannot be compiled for jammy (requires GLIBC 2.38+, jammy has GLIBC 2.35)"
+    echo "Ruby 4.x requires noble or later"
+    exit 1
+  fi
+
   # Map arch to suffix for naming
   case "${arch}" in
     amd64|x64)

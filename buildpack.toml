@@ -124,6 +124,11 @@ api = "0.7"
     id = "ruby"
     patches = 2
 
+  [[metadata.dependency-constraints]]
+    constraint = "4.0.*"
+    id = "ruby"
+    patches = 2
+
 [[stacks]]
   id = "io.buildpacks.stacks.jammy"
 
