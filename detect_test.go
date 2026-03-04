@@ -41,12 +41,12 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 	context("when $BP_MRI_VERSION is set and a buildpack.yml is present", func() {
 		it.Before(func() {
-			os.Setenv("BP_MRI_VERSION", "1.2.3")
+			Expect(os.Setenv("BP_MRI_VERSION", "1.2.3")).To(Succeed())
 			buildpackYMLParser.ParseVersionCall.Returns.Version = "4.5.6"
 		})
 
 		it.After(func() {
-			os.Unsetenv("BP_MRI_VERSION")
+			Expect(os.Unsetenv("BP_MRI_VERSION")).To(Succeed())
 		})
 
 		it("returns a plan that provides and requires the $BP_MRI_VERSION of mri", func() {

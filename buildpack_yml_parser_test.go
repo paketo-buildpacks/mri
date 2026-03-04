@@ -21,12 +21,13 @@ func testBuildpackYMLParser(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		file, err := os.CreateTemp("", "buildpack.yml")
 		Expect(err).NotTo(HaveOccurred())
-		defer file.Close()
+		defer func() {
+			if err := file.Close(); err != nil {
+				Expect(err).NotTo(HaveOccurred())
+			}
+		}()
 
-		_, err = file.WriteString(`---
-mri:
-  version: 1.2.3
-`)
+		_, err = file.WriteString(`---\nmri:\n  version: 1.2.3\n`)
 		Expect(err).NotTo(HaveOccurred())
 
 		path = file.Name()
