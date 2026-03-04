@@ -50,21 +50,21 @@ func TestIntegration(t *testing.T) {
 	root, err := filepath.Abs("./..")
 	Expect(err).ToNot(HaveOccurred())
 
-	file, err := os.Open("../integration.json")
+	integrationFile, err := os.Open("../integration.json")
 	Expect(err).NotTo(HaveOccurred())
 	defer func() {
-		if err := file.Close(); err != nil {
+		if err := integrationFile.Close(); err != nil {
 			Expect(err).NotTo(HaveOccurred())
 		}
 	}()
 
-	Expect(json.NewDecoder(file).Decode(&settings.Config)).To(Succeed())
+	Expect(json.NewDecoder(integrationFile).Decode(&settings.Config)).To(Succeed())
 
-	file, err = os.Open("../buildpack.toml")
+	buildpackFile, err := os.Open("../buildpack.toml")
 	Expect(err).NotTo(HaveOccurred())
-	_, err = toml.NewDecoder(file).Decode(&settings)
+	_, err = toml.NewDecoder(buildpackFile).Decode(&settings)
 	Expect(err).NotTo(HaveOccurred())
-	Expect(file.Close()).To(Succeed())
+	Expect(buildpackFile.Close()).To(Succeed())
 
 	buildpackStore := occam.NewBuildpackStore()
 
