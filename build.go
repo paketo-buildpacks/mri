@@ -175,7 +175,9 @@ func Build(
 
 		logger.Debug.Process("Adding %s to the $PATH", filepath.Join(mriLayer.Path, "bin"))
 		logger.Debug.Break()
-		os.Setenv("PATH", fmt.Sprintf("%s:%s", filepath.Join(mriLayer.Path, "bin"), os.Getenv("PATH")))
+		if err = os.Setenv("PATH", fmt.Sprintf("%s:%s", filepath.Join(mriLayer.Path, "bin"), os.Getenv("PATH"))); err != nil {
+			return packit.BuildResult{}, err
+		}
 
 		buffer := bytes.NewBuffer(nil)
 		err = gem.Execute(pexec.Execution{

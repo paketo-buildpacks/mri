@@ -90,7 +90,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		logEmitter := scribe.NewEmitter(buffer)
 		gem = &fakes.Executable{}
 		gem.ExecuteCall.Stub = func(execution pexec.Execution) error {
-			fmt.Fprintln(execution.Stdout, "/some/mri/gems/path")
+			_, _ = fmt.Fprintln(execution.Stdout, "/some/mri/gems/path")
 			return nil
 		}
 
