@@ -7,12 +7,20 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Masterminds/semver/v3"
+
 	"github.com/paketo-buildpacks/packit/v2/cargo"
 )
 
 type Dependency struct {
 	cargo.ConfigMetadataDependency
 	Target string `json:"target,omitempty"`
+}
+type PlatformTarget struct {
+	Stacks []string
+	Target string
+	OS     string
+	Arch   string
 }
 
 //go:generate faux --interface License --output fakes/license.go
@@ -26,7 +34,10 @@ type DeprecationDate interface {
 }
 
 // GenerateMetadata will generate Ruby dependency-specific metadata for each given target
-func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever License, deprecationDate DeprecationDate) ([]Dependency, error) {
+// Note that `jammy` and `noble` stack-related entries will only be generated when the
+// version is 3.2 or greater, due to OpenSSL v3 incompatibilites with Ruby 3.1
+// and below.
+func GenerateMetadata(release RubyRelease, platformTargets []PlatformTarget, licenseRetriever License, deprecationDate DeprecationDate) ([]Dependency, error) {
 	dependencies := []Dependency{}
 	licenses, err := licenseRetriever.LookupLicenses("ruby", release.URL.Gz)
 	if err != nil {
@@ -45,15 +56,28 @@ func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever Li
 		return dependencies, err
 	}
 
-	for _, target := range targets {
+	for _, platformTarget := range platformTargets {
 		dependency := Dependency{
-			Target: target,
+			Target: platformTarget.Target,
 		}
 
 		stacks := []string{}
-		switch target {
-		case "jammy":
-			stacks = []string{"io.buildpacks.stacks.jammy"}
+		switch platformTarget.Target {
+		case "jammy", "noble":
+			// If target==jammy/noble and version <= 3.1.x, don't include it
+			version, err := semver.NewVersion(release.Version)
+			if err != nil {
+				return dependencies, err
+			}
+			constraint, err := semver.NewConstraint("< 3.2")
+			if err != nil {
+				//untested
+				return dependencies, err
+			}
+			if constraint.Check(version) {
+				continue
+			}
+			stacks = platformTarget.Stacks
 		}
 
 		dependency.ConfigMetadataDependency = cargo.ConfigMetadataDependency{
@@ -65,6 +89,8 @@ func GenerateMetadata(release RubyRelease, targets []string, licenseRetriever Li
 			CPE:            cpe,
 			PURL:           purl,
 			Stacks:         stacks,
+			OS:             platformTarget.OS,
+			Arch:           platformTarget.Arch,
 			Licenses:       licenses,
 		}
 

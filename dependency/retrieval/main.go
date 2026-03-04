@@ -12,6 +12,39 @@ import (
 
 const versionFeed = "https://raw.githubusercontent.com/ruby/www.ruby-lang.org/master/_data/releases.yml"
 
+type StackTarget struct {
+	stacks []string
+	target string
+}
+
+var supportedTargets = []StackTarget{
+	{stacks: []string{"io.buildpacks.stacks.jammy"}, target: "jammy"},
+	{stacks: []string{"io.buildpacks.stacks.noble"}, target: "noble"},
+}
+
+var supportedPlatforms = map[string][]string{
+	"linux": {"amd64", "arm64"},
+}
+
+func getSupportedPlatformTargets() []components.PlatformTarget {
+	platformTargets := []components.PlatformTarget{}
+
+	for _, target := range supportedTargets {
+		for os, archs := range supportedPlatforms {
+			for _, arch := range archs {
+				platformTargets = append(platformTargets, components.PlatformTarget{
+					Stacks: target.stacks,
+					Target: target.target,
+					OS:     os,
+					Arch:   arch,
+				})
+			}
+		}
+	}
+
+	return platformTargets
+}
+
 // Retrieval for gets newer upstream versions of the ruby dependency from upstream
 // and returns a metadata.json for new versions within buildpack.toml constraints
 func main() {
@@ -55,6 +88,7 @@ func main() {
 
 	fmt.Printf("New versions: %v\n", newVersions)
 	dependencies := []components.Dependency{}
+	platformTargets := getSupportedPlatformTargets()
 	for _, version := range newVersions {
 		// Validate the dependency checksum matches the upstream dependency
 		// checkdum before we add it to the list of dependencies
@@ -66,7 +100,7 @@ func main() {
 			fail(fmt.Errorf("failed to validate dependency checksum for version %s", version))
 		}
 
-		entries, err := components.GenerateMetadata(upstreamVersionMap[version], []string{"jammy"}, components.NewLicenseRetriever(), components.NewDeprecationDateRetriever())
+		entries, err := components.GenerateMetadata(upstreamVersionMap[version], platformTargets, components.NewLicenseRetriever(), components.NewDeprecationDateRetriever())
 		if err != nil {
 			fail(err)
 		}
