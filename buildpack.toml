@@ -20,66 +20,6 @@ api = "0.7"
 
   [[metadata.dependencies]]
     arch = "amd64"
-    checksum = "sha256:5dda3b3a4929b193a3abdf23a9d508d93b887ee78cbd93fc50a4013c673fe0cc"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:3.2.9:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
-    name = "Ruby"
-    os = "linux"
-    purl = "pkg:generic/ruby@3.2.9?checksum=abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a&download_url=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source-checksum = "sha256:abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a"
-    stacks = ["io.buildpacks.stacks.jammy"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_3.2.9_linux_x64_jammy_5dda3b3a.tgz"
-    version = "3.2.9"
-
-  [[metadata.dependencies]]
-    arch = "arm64"
-    checksum = "sha256:cede63c9c444cfac3219a892f5ad599002743ad948413295dd6c354dc8baec10"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:3.2.9:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
-    name = "Ruby"
-    os = "linux"
-    purl = "pkg:generic/ruby@3.2.9?checksum=abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a&download_url=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source-checksum = "sha256:abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a"
-    stacks = ["io.buildpacks.stacks.jammy"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_3.2.9_linux_arm64_jammy_cede63c9.tgz"
-    version = "3.2.9"
-
-  [[metadata.dependencies]]
-    arch = "amd64"
-    checksum = "sha256:756ce7b9693e05b56747d5efdc80cafe95c978751942c7efc5d846a601d37b3d"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:3.2.9:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
-    name = "Ruby"
-    os = "linux"
-    purl = "pkg:generic/ruby@3.2.9?checksum=abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a&download_url=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source-checksum = "sha256:abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a"
-    stacks = ["io.buildpacks.stacks.noble"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_3.2.9_linux_x64_noble_756ce7b9.tgz"
-    version = "3.2.9"
-
-  [[metadata.dependencies]]
-    arch = "arm64"
-    checksum = "sha256:5866a7661c0060e805f789e37ae44521e5be37963a890ddb522b61659c1b89a9"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:3.2.9:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
-    name = "Ruby"
-    os = "linux"
-    purl = "pkg:generic/ruby@3.2.9?checksum=abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a&download_url=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
-    source-checksum = "sha256:abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a"
-    stacks = ["io.buildpacks.stacks.noble"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_3.2.9_linux_arm64_noble_5866a766.tgz"
-    version = "3.2.9"
-
-  [[metadata.dependencies]]
-    arch = "amd64"
     checksum = "sha256:7b958ff73d4cbc59c88bf60b4d5661577b4fb6589b9b4021e685ccb333b99b22"
     cpe = "cpe:2.3:a:ruby-lang:ruby:3.2.10:*:*:*:*:*:*:*"
     id = "ruby"
