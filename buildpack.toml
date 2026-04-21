@@ -380,36 +380,6 @@ api = "0.7"
 
   [[metadata.dependencies]]
     arch = "amd64"
-    checksum = "sha256:2035ed6d12cca67bc13dcd1c294f34ea47aeee40a8cd73ea10a820486e538470"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:4.0.1:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "Apache-2.0", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
-    name = "Ruby"
-    os = "linux"
-    purl = "pkg:generic/ruby@4.0.1?checksum=3924be2d05db30f4e35f859bf028be85f4b7dd01714142fd823e4af5de2faf9d&download_url=https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.1.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.1.tar.gz"
-    source-checksum = "sha256:3924be2d05db30f4e35f859bf028be85f4b7dd01714142fd823e4af5de2faf9d"
-    stacks = ["io.buildpacks.stacks.noble"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_4.0.1_linux_x64_noble_2035ed6d.tgz"
-    version = "4.0.1"
-
-  [[metadata.dependencies]]
-    arch = "arm64"
-    checksum = "sha256:46ef9adeaee6f07a6dec70879e642e6b0560bb016c543ab77032ab3893f594ea"
-    cpe = "cpe:2.3:a:ruby-lang:ruby:4.0.1:*:*:*:*:*:*:*"
-    id = "ruby"
-    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "Apache-2.0", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
-    name = "Ruby"
-    os = "linux"
-    purl = "pkg:generic/ruby@4.0.1?checksum=3924be2d05db30f4e35f859bf028be85f4b7dd01714142fd823e4af5de2faf9d&download_url=https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.1.tar.gz"
-    source = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.1.tar.gz"
-    source-checksum = "sha256:3924be2d05db30f4e35f859bf028be85f4b7dd01714142fd823e4af5de2faf9d"
-    stacks = ["io.buildpacks.stacks.noble"]
-    uri = "https://artifacts.paketo.io/ruby/ruby_4.0.1_linux_arm64_noble_46ef9ade.tgz"
-    version = "4.0.1"
-
-  [[metadata.dependencies]]
-    arch = "amd64"
     checksum = "sha256:c7c55d8b9cd915b418a60d190ee52f86f7f0808ab565b9e7c08e0a8ba9b6e8ab"
     cpe = "cpe:2.3:a:ruby-lang:ruby:4.0.2:*:*:*:*:*:*:*"
     id = "ruby"
@@ -437,6 +407,36 @@ api = "0.7"
     stacks = ["io.buildpacks.stacks.noble"]
     uri = "https://artifacts.paketo.io/ruby/ruby_4.0.2_linux_arm64_noble_7baacb5c.tgz"
     version = "4.0.2"
+
+  [[metadata.dependencies]]
+    arch = "amd64"
+    checksum = "sha256:d91aa8e4797062a66f87046903e8d8ae0b2e6f78790d79d59f94b89575144714"
+    cpe = "cpe:2.3:a:ruby-lang:ruby:4.0.3:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "Apache-2.0", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
+    name = "Ruby"
+    os = "linux"
+    purl = "pkg:generic/ruby@4.0.3?checksum=77964acc370d5c8375b9502e5ba6c13c03ef91ab9eb9f521c84fb42b9c9a6b0f&download_url=https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.3.tar.gz"
+    source = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.3.tar.gz"
+    source-checksum = "sha256:77964acc370d5c8375b9502e5ba6c13c03ef91ab9eb9f521c84fb42b9c9a6b0f"
+    stacks = ["io.buildpacks.stacks.noble"]
+    uri = "https://artifacts.paketo.io/ruby/ruby_4.0.3_linux_x64_noble_d91aa8e4.tgz"
+    version = "4.0.3"
+
+  [[metadata.dependencies]]
+    arch = "arm64"
+    checksum = "sha256:d69ed3cd3695ca1e4aba4e05c6828bd15c4d4bf12f5c14ee1de6bc16d4df8940"
+    cpe = "cpe:2.3:a:ruby-lang:ruby:4.0.3:*:*:*:*:*:*:*"
+    id = "ruby"
+    licenses = ["0BSD", "AGPL-1.0-only", "AGPL-1.0-or-later", "Apache-2.0", "BSD-1-Clause", "BSD-2-Clause", "BSD-2-Clause-Views", "BSD-3-Clause", "BSD-3-Clause-Clear", "BSD-3-Clause-No-Military-License", "BSD-3-Clause-No-Nuclear-License-2014", "BSD-4-Clause-UC", "Bison-exception-2.2", "FSFUL", "GPL-2.0-only", "GPL-2.0-or-later", "JSON", "MIT", "MIT-0", "MIT-advertising", "MIT-feh", "Ruby", "X11-distribute-modifications-variant", "Zlib", "deprecated_AGPL-1.0", "deprecated_GPL-2.0", "deprecated_GPL-2.0+", "deprecated_GPL-2.0-with-bison-exception"]
+    name = "Ruby"
+    os = "linux"
+    purl = "pkg:generic/ruby@4.0.3?checksum=77964acc370d5c8375b9502e5ba6c13c03ef91ab9eb9f521c84fb42b9c9a6b0f&download_url=https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.3.tar.gz"
+    source = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.3.tar.gz"
+    source-checksum = "sha256:77964acc370d5c8375b9502e5ba6c13c03ef91ab9eb9f521c84fb42b9c9a6b0f"
+    stacks = ["io.buildpacks.stacks.noble"]
+    uri = "https://artifacts.paketo.io/ruby/ruby_4.0.3_linux_arm64_noble_d69ed3cd.tgz"
+    version = "4.0.3"
 
   [[metadata.dependency-constraints]]
     constraint = "3.2.*"
