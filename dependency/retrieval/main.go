@@ -20,6 +20,7 @@ type StackTarget struct {
 var supportedTargets = []StackTarget{
 	{stacks: []string{"io.buildpacks.stacks.jammy"}, target: "jammy"},
 	{stacks: []string{"io.buildpacks.stacks.noble"}, target: "noble"},
+	{stacks: []string{"io.buildpacks.stacks.resolute"}, target: "resolute"},
 }
 
 var supportedPlatforms = map[string][]string{
