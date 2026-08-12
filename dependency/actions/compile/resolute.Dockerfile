@@ -9,7 +9,7 @@ USER ${cnb_uid}:${cnb_gid}
 
 RUN apt-get -y update && \
   apt-get -y upgrade && \
-  apt-get -y install rustc && \
+  apt-get -y install rustc autoconf automake build-essential git libyaml-dev pkg-config && \
   rm -rf /var/lib/apt/lists/* /tmp/* /etc/apt/preferences
 
 COPY entrypoint /entrypoint
