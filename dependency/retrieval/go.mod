@@ -5,7 +5,7 @@ go 1.27.1
 require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/go-enry/go-license-detector/v4 v4.3.1
-	github.com/onsi/gomega v1.43.1
+	github.com/onsi/gomega v1.44.0
 	github.com/package-url/packageurl-go v0.1.7
 	github.com/paketo-buildpacks/occam v0.31.4
 	github.com/paketo-buildpacks/packit/v2 v2.25.7
