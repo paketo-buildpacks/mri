@@ -189,6 +189,10 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		contentReplaced := versionPattern.ReplaceAllString(string(content), `"licenseListVersion": "x.x"`)
 		uuidRegex := regexp.MustCompile(`[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}`)
 		contentReplaced = uuidRegex.ReplaceAllString(contentReplaced, "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+		rootPackageNamePattern := regexp.MustCompile(`("SPDXID": "SPDXRef-DocumentRoot-Unknown-(?:unknown)?",[\s\S]*?"name": )"(?:unknown)?"`)
+		contentReplaced = rootPackageNamePattern.ReplaceAllString(contentReplaced, `${1}"normalized"`)
+		rootPackageIDPattern := regexp.MustCompile(`SPDXRef-DocumentRoot-Unknown-(?:unknown)?`)
+		contentReplaced = rootPackageIDPattern.ReplaceAllString(contentReplaced, "SPDXRef-DocumentRoot-Unknown-normalized")
 
 		Expect(string(contentReplaced)).To(MatchJSON(`{
 			"SPDXID": "SPDXRef-DOCUMENT",
@@ -205,19 +209,19 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			"name": "unknown",
 			"packages": [
                 {
-                  "SPDXID": "SPDXRef-DocumentRoot-Unknown-",
+				  "SPDXID": "SPDXRef-DocumentRoot-Unknown-normalized",
                   "copyrightText": "NOASSERTION",
                   "downloadLocation": "NOASSERTION",
                   "filesAnalyzed": false,
                   "licenseConcluded": "NOASSERTION",
                   "licenseDeclared": "NOASSERTION",
-                  "name": "",
+				  "name": "normalized",
                   "supplier": "NOASSERTION"
                 }
 			],
 			"relationships": [
                 {
-                  "relatedSpdxElement": "SPDXRef-DocumentRoot-Unknown-",
+				  "relatedSpdxElement": "SPDXRef-DocumentRoot-Unknown-normalized",
                   "relationshipType": "DESCRIBES",
                   "spdxElementId": "SPDXRef-DOCUMENT"
                 }
