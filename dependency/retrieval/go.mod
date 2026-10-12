@@ -1,6 +1,6 @@
 module github.com/paketo-buildpacks/mri/dependency/retrieval
 
-go 1.27.1
+go 1.27.2
 
 require (
 	github.com/Masterminds/semver v1.5.0
