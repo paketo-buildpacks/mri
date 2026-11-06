@@ -8,7 +8,7 @@ require (
 	github.com/onsi/gomega v1.44.0
 	github.com/package-url/packageurl-go v0.1.7
 	github.com/paketo-buildpacks/occam v0.31.4
-	github.com/paketo-buildpacks/packit/v2 v2.25.8
+	github.com/paketo-buildpacks/packit/v2 v2.26.0
 	github.com/sclevine/spec v1.4.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
