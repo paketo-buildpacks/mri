@@ -15,6 +15,28 @@ type Dependency struct {
 	cargo.ConfigMetadataDependency
 	Target string `json:"target,omitempty"`
 }
+
+func (d Dependency) MarshalJSON() ([]byte, error) {
+	data, err := json.Marshal(d.ConfigMetadataDependency)
+	if err != nil {
+		return nil, err
+	}
+
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &fields); err != nil {
+		return nil, err
+	}
+	if d.Target != "" {
+		target, err := json.Marshal(d.Target)
+		if err != nil {
+			return nil, err
+		}
+		fields["target"] = target
+	}
+
+	return json.Marshal(fields)
+}
+
 type PlatformTarget struct {
 	Stacks []string
 	Target string
