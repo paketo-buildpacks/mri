@@ -10,7 +10,6 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/paketo-buildpacks/mri/dependency/retrieval/components"
 	"github.com/paketo-buildpacks/mri/dependency/retrieval/components/fakes"
-	. "github.com/paketo-buildpacks/occam/matchers"
 	"github.com/paketo-buildpacks/packit/v2/cargo"
 	"github.com/sclevine/spec"
 )
@@ -23,6 +22,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 			release                  components.RubyRelease
 			licenseRetriever         *fakes.License
 			deprecationDateRetriever *fakes.DeprecationDate
+			targets                  []components.PlatformTarget
 		)
 
 		it.Before(func() {
@@ -31,6 +31,13 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 
 			deprecationDateRetriever = &fakes.DeprecationDate{}
 			deprecationDateRetriever.GetDateCall.Returns.String = "2022-11-01"
+
+			targets = []components.PlatformTarget{{
+				Stacks: []string{"io.buildpacks.stacks.jammy"},
+				Target: "jammy",
+				OS:     "linux",
+				Arch:   "amd64",
+			}}
 
 			release = components.RubyRelease{
 				Version: "3.4.5",
@@ -41,7 +48,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 
 		it("retrieves all upstream releases", func() {
 			time := time.Date(2022, time.Month(11), 01, 00, 00, 00, 00, time.UTC)
-			dependencies, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
+			dependencies, err := components.GenerateMetadata(release, targets, licenseRetriever, deprecationDateRetriever)
 			Expect(err).To(Not(HaveOccurred()))
 			Expect(dependencies).To(Equal([]components.Dependency{
 				components.Dependency{
@@ -51,6 +58,8 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 						PURL:            "pkg:generic/ruby@3.4.5?checksum=some-ruby-sha&download_url=ruby-3.4.5-release.tar.gz",
 						ID:              "ruby",
 						Name:            "Ruby",
+						OS:              "linux",
+						Arch:            "amd64",
 						Licenses:        []interface{}{"license-1"},
 						Source:          "ruby-3.4.5-release.tar.gz",
 						SourceChecksum:  "sha256:some-ruby-sha",
@@ -68,7 +77,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					licenseRetriever.LookupLicensesCall.Returns.Error = errors.New("failed to lookup licenses")
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, targets, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("failed to lookup licenses")))
 				})
 			})
@@ -78,7 +87,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					deprecationDateRetriever.GetDateCall.Returns.Error = errors.New("failed to get deprecationDate")
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, targets, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("failed to get deprecationDate")))
 				})
 			})
@@ -88,7 +97,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					deprecationDateRetriever.GetDateCall.Returns.String = "bad-time"
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, targets, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("invalid EOL date")))
 				})
 			})
@@ -102,7 +111,7 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 					}
 				})
 				it("returns an error", func() {
-					_, err := components.GenerateMetadata(release, []string{"jammy"}, licenseRetriever, deprecationDateRetriever)
+					_, err := components.GenerateMetadata(release, targets, licenseRetriever, deprecationDateRetriever)
 					Expect(err).To(MatchError(ContainSubstring("Invalid Semantic Version")))
 				})
 			})
@@ -120,10 +129,12 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 			dependencies = []components.Dependency{
 				components.Dependency{
 					cargo.ConfigMetadataDependency{
+						Arch:           "amd64",
 						CPE:            "CPE-1",
 						PURL:           "PURL-1",
 						ID:             "ruby",
 						Name:           "Ruby",
+						OS:             "linux",
 						Licenses:       []interface{}{"license-1"},
 						Source:         "source-1",
 						SourceChecksum: "source-checksum",
@@ -134,10 +145,12 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 				},
 				components.Dependency{
 					cargo.ConfigMetadataDependency{
+						Arch:           "arm64",
 						CPE:            "CPE-2",
 						PURL:           "PURL-2",
 						ID:             "ruby",
 						Name:           "Ruby",
+						OS:             "linux",
 						Licenses:       []interface{}{"license-2"},
 						Source:         "source-2",
 						SourceChecksum: "source-checksum",
@@ -152,11 +165,29 @@ func testMetadataGeneration(t *testing.T, context spec.G, it spec.S) {
 		it("writes dependencies to output file", func() {
 			err := components.WriteOutput(filepath.Join(outputDir, "metadata.json"), dependencies)
 			Expect(err).To(Not(HaveOccurred()))
-			Expect(filepath.Join(outputDir, "metadata.json")).To(BeAFileMatching(`[{"cpe":"CPE-1","purl":"PURL-1","id":"ruby","licenses":["license-1"],"name":"Ruby","source":"source-1","source-checksum":"source-checksum","stacks":["stack-1"],"version":"version-1","target":"target-1"},{"cpe":"CPE-2","purl":"PURL-2","id":"ruby","licenses":["license-2"],"name":"Ruby","source":"source-2","source-checksum":"source-checksum","stacks":["stack-2"],"version":"version-2","target":"target-2"}]
-`))
+			content, err := os.ReadFile(filepath.Join(outputDir, "metadata.json"))
+			Expect(err).To(Not(HaveOccurred()))
+			Expect(content).To(MatchJSON(`[{"arch":"amd64","cpe":"CPE-1","purl":"PURL-1","id":"ruby","licenses":["license-1"],"name":"Ruby","os":"linux","source":"source-1","source-checksum":"source-checksum","stacks":["stack-1"],"version":"version-1","target":"target-1"},{"arch":"arm64","cpe":"CPE-2","purl":"PURL-2","id":"ruby","licenses":["license-2"],"name":"Ruby","os":"linux","source":"source-2","source-checksum":"source-checksum","stacks":["stack-2"],"version":"version-2","target":"target-2"}]`))
+		})
+
+		it("preserves structured licenses and omits an empty target", func() {
+			dependencies[0].Target = ""
+			dependencies[0].Licenses = nil
+			dependencies[0].LicenseEntries = []cargo.ConfigDependencyLicense{{Type: "MIT", URI: "https://example.com/license"}}
+			err := components.WriteOutput(filepath.Join(outputDir, "metadata.json"), dependencies[:1])
+			Expect(err).To(Not(HaveOccurred()))
+			content, err := os.ReadFile(filepath.Join(outputDir, "metadata.json"))
+			Expect(err).To(Not(HaveOccurred()))
+			Expect(content).To(MatchJSON(`[{"arch":"amd64","cpe":"CPE-1","purl":"PURL-1","id":"ruby","licenses":[{"type":"MIT","uri":"https://example.com/license"}],"name":"Ruby","os":"linux","source":"source-1","source-checksum":"source-checksum","stacks":["stack-1"],"version":"version-1"}]`))
 		})
 
 		context("failure cases", func() {
+			it("returns an error when a dependency cannot be encoded", func() {
+				dependencies[0].Licenses = []interface{}{make(chan int)}
+				err := components.WriteOutput(filepath.Join(outputDir, "metadata.json"), dependencies)
+				Expect(err).To(MatchError(ContainSubstring("unsupported type")))
+			})
+
 			context("the output file cannot be created", func() {
 				it.Before(func() {
 					Expect(os.Chmod(outputDir, 0000)).To(Succeed())
